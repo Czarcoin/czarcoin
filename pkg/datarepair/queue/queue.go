@@ -7,8 +7,8 @@ import (
 	"github.com/gogo/protobuf/proto"
 	"go.uber.org/zap"
 
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/storage"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/storage"
 )
 
 // RepairQueue is the interface for the data repair queue

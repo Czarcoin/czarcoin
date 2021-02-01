@@ -10,8 +10,8 @@ import (
 	"sync"
 	"time"
 
-	"storj.io/storj/pkg/encryption"
-	"storj.io/storj/pkg/ranger"
+	"czarcoin.org/czarcoin/pkg/encryption"
+	"czarcoin.org/czarcoin/pkg/ranger"
 )
 
 // ErasureScheme represents the general format of any erasure scheme algorithm.

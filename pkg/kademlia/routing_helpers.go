@@ -11,10 +11,10 @@ import (
 
 	"github.com/gogo/protobuf/proto"
 
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/pkg/utils"
-	"storj.io/storj/storage"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/pkg/utils"
+	"czarcoin.org/czarcoin/storage"
 )
 
 // addNode attempts to add a new contact to the routing table
@@ -103,7 +103,7 @@ func (rt *RoutingTable) updateNode(node *pb.Node) error {
 }
 
 // removeNode will remove churned nodes and replace those entries with nodes from the replacement cache.
-func (rt *RoutingTable) removeNode(nodeID storj.NodeID) error {
+func (rt *RoutingTable) removeNode(nodeID czarcoin.NodeID) error {
 	kadBucketID, err := rt.getKBucketID(nodeID)
 	if err != nil {
 		return RoutingErr.New("could not get k bucket %s", err)
@@ -157,7 +157,7 @@ func (rt *RoutingTable) createOrUpdateKBucket(bID bucketID, now time.Time) error
 
 // getKBucketID: helper, returns the id of the corresponding k bucket given a node id.
 // The node doesn't have to be in the routing table at time of search
-func (rt *RoutingTable) getKBucketID(nodeID storj.NodeID) (bucketID, error) {
+func (rt *RoutingTable) getKBucketID(nodeID czarcoin.NodeID) (bucketID, error) {
 	kadBucketIDs, err := rt.kadBucketDB.List(nil, 0)
 	if err != nil {
 		return bucketID{}, RoutingErr.New("could not list all k bucket ids: %s", err)
@@ -210,17 +210,17 @@ func sortByXOR(nodeIDs storage.Keys, ref storage.Key) {
 	})
 }
 
-func nodeIDsToKeys(ids storj.NodeIDList) (nodeIDKeys storage.Keys) {
+func nodeIDsToKeys(ids czarcoin.NodeIDList) (nodeIDKeys storage.Keys) {
 	for _, n := range ids {
 		nodeIDKeys = append(nodeIDKeys, n.Bytes())
 	}
 	return nodeIDKeys
 }
 
-func keysToNodeIDs(keys storage.Keys) (ids storj.NodeIDList, err error) {
+func keysToNodeIDs(keys storage.Keys) (ids czarcoin.NodeIDList, err error) {
 	var idErrs []error
 	for _, k := range keys {
-		id, err := storj.NodeIDFromBytes(k[:])
+		id, err := czarcoin.NodeIDFromBytes(k[:])
 		if err != nil {
 			idErrs = append(idErrs, err)
 		}
@@ -239,13 +239,13 @@ func keyToBucketID(key storage.Key) (bID bucketID) {
 }
 
 // determineFurthestIDWithinK: helper, determines the furthest node within the k closest to local node
-func (rt *RoutingTable) determineFurthestIDWithinK(nodeIDs storj.NodeIDList) (storj.NodeID, error) {
+func (rt *RoutingTable) determineFurthestIDWithinK(nodeIDs czarcoin.NodeIDList) (czarcoin.NodeID, error) {
 	nodeIDKeys := nodeIDsToKeys(nodeIDs)
 	sortByXOR(nodeIDKeys, rt.self.Id.Bytes())
 	if len(nodeIDs) < rt.bucketSize+1 { //adding 1 since we're not including local node in closest k
-		return storj.NodeIDFromBytes(nodeIDKeys[len(nodeIDKeys)-1])
+		return czarcoin.NodeIDFromBytes(nodeIDKeys[len(nodeIDKeys)-1])
 	}
-	return storj.NodeIDFromBytes(nodeIDKeys[rt.bucketSize])
+	return czarcoin.NodeIDFromBytes(nodeIDKeys[rt.bucketSize])
 }
 
 // xorTwoIds: helper, finds the xor distance between two byte slices
@@ -264,7 +264,7 @@ func xorTwoIds(id, comparisonID []byte) []byte {
 }
 
 // nodeIsWithinNearestK: helper, returns true if the node in question is within the nearest k from local node
-func (rt *RoutingTable) nodeIsWithinNearestK(nodeID storj.NodeID) (bool, error) {
+func (rt *RoutingTable) nodeIsWithinNearestK(nodeID czarcoin.NodeID) (bool, error) {
 	nodeKeys, err := rt.nodeBucketDB.List(nil, 0)
 	if err != nil {
 		return false, RoutingErr.New("could not get nodes: %s", err)
@@ -311,7 +311,7 @@ func (rt *RoutingTable) kadBucketHasRoom(bID bucketID) (bool, error) {
 }
 
 // getNodeIDsWithinKBucket: helper, returns a collection of all the node ids contained within the kbucket
-func (rt *RoutingTable) getNodeIDsWithinKBucket(bID bucketID) (storj.NodeIDList, error) {
+func (rt *RoutingTable) getNodeIDsWithinKBucket(bID bucketID) (czarcoin.NodeIDList, error) {
 	endpoints, err := rt.getKBucketRange(bID)
 	if err != nil {
 		return nil, err
@@ -331,7 +331,7 @@ func (rt *RoutingTable) getNodeIDsWithinKBucket(bID bucketID) (storj.NodeIDList,
 			}
 		}
 	}
-	nodeIDs, err := storj.NodeIDsFromBytes(nodeIDsBytes)
+	nodeIDs, err := czarcoin.NodeIDsFromBytes(nodeIDsBytes)
 	if err != nil {
 		return nil, err
 	}
@@ -342,7 +342,7 @@ func (rt *RoutingTable) getNodeIDsWithinKBucket(bID bucketID) (storj.NodeIDList,
 }
 
 // getNodesFromIDsBytes: helper, returns array of encoded nodes from node ids
-func (rt *RoutingTable) getNodesFromIDsBytes(nodeIDs storj.NodeIDList) ([]*pb.Node, error) {
+func (rt *RoutingTable) getNodesFromIDsBytes(nodeIDs czarcoin.NodeIDList) ([]*pb.Node, error) {
 	var marshaledNodes []storage.Value
 	for _, v := range nodeIDs {
 		n, err := rt.nodeBucketDB.Get(v.Bytes())

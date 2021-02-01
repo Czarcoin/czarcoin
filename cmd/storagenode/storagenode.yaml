@@ -35,7 +35,7 @@ spec:
     spec:
       terminationGracePeriodSeconds: 60
       containers:
-      - image: "storjlabs/storagenode"
+      - image: "czarcoin/storagenode"
         imagePullPolicy: Always
         name: piecestore
         env:
@@ -46,7 +46,7 @@ spec:
           - name: KAD_PORT
             value: "8080"
           - name: KAD_HOST
-            value: "bootstrap.storj.io"
+            value: "bootstrap.czarcoin.org"
           - name: KAD_LISTEN_PORT
             value: "7776"
           - name: PS_DIR

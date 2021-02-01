@@ -9,11 +9,11 @@ import (
 
 	"go.uber.org/zap"
 
-	"storj.io/storj/internal/sync2"
-	"storj.io/storj/pkg/datarepair/queue"
-	"storj.io/storj/pkg/pb"
-	segment "storj.io/storj/pkg/storage/segments"
-	"storj.io/storj/storage"
+	"czarcoin.org/czarcoin/internal/sync2"
+	"czarcoin.org/czarcoin/pkg/datarepair/queue"
+	"czarcoin.org/czarcoin/pkg/pb"
+	segment "czarcoin.org/czarcoin/pkg/storage/segments"
+	"czarcoin.org/czarcoin/storage"
 )
 
 // Repairer is the interface for the data repairer

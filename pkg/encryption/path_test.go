@@ -9,12 +9,12 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 func TestEncryption(t *testing.T) {
-	forAllCiphers(func(cipher storj.Cipher) {
-		for i, path := range []storj.Path{
+	forAllCiphers(func(cipher czarcoin.Cipher) {
+		for i, path := range []czarcoin.Path{
 			"",
 			"/",
 			"//",
@@ -26,8 +26,8 @@ func TestEncryption(t *testing.T) {
 		} {
 			errTag := fmt.Sprintf("%d. %+v", i, path)
 
-			key := new(storj.Key)
-			copy(key[:], randData(storj.KeySize))
+			key := new(czarcoin.Key)
+			copy(key[:], randData(czarcoin.KeySize))
 
 			encrypted, err := EncryptPath(path, cipher, key)
 			if !assert.NoError(t, err, errTag) {
@@ -45,9 +45,9 @@ func TestEncryption(t *testing.T) {
 }
 
 func TestDeriveKey(t *testing.T) {
-	forAllCiphers(func(cipher storj.Cipher) {
+	forAllCiphers(func(cipher czarcoin.Cipher) {
 		for i, tt := range []struct {
-			path      storj.Path
+			path      czarcoin.Path
 			depth     int
 			errString string
 		}{
@@ -61,8 +61,8 @@ func TestDeriveKey(t *testing.T) {
 		} {
 			errTag := fmt.Sprintf("%d. %+v", i, tt)
 
-			key := new(storj.Key)
-			copy(key[:], randData(storj.KeySize))
+			key := new(czarcoin.Key)
+			copy(key[:], randData(czarcoin.KeySize))
 
 			encrypted, err := EncryptPath(tt.path, cipher, key)
 			if !assert.NoError(t, err, errTag) {
@@ -78,23 +78,23 @@ func TestDeriveKey(t *testing.T) {
 				continue
 			}
 
-			shared := storj.JoinPaths(storj.SplitPath(encrypted)[tt.depth:]...)
+			shared := czarcoin.JoinPaths(czarcoin.SplitPath(encrypted)[tt.depth:]...)
 			decrypted, err := DecryptPath(shared, cipher, derivedKey)
 			if !assert.NoError(t, err, errTag) {
 				continue
 			}
 
-			expected := storj.JoinPaths(storj.SplitPath(tt.path)[tt.depth:]...)
+			expected := czarcoin.JoinPaths(czarcoin.SplitPath(tt.path)[tt.depth:]...)
 			assert.Equal(t, expected, decrypted, errTag)
 		}
 	})
 }
 
-func forAllCiphers(test func(cipher storj.Cipher)) {
-	for _, cipher := range []storj.Cipher{
-		storj.Unencrypted,
-		storj.AESGCM,
-		storj.SecretBox,
+func forAllCiphers(test func(cipher czarcoin.Cipher)) {
+	for _, cipher := range []czarcoin.Cipher{
+		czarcoin.Unencrypted,
+		czarcoin.AESGCM,
+		czarcoin.SecretBox,
 	} {
 		test(cipher)
 	}

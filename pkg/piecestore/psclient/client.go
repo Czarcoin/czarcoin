@@ -18,10 +18,10 @@ import (
 	"go.uber.org/zap"
 	"golang.org/x/net/context"
 
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/ranger"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/pkg/transport"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/ranger"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/pkg/transport"
 )
 
 // ClientError is any error returned by the client
@@ -52,7 +52,7 @@ type PieceStore struct {
 	client           pb.PieceStoreRoutesClient // PieceStore for interacting with Storage Node
 	prikey           crypto.PrivateKey         // Uplink private key
 	bandwidthMsgSize int                       // max bandwidth message size in bytes
-	nodeID           storj.NodeID              // Storage node being connected to
+	nodeID           czarcoin.NodeID              // Storage node being connected to
 }
 
 // NewPSClient initilizes a piecestore client

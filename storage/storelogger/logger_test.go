@@ -8,8 +8,8 @@ import (
 
 	"go.uber.org/zap"
 
-	"storj.io/storj/storage/teststore"
-	"storj.io/storj/storage/testsuite"
+	"czarcoin.org/czarcoin/storage/teststore"
+	"czarcoin.org/czarcoin/storage/testsuite"
 )
 
 func TestSuite(t *testing.T) {

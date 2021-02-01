@@ -12,10 +12,10 @@ import (
 	"github.com/gogo/protobuf/proto"
 	"github.com/stretchr/testify/assert"
 
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/storage/redis"
-	"storj.io/storj/storage/redis/redisserver"
-	"storj.io/storj/storage/testqueue"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/storage/redis"
+	"czarcoin.org/czarcoin/storage/redis/redisserver"
+	"czarcoin.org/czarcoin/storage/testqueue"
 )
 
 func TestEnqueueDequeue(t *testing.T) {

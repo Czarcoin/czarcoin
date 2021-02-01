@@ -23,13 +23,13 @@ import (
 	"golang.org/x/net/context"
 	monkit "gopkg.in/spacemonkeygo/monkit.v2"
 
-	"storj.io/storj/pkg/auth"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/peertls"
-	"storj.io/storj/pkg/piecestore"
-	as "storj.io/storj/pkg/piecestore/psserver/agreementsender"
-	"storj.io/storj/pkg/piecestore/psserver/psdb"
-	"storj.io/storj/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/auth"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/peertls"
+	"czarcoin.org/czarcoin/pkg/piecestore"
+	as "czarcoin.org/czarcoin/pkg/piecestore/psserver/agreementsender"
+	"czarcoin.org/czarcoin/pkg/piecestore/psserver/psdb"
+	"czarcoin.org/czarcoin/pkg/provider"
 )
 
 var (

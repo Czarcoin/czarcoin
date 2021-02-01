@@ -8,12 +8,12 @@ import (
 
 	"go.uber.org/zap"
 
-	"storj.io/storj/pkg/overlay"
-	"storj.io/storj/pkg/statdb"
-	"storj.io/storj/storage"
-	"storj.io/storj/storage/boltdb"
-	"storj.io/storj/storage/redis"
-	"storj.io/storj/storage/storelogger"
+	"czarcoin.org/czarcoin/pkg/overlay"
+	"czarcoin.org/czarcoin/pkg/statdb"
+	"czarcoin.org/czarcoin/storage"
+	"czarcoin.org/czarcoin/storage/boltdb"
+	"czarcoin.org/czarcoin/storage/redis"
+	"czarcoin.org/czarcoin/storage/storelogger"
 )
 
 type cacheConfig struct {

@@ -10,14 +10,14 @@ import (
 	"go.uber.org/zap"
 	monkit "gopkg.in/spacemonkeygo/monkit.v2"
 
-	"storj.io/storj/pkg/dht"
-	"storj.io/storj/pkg/node"
-	"storj.io/storj/pkg/overlay"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/provider"
-	"storj.io/storj/pkg/statdb"
-	statsproto "storj.io/storj/pkg/statdb/proto"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/pkg/dht"
+	"czarcoin.org/czarcoin/pkg/node"
+	"czarcoin.org/czarcoin/pkg/overlay"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/statdb"
+	statsproto "czarcoin.org/czarcoin/pkg/statdb/proto"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 var (
@@ -67,7 +67,7 @@ func (srv *Server) GetBuckets(ctx context.Context, req *pb.GetBucketsRequest) (*
 		return nil, err
 	}
 	// TODO(bryanchriswhite): should use bucketID type
-	nodeIDs, err := storj.NodeIDsFromBytes(b.ByteSlices())
+	nodeIDs, err := czarcoin.NodeIDsFromBytes(b.ByteSlices())
 	if err != nil {
 		return nil, err
 	}
@@ -128,7 +128,7 @@ func (srv *Server) PingNode(ctx context.Context, req *pb.PingNodeRequest) (*pb.P
 
 // LookupNode triggers a Kademlia lookup and returns the node the network found.
 func (srv *Server) LookupNode(ctx context.Context, req *pb.LookupNodeRequest) (*pb.LookupNodeResponse, error) {
-	id, err := storj.NodeIDFromString(req.Id)
+	id, err := czarcoin.NodeIDFromString(req.Id)
 	if err != nil {
 		return &pb.LookupNodeResponse{}, err
 	}

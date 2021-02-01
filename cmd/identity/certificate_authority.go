@@ -8,9 +8,9 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"storj.io/storj/pkg/cfgstruct"
-	"storj.io/storj/pkg/process"
-	"storj.io/storj/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/cfgstruct"
+	"czarcoin.org/czarcoin/pkg/process"
+	"czarcoin.org/czarcoin/pkg/provider"
 )
 
 var (

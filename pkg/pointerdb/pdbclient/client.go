@@ -13,12 +13,12 @@ import (
 	"google.golang.org/grpc/status"
 	"gopkg.in/spacemonkeygo/monkit.v2"
 
-	"storj.io/storj/pkg/auth/grpcauth"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/provider"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/pkg/transport"
-	"storj.io/storj/storage"
+	"czarcoin.org/czarcoin/pkg/auth/grpcauth"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/pkg/transport"
+	"czarcoin.org/czarcoin/storage"
 )
 
 var (
@@ -41,17 +41,17 @@ var _ Client = (*PointerDB)(nil)
 
 // ListItem is a single item in a listing
 type ListItem struct {
-	Path     storj.Path
+	Path     czarcoin.Path
 	Pointer  *pb.Pointer
 	IsPrefix bool
 }
 
 // Client services offerred for the interface
 type Client interface {
-	Put(ctx context.Context, path storj.Path, pointer *pb.Pointer) error
-	Get(ctx context.Context, path storj.Path) (*pb.Pointer, []*pb.Node, *pb.PayerBandwidthAllocation, error)
-	List(ctx context.Context, prefix, startAfter, endBefore storj.Path, recursive bool, limit int, metaFlags uint32) (items []ListItem, more bool, err error)
-	Delete(ctx context.Context, path storj.Path) error
+	Put(ctx context.Context, path czarcoin.Path, pointer *pb.Pointer) error
+	Get(ctx context.Context, path czarcoin.Path) (*pb.Pointer, []*pb.Node, *pb.PayerBandwidthAllocation, error)
+	List(ctx context.Context, prefix, startAfter, endBefore czarcoin.Path, recursive bool, limit int, metaFlags uint32) (items []ListItem, more bool, err error)
+	Delete(ctx context.Context, path czarcoin.Path) error
 
 	SignedMessage() *pb.SignedMessage
 	PayerBandwidthAllocation(context.Context, pb.PayerBandwidthAllocation_Action) (*pb.PayerBandwidthAllocation, error)
@@ -79,7 +79,7 @@ func NewClient(identity *provider.FullIdentity, address string, APIKey string) (
 var _ Client = (*PointerDB)(nil)
 
 // Put is the interface to make a PUT request, needs Pointer and APIKey
-func (pdb *PointerDB) Put(ctx context.Context, path storj.Path, pointer *pb.Pointer) (err error) {
+func (pdb *PointerDB) Put(ctx context.Context, path czarcoin.Path, pointer *pb.Pointer) (err error) {
 	defer mon.Task()(&ctx)(&err)
 
 	_, err = pdb.client.Put(ctx, &pb.PutRequest{Path: path, Pointer: pointer})
@@ -88,7 +88,7 @@ func (pdb *PointerDB) Put(ctx context.Context, path storj.Path, pointer *pb.Poin
 }
 
 // Get is the interface to make a GET request, needs PATH and APIKey
-func (pdb *PointerDB) Get(ctx context.Context, path storj.Path) (pointer *pb.Pointer, nodes []*pb.Node, pba *pb.PayerBandwidthAllocation, err error) {
+func (pdb *PointerDB) Get(ctx context.Context, path czarcoin.Path) (pointer *pb.Pointer, nodes []*pb.Node, pba *pb.PayerBandwidthAllocation, err error) {
 	defer mon.Task()(&ctx)(&err)
 
 	res, err := pdb.client.Get(ctx, &pb.GetRequest{Path: path})
@@ -105,7 +105,7 @@ func (pdb *PointerDB) Get(ctx context.Context, path storj.Path) (pointer *pb.Poi
 }
 
 // List is the interface to make a LIST request, needs StartingPathKey, Limit, and APIKey
-func (pdb *PointerDB) List(ctx context.Context, prefix, startAfter, endBefore storj.Path, recursive bool, limit int, metaFlags uint32) (items []ListItem, more bool, err error) {
+func (pdb *PointerDB) List(ctx context.Context, prefix, startAfter, endBefore czarcoin.Path, recursive bool, limit int, metaFlags uint32) (items []ListItem, more bool, err error) {
 	defer mon.Task()(&ctx)(&err)
 
 	res, err := pdb.client.List(ctx, &pb.ListRequest{
@@ -134,7 +134,7 @@ func (pdb *PointerDB) List(ctx context.Context, prefix, startAfter, endBefore st
 }
 
 // Delete is the interface to make a Delete request, needs Path and APIKey
-func (pdb *PointerDB) Delete(ctx context.Context, path storj.Path) (err error) {
+func (pdb *PointerDB) Delete(ctx context.Context, path czarcoin.Path) (err error) {
 	defer mon.Task()(&ctx)(&err)
 
 	_, err = pdb.client.Delete(ctx, &pb.DeleteRequest{Path: path})

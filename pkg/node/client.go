@@ -8,9 +8,9 @@ import (
 
 	"github.com/zeebo/errs"
 
-	"storj.io/storj/pkg/dht"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/dht"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/provider"
 )
 
 //NodeClientErr is the class for all errors pertaining to node client operations

@@ -53,7 +53,7 @@ check-copyrights: ## Check source files for copyright headers
 
 .PHONY: goimports-fix
 goimports-fix: ## Applies goimports to every go file (excluding vendored files)
-	goimports -w -local storj.io $$(find . -type f -name '*.go' -not -path "*/vendor/*")
+	goimports -w -local czarcoin.org $$(find . -type f -name '*.go' -not -path "*/vendor/*")
 
 .PHONY: proto
 proto: ## Rebuild protobuf files
@@ -94,16 +94,16 @@ images: satellite-image storagenode-image uplink-image gateway-image ## Build ga
 
 .PHONY: gateway-image
 gateway-image: ## Build gateway Docker image
-	${DOCKER_BUILD} -t storjlabs/gateway:${TAG}${CUSTOMTAG} -f cmd/gateway/Dockerfile .
+	${DOCKER_BUILD} -t czarcoin/gateway:${TAG}${CUSTOMTAG} -f cmd/gateway/Dockerfile .
 .PHONY: satellite-image
 satellite-image: ## Build satellite Docker image
-	${DOCKER_BUILD} -t storjlabs/satellite:${TAG}${CUSTOMTAG} -f cmd/satellite/Dockerfile .
+	${DOCKER_BUILD} -t czarcoin/satellite:${TAG}${CUSTOMTAG} -f cmd/satellite/Dockerfile .
 .PHONY: storagenode-image
 storagenode-image: ## Build storagenode Docker image
-	${DOCKER_BUILD} -t storjlabs/storagenode:${TAG}${CUSTOMTAG} -f cmd/storagenode/Dockerfile .
+	${DOCKER_BUILD} -t czarcoin/storagenode:${TAG}${CUSTOMTAG} -f cmd/storagenode/Dockerfile .
 .PHONY: uplink-image
 uplink-image: ## Build uplink Docker image
-	${DOCKER_BUILD} -t storjlabs/uplink:${TAG}${CUSTOMTAG} -f cmd/uplink/Dockerfile .
+	${DOCKER_BUILD} -t czarcoin/uplink:${TAG}${CUSTOMTAG} -f cmd/uplink/Dockerfile .
 
 .PHONY: binary
 binary: CUSTOMTAG = -${GOOS}-${GOARCH}
@@ -115,17 +115,17 @@ binary:
 	if [ "${GOARCH}" = "amd64" ]; then sixtyfour="-64"; fi; \
 	[ "${GOARCH}" = "amd64" ] && goversioninfo $$sixtyfour -o cmd/${COMPONENT}/resource.syso \
 	-original-name ${COMPONENT}_${GOOS}_${GOARCH}${FILEEXT} \
-	-description "${COMPONENT} program for Storj" \
+	-description "${COMPONENT} program for Czarcoin" \
 	-product-ver-build 2 -ver-build 2 \
 	-product-version "alpha2" \
 	resources/versioninfo.json || echo "goversioninfo is not installed, metadata will not be created"
 	tar -c . | docker run --rm -i -e TAR=1 -e GO111MODULE=on \
 	-e GOOS=${GOOS} -e GOARCH=${GOARCH} -e GOARM=6 -e CGO_ENABLED=1 \
-	-w /go/src/storj.io/storj -e GOPROXY storjlabs/golang \
-	-o app storj.io/storj/cmd/${COMPONENT} \
+	-w /go/src/czarcoin.org/czarcoin -e GOPROXY czarcoin/golang \
+	-o app czarcoin.org/czarcoin/cmd/${COMPONENT} \
 	| tar -O -x ./app > release/${TAG}/$(COMPONENT)_${GOOS}_${GOARCH}${FILEEXT}
 	chmod 755 release/${TAG}/$(COMPONENT)_${GOOS}_${GOARCH}${FILEEXT}
-	[ "${FILEEXT}" = ".exe" ] && storj-sign release/${TAG}/$(COMPONENT)_${GOOS}_${GOARCH}${FILEEXT} || echo "Skipping signing"
+	[ "${FILEEXT}" = ".exe" ] && czarcoin-sign release/${TAG}/$(COMPONENT)_${GOOS}_${GOARCH}${FILEEXT} || echo "Skipping signing"
 	rm -f release/${TAG}/${COMPONENT}_${GOOS}_${GOARCH}.zip
 	cd release/${TAG}; zip ${COMPONENT}_${GOOS}_${GOARCH}.zip ${COMPONENT}_${GOOS}_${GOARCH}${FILEEXT}
 	rm -f release/${TAG}/${COMPONENT}_${GOOS}_${GOARCH}${FILEEXT}
@@ -154,25 +154,25 @@ binaries: ${BINARIES} ## Build gateway, satellite, storagenode, and uplink binar
 .PHONY: deploy
 deploy: ## Update Kubernetes deployments in staging (jenkins)
 	for deployment in $$(kubectl --context nonprod -n v3 get deployment -l app=storagenode --output=jsonpath='{.items..metadata.name}'); do \
-		kubectl --context nonprod --namespace v3 patch deployment $$deployment -p"{\"spec\":{\"template\":{\"spec\":{\"containers\":[{\"name\":\"storagenode\",\"image\":\"storjlabs/storagenode:${TAG}\"}]}}}}" ; \
+		kubectl --context nonprod --namespace v3 patch deployment $$deployment -p"{\"spec\":{\"template\":{\"spec\":{\"containers\":[{\"name\":\"storagenode\",\"image\":\"czarcoin/storagenode:${TAG}\"}]}}}}" ; \
 	done
-	kubectl --context nonprod --namespace v3 patch deployment satellite -p"{\"spec\":{\"template\":{\"spec\":{\"containers\":[{\"name\":\"satellite\",\"image\":\"storjlabs/satellite:${TAG}\"}]}}}}"
+	kubectl --context nonprod --namespace v3 patch deployment satellite -p"{\"spec\":{\"template\":{\"spec\":{\"containers\":[{\"name\":\"satellite\",\"image\":\"czarcoin/satellite:${TAG}\"}]}}}}"
 
 .PHONY: push-images
 push-images: ## Push Docker images to Docker Hub (jenkins)
-	docker tag storjlabs/satellite:${TAG} storjlabs/satellite:latest
-	docker push storjlabs/satellite:${TAG}
-	docker push storjlabs/satellite:latest
-	docker tag storjlabs/storagenode:${TAG} storjlabs/storagenode:latest
-	docker push storjlabs/storagenode:${TAG}
-	docker push storjlabs/storagenode:latest
-	docker tag storjlabs/uplink:${TAG} storjlabs/uplink:latest
-	docker push storjlabs/uplink:${TAG}
-	docker push storjlabs/uplink:latest
+	docker tag czarcoin/satellite:${TAG} czarcoin/satellite:latest
+	docker push czarcoin/satellite:${TAG}
+	docker push czarcoin/satellite:latest
+	docker tag czarcoin/storagenode:${TAG} czarcoin/storagenode:latest
+	docker push czarcoin/storagenode:${TAG}
+	docker push czarcoin/storagenode:latest
+	docker tag czarcoin/uplink:${TAG} czarcoin/uplink:latest
+	docker push czarcoin/uplink:${TAG}
+	docker push czarcoin/uplink:latest
 
 .PHONY: binaries-upload
 binaries-upload: ## Upload binaries to Google Storage (jenkins)
-	cd release; gsutil -m cp -r . gs://storj-v3-alpha-builds
+	cd release; gsutil -m cp -r . gs://czarcoin-v3-alpha-builds
 
 ##@ Clean
 
@@ -186,14 +186,14 @@ binaries-clean: ## Remove all local release binaries (jenkins)
 .PHONY: clean-images
 ifeq (${BRANCH},master)
 clean-images: ## Remove Docker images from local engine
-	-docker rmi storjlabs/satellite:${TAG} storjlabs/satellite:latest
-	-docker rmi storjlabs/storagenode:${TAG} storjlabs/storagenode:latest
-	-docker rmi storjlabs/uplink:${TAG} storjlabs/uplink:latest
+	-docker rmi czarcoin/satellite:${TAG} czarcoin/satellite:latest
+	-docker rmi czarcoin/storagenode:${TAG} czarcoin/storagenode:latest
+	-docker rmi czarcoin/uplink:${TAG} czarcoin/uplink:latest
 else
 clean-images:
-	-docker rmi storjlabs/satellite:${TAG}
-	-docker rmi storjlabs/storagenode:${TAG}
-	-docker rmi storjlabs/uplink:${TAG}
+	-docker rmi czarcoin/satellite:${TAG}
+	-docker rmi czarcoin/storagenode:${TAG}
+	-docker rmi czarcoin/uplink:${TAG}
 endif
 
 .PHONY: test-docker-clean

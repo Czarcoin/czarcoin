@@ -8,9 +8,9 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"storj.io/storj/internal/fpath"
-	"storj.io/storj/pkg/process"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/internal/fpath"
+	"czarcoin.org/czarcoin/pkg/process"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 func init() {
@@ -50,10 +50,10 @@ func makeBucket(cmd *cobra.Command, args []string) error {
 	if err == nil {
 		return fmt.Errorf("Bucket already exists")
 	}
-	if !storj.ErrBucketNotFound.Has(err) {
+	if !czarcoin.ErrBucketNotFound.Has(err) {
 		return err
 	}
-	_, err = metainfo.CreateBucket(ctx, dst.Bucket(), &storj.Bucket{PathCipher: storj.Cipher(cfg.Enc.PathType)})
+	_, err = metainfo.CreateBucket(ctx, dst.Bucket(), &czarcoin.Bucket{PathCipher: czarcoin.Cipher(cfg.Enc.PathType)})
 	if err != nil {
 		return err
 	}

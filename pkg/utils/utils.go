@@ -23,8 +23,8 @@ func GetBytes(key interface{}) ([]byte, error) {
 }
 
 // ParseURL extracts database parameters from a string as a URL
-//   bolt://storj.db
-//   bolt://C:\storj.db
+//   bolt://czarcoin.db
+//   bolt://C:\czarcoin.db
 //   redis://hostname
 func ParseURL(s string) (*url.URL, error) {
 	if strings.HasPrefix(s, "bolt://") {

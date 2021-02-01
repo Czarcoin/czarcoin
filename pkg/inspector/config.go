@@ -10,11 +10,11 @@ import (
 	"go.uber.org/zap"
 	"gopkg.in/spacemonkeygo/monkit.v2"
 
-	"storj.io/storj/pkg/kademlia"
-	"storj.io/storj/pkg/overlay"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/provider"
-	"storj.io/storj/pkg/statdb"
+	"czarcoin.org/czarcoin/pkg/kademlia"
+	"czarcoin.org/czarcoin/pkg/overlay"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/statdb"
 )
 
 var (

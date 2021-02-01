@@ -9,9 +9,9 @@ import (
 	"github.com/skyrings/skyring-common/tools/uuid"
 	"github.com/zeebo/errs"
 
-	"storj.io/storj/pkg/satellite"
-	"storj.io/storj/pkg/satellite/satellitedb/dbx"
-	"storj.io/storj/pkg/utils"
+	"czarcoin.org/czarcoin/pkg/satellite"
+	"czarcoin.org/czarcoin/pkg/satellite/satellitedb/dbx"
+	"czarcoin.org/czarcoin/pkg/utils"
 )
 
 // ProjectMembers exposes methods to manage ProjectMembers table in database.

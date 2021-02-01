@@ -1,9 +1,9 @@
 #!/bin/bash
 set -ueo pipefail
-go install -v storj.io/storj/cmd/captplanet
+go install -v czarcoin.org/czarcoin/cmd/captplanet
 
 captplanet setup --overwrite
-sed -i~ 's/interval:.*/interval: 1s/g' $HOME/.local/share/storj/capt/config.yaml
+sed -i~ 's/interval:.*/interval: 1s/g' $HOME/.local/share/czarcoin/capt/config.yaml
 
 # run captplanet for 5 seconds to reproduce kademlia problems. See V3-526
 captplanet run &
@@ -76,7 +76,7 @@ fi
 kill -9 $CAPT_PID
 
 captplanet setup --listen-host ::1 --overwrite
-sed -i~ 's/interval:.*/interval: 1s/g' $HOME/.local/share/storj/capt/config.yaml
+sed -i~ 's/interval:.*/interval: 1s/g' $HOME/.local/share/czarcoin/capt/config.yaml
 captplanet run &
 CAPT_PID=$!
 

@@ -16,12 +16,12 @@ import (
 	"github.com/zeebo/errs"
 	"go.uber.org/zap"
 
-	"storj.io/storj/internal/teststorj"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/storage"
-	"storj.io/storj/storage/storelogger"
-	"storj.io/storj/storage/teststore"
+	"czarcoin.org/czarcoin/internal/testczarcoin"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/storage"
+	"czarcoin.org/czarcoin/storage/storelogger"
+	"czarcoin.org/czarcoin/storage/teststore"
 )
 
 // newTestRoutingTable returns a newly configured instance of a RoutingTable
@@ -33,7 +33,7 @@ func newTestRoutingTable(localNode pb.Node) (*RoutingTable, error) {
 		transport:    &defaultTransport,
 
 		mutex:            &sync.Mutex{},
-		seen:             make(map[storj.NodeID]*pb.Node),
+		seen:             make(map[czarcoin.NodeID]*pb.Node),
 		replacementCache: make(map[bucketID][]*pb.Node),
 
 		bucketSize:   6,
@@ -46,9 +46,9 @@ func newTestRoutingTable(localNode pb.Node) (*RoutingTable, error) {
 	return rt, nil
 }
 
-func createRoutingTable(t *testing.T, localNodeID storj.NodeID) (*RoutingTable, func()) {
-	if localNodeID == (storj.NodeID{}) {
-		localNodeID = teststorj.NodeIDFromString("AA")
+func createRoutingTable(t *testing.T, localNodeID czarcoin.NodeID) (*RoutingTable, func()) {
+	if localNodeID == (czarcoin.NodeID{}) {
+		localNodeID = testczarcoin.NodeIDFromString("AA")
 	}
 	localNode := pb.Node{Id: localNodeID}
 
@@ -66,7 +66,7 @@ func createRoutingTable(t *testing.T, localNodeID storj.NodeID) (*RoutingTable, 
 }
 
 func TestAddNode(t *testing.T) {
-	rt, cleanup := createRoutingTable(t, teststorj.NodeIDFromString("OO"))
+	rt, cleanup := createRoutingTable(t, testczarcoin.NodeIDFromString("OO"))
 	defer cleanup()
 	// bucket, err := rt.kadBucketDB.Get(storage.Key([]byte{255, 255}))
 	// assert.NoError(t, err)
@@ -79,114 +79,114 @@ func TestAddNode(t *testing.T) {
 		nodeIDs [][]string
 	}{
 		{testID: "PO: add node to unfilled kbucket",
-			node:    teststorj.MockNode("PO"),
+			node:    testczarcoin.MockNode("PO"),
 			added:   true,
 			kadIDs:  [][]byte{{255, 255}},
 			nodeIDs: [][]string{{"OO", "PO"}},
 		},
 		{testID: "NO: add node to full kbucket and split",
-			node:    teststorj.MockNode("NO"),
+			node:    testczarcoin.MockNode("NO"),
 			added:   true,
 			kadIDs:  [][]byte{{255, 255}},
 			nodeIDs: [][]string{{"NO", "OO", "PO"}},
 		},
 		{testID: "MO",
-			node:    teststorj.MockNode("MO"),
+			node:    testczarcoin.MockNode("MO"),
 			added:   true,
 			kadIDs:  [][]byte{{255, 255}},
 			nodeIDs: [][]string{{"MO", "NO", "OO", "PO"}},
 		},
 		{testID: "LO",
-			node:    teststorj.MockNode("LO"),
+			node:    testczarcoin.MockNode("LO"),
 			added:   true,
 			kadIDs:  [][]byte{{255, 255}},
 			nodeIDs: [][]string{{"LO", "MO", "NO", "OO", "PO"}},
 		},
 		{testID: "QO",
-			node:    teststorj.MockNode("QO"),
+			node:    testczarcoin.MockNode("QO"),
 			added:   true,
 			kadIDs:  [][]byte{{255, 255}},
 			nodeIDs: [][]string{{"LO", "MO", "NO", "OO", "PO", "QO"}},
 		},
 		{testID: "SO: split bucket",
-			node:    teststorj.MockNode("SO"),
+			node:    testczarcoin.MockNode("SO"),
 			added:   true,
 			kadIDs:  [][]byte{{63, 255}, {79, 255}, {95, 255}, {127, 255}, {255, 255}},
 			nodeIDs: [][]string{{}, {"LO", "MO", "NO", "OO"}, {"PO", "QO", "SO"}, {}, {}},
 		},
 		{testID: "?O",
-			node:    teststorj.MockNode("?O"),
+			node:    testczarcoin.MockNode("?O"),
 			added:   true,
 			kadIDs:  [][]byte{{63, 255}, {79, 255}, {95, 255}, {127, 255}, {255, 255}},
 			nodeIDs: [][]string{{"?O"}, {"LO", "MO", "NO", "OO"}, {"PO", "QO", "SO"}, {}, {}},
 		},
 		{testID: ">O",
-			node:   teststorj.MockNode(">O"),
+			node:   testczarcoin.MockNode(">O"),
 			added:  true,
 			kadIDs: [][]byte{{63, 255}, {79, 255}, {95, 255}, {127, 255}, {255, 255}}, nodeIDs: [][]string{{">O", "?O"}, {"LO", "MO", "NO", "OO"}, {"PO", "QO", "SO"}, {}, {}},
 		},
 		{testID: "=O",
-			node:    teststorj.MockNode("=O"),
+			node:    testczarcoin.MockNode("=O"),
 			added:   true,
 			kadIDs:  [][]byte{{63, 255}, {79, 255}, {95, 255}, {127, 255}, {255, 255}},
 			nodeIDs: [][]string{{"=O", ">O", "?O"}, {"LO", "MO", "NO", "OO"}, {"PO", "QO", "SO"}, {}, {}},
 		},
 		{testID: ";O",
-			node:    teststorj.MockNode(";O"),
+			node:    testczarcoin.MockNode(";O"),
 			added:   true,
 			kadIDs:  [][]byte{{63, 255}, {79, 255}, {95, 255}, {127, 255}, {255, 255}},
 			nodeIDs: [][]string{{";O", "=O", ">O", "?O"}, {"LO", "MO", "NO", "OO"}, {"PO", "QO", "SO"}, {}, {}},
 		},
 		{testID: ":O",
-			node:    teststorj.MockNode(":O"),
+			node:    testczarcoin.MockNode(":O"),
 			added:   true,
 			kadIDs:  [][]byte{{63, 255}, {79, 255}, {95, 255}, {127, 255}, {255, 255}},
 			nodeIDs: [][]string{{":O", ";O", "=O", ">O", "?O"}, {"LO", "MO", "NO", "OO"}, {"PO", "QO", "SO"}, {}, {}},
 		},
 		{testID: "9O",
-			node:    teststorj.MockNode("9O"),
+			node:    testczarcoin.MockNode("9O"),
 			added:   true,
 			kadIDs:  [][]byte{{63, 255}, {79, 255}, {95, 255}, {127, 255}, {255, 255}},
 			nodeIDs: [][]string{{"9O", ":O", ";O", "=O", ">O", "?O"}, {"LO", "MO", "NO", "OO"}, {"PO", "QO", "SO"}, {}, {}},
 		},
 		{testID: "8O: should drop",
-			node:    teststorj.MockNode("8O"),
+			node:    testczarcoin.MockNode("8O"),
 			added:   false,
 			kadIDs:  [][]byte{{63, 255}, {79, 255}, {95, 255}, {127, 255}, {255, 255}},
 			nodeIDs: [][]string{{"9O", ":O", ";O", "=O", ">O", "?O"}, {"LO", "MO", "NO", "OO"}, {"PO", "QO", "SO"}, {}, {}},
 		},
 		{testID: "KO",
-			node:    teststorj.MockNode("KO"),
+			node:    testczarcoin.MockNode("KO"),
 			added:   true,
 			kadIDs:  [][]byte{{63, 255}, {79, 255}, {95, 255}, {127, 255}, {255, 255}},
 			nodeIDs: [][]string{{"9O", ":O", ";O", "=O", ">O", "?O"}, {"KO", "LO", "MO", "NO", "OO"}, {"PO", "QO", "SO"}, {}, {}},
 		},
 		{testID: "JO",
-			node:    teststorj.MockNode("JO"),
+			node:    testczarcoin.MockNode("JO"),
 			added:   true,
 			kadIDs:  [][]byte{{63, 255}, {79, 255}, {95, 255}, {127, 255}, {255, 255}},
 			nodeIDs: [][]string{{"9O", ":O", ";O", "=O", ">O", "?O"}, {"JO", "KO", "LO", "MO", "NO", "OO"}, {"PO", "QO", "SO"}, {}, {}},
 		},
 		{testID: "]O",
-			node:    teststorj.MockNode("]O"),
+			node:    testczarcoin.MockNode("]O"),
 			added:   true,
 			kadIDs:  [][]byte{{63, 255}, {79, 255}, {95, 255}, {127, 255}, {255, 255}},
 			nodeIDs: [][]string{{"9O", ":O", ";O", "=O", ">O", "?O"}, {"JO", "KO", "LO", "MO", "NO", "OO"}, {"PO", "QO", "SO", "]O"}, {}, {}},
 		},
 		{testID: "^O",
-			node:    teststorj.MockNode("^O"),
+			node:    testczarcoin.MockNode("^O"),
 			added:   true,
 			kadIDs:  [][]byte{{63, 255}, {79, 255}, {95, 255}, {127, 255}, {255, 255}},
 			nodeIDs: [][]string{{"9O", ":O", ";O", "=O", ">O", "?O"}, {"JO", "KO", "LO", "MO", "NO", "OO"}, {"PO", "QO", "SO", "]O", "^O"}, {}, {}},
 		},
 		{testID: "_O",
-			node:    teststorj.MockNode("_O"),
+			node:    testczarcoin.MockNode("_O"),
 			added:   true,
 			kadIDs:  [][]byte{{63, 255}, {79, 255}, {95, 255}, {127, 255}, {255, 255}},
 			nodeIDs: [][]string{{"9O", ":O", ";O", "=O", ">O", "?O"}, {"JO", "KO", "LO", "MO", "NO", "OO"}, {"PO", "QO", "SO", "]O", "^O", "_O"}, {}, {}},
 		},
 		{testID: "@O: split bucket 2",
-			node:    teststorj.MockNode("@O"),
+			node:    testczarcoin.MockNode("@O"),
 			added:   true,
 			kadIDs:  [][]byte{{63, 255}, {71, 255}, {79, 255}, {95, 255}, {127, 255}, {255, 255}},
 			nodeIDs: [][]string{{"9O", ":O", ";O", "=O", ">O", "?O"}, {"@O"}, {"JO", "KO", "LO", "MO", "NO", "OO"}, {"PO", "QO", "SO", "]O", "^O", "_O"}, {}, {}},
@@ -204,12 +204,12 @@ func TestAddNode(t *testing.T) {
 				ids, err := rt.getNodeIDsWithinKBucket(keyToBucketID(v))
 				assert.NoError(t, err)
 				for j, id := range ids {
-					assert.True(t, bytes.Equal(teststorj.NodeIDFromString(c.nodeIDs[i][j]).Bytes(), id.Bytes()))
+					assert.True(t, bytes.Equal(testczarcoin.NodeIDFromString(c.nodeIDs[i][j]).Bytes(), id.Bytes()))
 				}
 			}
 
 			if c.testID == "8O" {
-				nodeID80 := teststorj.NodeIDFromString("8O")
+				nodeID80 := testczarcoin.NodeIDFromString("8O")
 				n := rt.replacementCache[keyToBucketID(nodeID80.Bytes())]
 				assert.Equal(t, nodeID80.Bytes(), n[0].Id.Bytes())
 			}
@@ -219,9 +219,9 @@ func TestAddNode(t *testing.T) {
 }
 
 func TestUpdateNode(t *testing.T) {
-	rt, cleanup := createRoutingTable(t, teststorj.NodeIDFromString("AA"))
+	rt, cleanup := createRoutingTable(t, testczarcoin.NodeIDFromString("AA"))
 	defer cleanup()
-	node := teststorj.MockNode("BB")
+	node := testczarcoin.MockNode("BB")
 	ok, err := rt.addNode(node)
 	assert.True(t, ok)
 	assert.NoError(t, err)
@@ -244,17 +244,17 @@ func TestUpdateNode(t *testing.T) {
 }
 
 func TestRemoveNode(t *testing.T) {
-	rt, cleanup := createRoutingTable(t, teststorj.NodeIDFromString("AA"))
+	rt, cleanup := createRoutingTable(t, testczarcoin.NodeIDFromString("AA"))
 	defer cleanup()
 	kadBucketID := rt.createFirstBucketID()
-	node := teststorj.MockNode("BB")
+	node := testczarcoin.MockNode("BB")
 	ok, err := rt.addNode(node)
 	assert.True(t, ok)
 	assert.NoError(t, err)
 	val, err := rt.nodeBucketDB.Get(node.Id.Bytes())
 	assert.NoError(t, err)
 	assert.NotNil(t, val)
-	node2 := teststorj.MockNode("CC")
+	node2 := testczarcoin.MockNode("CC")
 	rt.addToReplacementCache(kadBucketID, node2)
 	err = rt.removeNode(node.Id)
 	assert.NoError(t, err)
@@ -267,13 +267,13 @@ func TestRemoveNode(t *testing.T) {
 	assert.Equal(t, 0, len(rt.replacementCache[kadBucketID]))
 
 	//try to remove node not in rt
-	err = rt.removeNode(teststorj.NodeIDFromString("DD"))
+	err = rt.removeNode(testczarcoin.NodeIDFromString("DD"))
 	assert.NoError(t, err)
 }
 
 func TestCreateOrUpdateKBucket(t *testing.T) {
-	id := teststorj.NodeIDFromBytes([]byte{255, 255})
-	rt, cleanup := createRoutingTable(t, storj.NodeID{})
+	id := testczarcoin.NodeIDFromBytes([]byte{255, 255})
+	rt, cleanup := createRoutingTable(t, czarcoin.NodeID{})
 	defer cleanup()
 	err := rt.createOrUpdateKBucket(keyToBucketID(id.Bytes()), time.Now())
 	assert.NoError(t, err)
@@ -285,7 +285,7 @@ func TestCreateOrUpdateKBucket(t *testing.T) {
 
 func TestGetKBucketID(t *testing.T) {
 	kadIDA := keyToBucketID([]byte{255, 255})
-	nodeIDA := teststorj.NodeIDFromString("AA")
+	nodeIDA := testczarcoin.NodeIDFromString("AA")
 	rt, cleanup := createRoutingTable(t, nodeIDA)
 	defer cleanup()
 	keyA, err := rt.getKBucketID(nodeIDA)
@@ -299,16 +299,16 @@ func TestXorTwoIds(t *testing.T) {
 }
 
 func TestSortByXOR(t *testing.T) {
-	node1 := teststorj.NodeIDFromBytes([]byte{127, 255}) //xor 0
+	node1 := testczarcoin.NodeIDFromBytes([]byte{127, 255}) //xor 0
 	rt, cleanup := createRoutingTable(t, node1)
 	defer cleanup()
-	node2 := teststorj.NodeIDFromBytes([]byte{143, 255}) //xor 240
+	node2 := testczarcoin.NodeIDFromBytes([]byte{143, 255}) //xor 240
 	assert.NoError(t, rt.nodeBucketDB.Put(node2.Bytes(), []byte("")))
-	node3 := teststorj.NodeIDFromBytes([]byte{255, 255}) //xor 128
+	node3 := testczarcoin.NodeIDFromBytes([]byte{255, 255}) //xor 128
 	assert.NoError(t, rt.nodeBucketDB.Put(node3.Bytes(), []byte("")))
-	node4 := teststorj.NodeIDFromBytes([]byte{191, 255}) //xor 192
+	node4 := testczarcoin.NodeIDFromBytes([]byte{191, 255}) //xor 192
 	assert.NoError(t, rt.nodeBucketDB.Put(node4.Bytes(), []byte("")))
-	node5 := teststorj.NodeIDFromBytes([]byte{133, 255}) //xor 250
+	node5 := testczarcoin.NodeIDFromBytes([]byte{133, 255}) //xor 250
 	assert.NoError(t, rt.nodeBucketDB.Put(node5.Bytes(), []byte("")))
 	nodes, err := rt.nodeBucketDB.List(nil, 0)
 	assert.NoError(t, err)
@@ -346,7 +346,7 @@ func BenchmarkSortByXOR(b *testing.B) {
 }
 
 func TestDetermineFurthestIDWithinK(t *testing.T) {
-	rt, cleanup := createRoutingTable(t, teststorj.NodeIDFromBytes([]byte{127, 255}))
+	rt, cleanup := createRoutingTable(t, testczarcoin.NodeIDFromBytes([]byte{127, 255}))
 	defer cleanup()
 	cases := []struct {
 		testID           string
@@ -376,10 +376,10 @@ func TestDetermineFurthestIDWithinK(t *testing.T) {
 	}
 	for _, c := range cases {
 		t.Run(c.testID, func(t *testing.T) {
-			assert.NoError(t, rt.nodeBucketDB.Put(teststorj.NodeIDFromBytes(c.nodeID).Bytes(), []byte("")))
+			assert.NoError(t, rt.nodeBucketDB.Put(testczarcoin.NodeIDFromBytes(c.nodeID).Bytes(), []byte("")))
 			nodes, err := rt.nodeBucketDB.List(nil, 0)
 			assert.NoError(t, err)
-			furthest, err := rt.determineFurthestIDWithinK(teststorj.NodeIDsFromBytes(nodes.ByteSlices()...))
+			furthest, err := rt.determineFurthestIDWithinK(testczarcoin.NodeIDsFromBytes(nodes.ByteSlices()...))
 			assert.NoError(t, err)
 			fmt.Println(furthest.Bytes())
 			assert.Equal(t, c.expectedFurthest, furthest[:2])
@@ -388,7 +388,7 @@ func TestDetermineFurthestIDWithinK(t *testing.T) {
 }
 
 func TestNodeIsWithinNearestK(t *testing.T) {
-	rt, cleanup := createRoutingTable(t, teststorj.NodeIDFromBytes([]byte{127, 255}))
+	rt, cleanup := createRoutingTable(t, testczarcoin.NodeIDFromBytes([]byte{127, 255}))
 	defer cleanup()
 	rt.bucketSize = 2
 	cases := []struct {
@@ -419,16 +419,16 @@ func TestNodeIsWithinNearestK(t *testing.T) {
 	}
 	for _, c := range cases {
 		t.Run(c.testID, func(t *testing.T) {
-			result, err := rt.nodeIsWithinNearestK(teststorj.NodeIDFromBytes(c.nodeID))
+			result, err := rt.nodeIsWithinNearestK(testczarcoin.NodeIDFromBytes(c.nodeID))
 			assert.NoError(t, err)
 			assert.Equal(t, c.closest, result)
-			assert.NoError(t, rt.nodeBucketDB.Put(teststorj.NodeIDFromBytes(c.nodeID).Bytes(), []byte("")))
+			assert.NoError(t, rt.nodeBucketDB.Put(testczarcoin.NodeIDFromBytes(c.nodeID).Bytes(), []byte("")))
 		})
 	}
 }
 
 func TestKadBucketContainsLocalNode(t *testing.T) {
-	nodeIDA := teststorj.NodeIDFromBytes([]byte{183, 255}) //[10110111, 1111111]
+	nodeIDA := testczarcoin.NodeIDFromBytes([]byte{183, 255}) //[10110111, 1111111]
 	rt, cleanup := createRoutingTable(t, nodeIDA)
 	defer cleanup()
 	kadIDA := rt.createFirstBucketID()
@@ -447,15 +447,15 @@ func TestKadBucketContainsLocalNode(t *testing.T) {
 }
 
 func TestKadBucketHasRoom(t *testing.T) {
-	node1 := teststorj.NodeIDFromBytes([]byte{255, 255})
+	node1 := testczarcoin.NodeIDFromBytes([]byte{255, 255})
 	rt, cleanup := createRoutingTable(t, node1)
 	defer cleanup()
 	kadIDA := rt.createFirstBucketID()
-	node2 := teststorj.NodeIDFromBytes([]byte{191, 255})
-	node3 := teststorj.NodeIDFromBytes([]byte{127, 255})
-	node4 := teststorj.NodeIDFromBytes([]byte{63, 255})
-	node5 := teststorj.NodeIDFromBytes([]byte{159, 255})
-	node6 := teststorj.NodeIDFromBytes([]byte{0, 127})
+	node2 := testczarcoin.NodeIDFromBytes([]byte{191, 255})
+	node3 := testczarcoin.NodeIDFromBytes([]byte{127, 255})
+	node4 := testczarcoin.NodeIDFromBytes([]byte{63, 255})
+	node5 := testczarcoin.NodeIDFromBytes([]byte{159, 255})
+	node6 := testczarcoin.NodeIDFromBytes([]byte{0, 127})
 	resultA, err := rt.kadBucketHasRoom(kadIDA)
 	assert.NoError(t, err)
 	assert.True(t, resultA)
@@ -470,7 +470,7 @@ func TestKadBucketHasRoom(t *testing.T) {
 }
 
 func TestGetNodeIDsWithinKBucket(t *testing.T) {
-	nodeIDA := teststorj.NodeIDFromBytes([]byte{183, 255}) //[10110111, 1111111]
+	nodeIDA := testczarcoin.NodeIDFromBytes([]byte{183, 255}) //[10110111, 1111111]
 	rt, cleanup := createRoutingTable(t, nodeIDA)
 	defer cleanup()
 	kadIDA := rt.createFirstBucketID()
@@ -480,8 +480,8 @@ func TestGetNodeIDsWithinKBucket(t *testing.T) {
 	now := time.Now()
 	assert.NoError(t, rt.createOrUpdateKBucket(kadIDB, now))
 
-	nodeIDB := teststorj.NodeIDFromBytes([]byte{111, 255}) //[01101111, 1111111]
-	nodeIDC := teststorj.NodeIDFromBytes([]byte{47, 255})  //[00101111, 1111111]
+	nodeIDB := testczarcoin.NodeIDFromBytes([]byte{111, 255}) //[01101111, 1111111]
+	nodeIDC := testczarcoin.NodeIDFromBytes([]byte{47, 255})  //[00101111, 1111111]
 
 	assert.NoError(t, rt.nodeBucketDB.Put(nodeIDB.Bytes(), []byte("")))
 	assert.NoError(t, rt.nodeBucketDB.Put(nodeIDC.Bytes(), []byte("")))
@@ -512,9 +512,9 @@ func TestGetNodeIDsWithinKBucket(t *testing.T) {
 }
 
 func TestGetNodesFromIDs(t *testing.T) {
-	nodeA := teststorj.MockNode("AA")
-	nodeB := teststorj.MockNode("BB")
-	nodeC := teststorj.MockNode("CC")
+	nodeA := testczarcoin.MockNode("AA")
+	nodeB := testczarcoin.MockNode("BB")
+	nodeC := testczarcoin.MockNode("CC")
 	a, err := proto.Marshal(nodeA)
 	assert.NoError(t, err)
 	b, err := proto.Marshal(nodeB)
@@ -531,7 +531,7 @@ func TestGetNodesFromIDs(t *testing.T) {
 
 	nodeKeys, err := rt.nodeBucketDB.List(nil, 0)
 	assert.NoError(t, err)
-	values, err := rt.getNodesFromIDsBytes(teststorj.NodeIDsFromBytes(nodeKeys.ByteSlices()...))
+	values, err := rt.getNodesFromIDsBytes(testczarcoin.NodeIDsFromBytes(nodeKeys.ByteSlices()...))
 	assert.NoError(t, err)
 	for i, n := range expected {
 		assert.True(t, bytes.Equal(n.Id.Bytes(), values[i].Id.Bytes()))
@@ -539,9 +539,9 @@ func TestGetNodesFromIDs(t *testing.T) {
 }
 
 func TestUnmarshalNodes(t *testing.T) {
-	nodeA := teststorj.MockNode("AA")
-	nodeB := teststorj.MockNode("BB")
-	nodeC := teststorj.MockNode("CC")
+	nodeA := testczarcoin.MockNode("AA")
+	nodeB := testczarcoin.MockNode("BB")
+	nodeC := testczarcoin.MockNode("CC")
 
 	a, err := proto.Marshal(nodeA)
 	assert.NoError(t, err)
@@ -556,7 +556,7 @@ func TestUnmarshalNodes(t *testing.T) {
 	assert.NoError(t, rt.nodeBucketDB.Put(nodeC.Id.Bytes(), c))
 	nodeKeys, err := rt.nodeBucketDB.List(nil, 0)
 	assert.NoError(t, err)
-	nodes, err := rt.getNodesFromIDsBytes(teststorj.NodeIDsFromBytes(nodeKeys.ByteSlices()...))
+	nodes, err := rt.getNodesFromIDsBytes(testczarcoin.NodeIDsFromBytes(nodeKeys.ByteSlices()...))
 	assert.NoError(t, err)
 	expected := []*pb.Node{nodeA, nodeB, nodeC}
 	for i, v := range expected {
@@ -565,12 +565,12 @@ func TestUnmarshalNodes(t *testing.T) {
 }
 
 func TestGetUnmarshaledNodesFromBucket(t *testing.T) {
-	nodeA := teststorj.MockNode("AA")
+	nodeA := testczarcoin.MockNode("AA")
 	rt, cleanup := createRoutingTable(t, nodeA.Id)
 	bucketID := rt.createFirstBucketID()
 	defer cleanup()
-	nodeB := teststorj.MockNode("BB")
-	nodeC := teststorj.MockNode("CC")
+	nodeB := testczarcoin.MockNode("BB")
+	nodeC := testczarcoin.MockNode("CC")
 	var err error
 	_, err = rt.addNode(nodeB)
 	assert.NoError(t, err)
@@ -585,18 +585,18 @@ func TestGetUnmarshaledNodesFromBucket(t *testing.T) {
 }
 
 func TestGetKBucketRange(t *testing.T) {
-	rt, cleanup := createRoutingTable(t, storj.NodeID{})
+	rt, cleanup := createRoutingTable(t, czarcoin.NodeID{})
 	defer cleanup()
-	idA := teststorj.NodeIDFromBytes([]byte{255, 255})
-	idB := teststorj.NodeIDFromBytes([]byte{127, 255})
-	idC := teststorj.NodeIDFromBytes([]byte{63, 255})
+	idA := testczarcoin.NodeIDFromBytes([]byte{255, 255})
+	idB := testczarcoin.NodeIDFromBytes([]byte{127, 255})
+	idC := testczarcoin.NodeIDFromBytes([]byte{63, 255})
 	assert.NoError(t, rt.kadBucketDB.Put(idA.Bytes(), []byte("")))
 	assert.NoError(t, rt.kadBucketDB.Put(idB.Bytes(), []byte("")))
 	assert.NoError(t, rt.kadBucketDB.Put(idC.Bytes(), []byte("")))
 	zeroBID := bucketID{}
 	cases := []struct {
 		testID   string
-		id       storj.NodeID
+		id       czarcoin.NodeID
 		expected storage.Keys
 	}{
 		{testID: "A",
@@ -623,7 +623,7 @@ func TestGetKBucketRange(t *testing.T) {
 }
 
 func TestCreateFirstBucketID(t *testing.T) {
-	rt, cleanup := createRoutingTable(t, storj.NodeID{})
+	rt, cleanup := createRoutingTable(t, czarcoin.NodeID{})
 	defer cleanup()
 	x := rt.createFirstBucketID()
 	expected := []byte{255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255}
@@ -631,7 +631,7 @@ func TestCreateFirstBucketID(t *testing.T) {
 }
 
 func TestBucketIDZeroValue(t *testing.T) {
-	// rt, cleanup := createRoutingTable(t, storj.NodeID{})
+	// rt, cleanup := createRoutingTable(t, czarcoin.NodeID{})
 	// defer cleanup()
 	zero := bucketID{} //rt.createZeroAsBucketID()
 	expected := []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
@@ -639,15 +639,15 @@ func TestBucketIDZeroValue(t *testing.T) {
 }
 
 func TestDetermineLeafDepth(t *testing.T) {
-	rt, cleanup := createRoutingTable(t, storj.NodeID{})
+	rt, cleanup := createRoutingTable(t, czarcoin.NodeID{})
 	defer cleanup()
-	idA := teststorj.NodeIDFromBytes([]byte{255, 255})
-	idB := teststorj.NodeIDFromBytes([]byte{127, 255})
-	idC := teststorj.NodeIDFromBytes([]byte{63, 255})
+	idA := testczarcoin.NodeIDFromBytes([]byte{255, 255})
+	idB := testczarcoin.NodeIDFromBytes([]byte{127, 255})
+	idC := testczarcoin.NodeIDFromBytes([]byte{63, 255})
 
 	cases := []struct {
 		testID  string
-		id      storj.NodeID
+		id      czarcoin.NodeID
 		depth   int
 		addNode func()
 	}{
@@ -708,7 +708,7 @@ func padBucketID(b []byte, p byte) (bID bucketID) {
 }
 
 func TestDetermineDifferingBitIndex(t *testing.T) {
-	rt, cleanup := createRoutingTable(t, storj.NodeID{})
+	rt, cleanup := createRoutingTable(t, czarcoin.NodeID{})
 	defer cleanup()
 	cases := []struct {
 		testID   string
@@ -801,7 +801,7 @@ func TestDetermineDifferingBitIndex(t *testing.T) {
 }
 
 func TestSplitBucket(t *testing.T) {
-	rt, cleanup := createRoutingTable(t, storj.NodeID{})
+	rt, cleanup := createRoutingTable(t, czarcoin.NodeID{})
 	defer cleanup()
 	cases := []struct {
 		testID string

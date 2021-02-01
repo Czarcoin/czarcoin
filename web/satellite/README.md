@@ -1,4 +1,4 @@
-# storj-dev-panel
+# czarcoin-dev-panel
 
 ## Project setup
 ```

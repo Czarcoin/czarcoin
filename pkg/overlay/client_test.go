@@ -9,13 +9,13 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"storj.io/storj/internal/identity"
-	"storj.io/storj/internal/testcontext"
-	"storj.io/storj/internal/testplanet"
-	"storj.io/storj/internal/teststorj"
-	"storj.io/storj/pkg/overlay"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/internal/identity"
+	"czarcoin.org/czarcoin/internal/testcontext"
+	"czarcoin.org/czarcoin/internal/testplanet"
+	"czarcoin.org/czarcoin/internal/testczarcoin"
+	"czarcoin.org/czarcoin/pkg/overlay"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 func TestNewOverlayClient(t *testing.T) {
@@ -62,7 +62,7 @@ func TestChoose(t *testing.T) {
 		auditSuccess float64
 		auditCount   int64
 		allNodes     []*pb.Node
-		excluded     storj.NodeIDList
+		excluded     czarcoin.NodeIDList
 	}{
 		{
 			limit:        4,
@@ -73,26 +73,26 @@ func TestChoose(t *testing.T) {
 			auditSuccess: 0,
 			auditCount:   0,
 			allNodes: func() []*pb.Node {
-				n1 := teststorj.MockNode("n1")
-				n2 := teststorj.MockNode("n2")
-				n3 := teststorj.MockNode("n3")
-				n4 := teststorj.MockNode("n4")
-				n5 := teststorj.MockNode("n5")
-				n6 := teststorj.MockNode("n6")
-				n7 := teststorj.MockNode("n7")
-				n8 := teststorj.MockNode("n8")
+				n1 := testczarcoin.MockNode("n1")
+				n2 := testczarcoin.MockNode("n2")
+				n3 := testczarcoin.MockNode("n3")
+				n4 := testczarcoin.MockNode("n4")
+				n5 := testczarcoin.MockNode("n5")
+				n6 := testczarcoin.MockNode("n6")
+				n7 := testczarcoin.MockNode("n7")
+				n8 := testczarcoin.MockNode("n8")
 				nodes := []*pb.Node{n1, n2, n3, n4, n5, n6, n7, n8}
 				for _, n := range nodes {
 					n.Type = pb.NodeType_STORAGE
 				}
 				return nodes
 			}(),
-			excluded: func() storj.NodeIDList {
-				id1 := teststorj.NodeIDFromString("n1")
-				id2 := teststorj.NodeIDFromString("n2")
-				id3 := teststorj.NodeIDFromString("n3")
-				id4 := teststorj.NodeIDFromString("n4")
-				return storj.NodeIDList{id1, id2, id3, id4}
+			excluded: func() czarcoin.NodeIDList {
+				id1 := testczarcoin.NodeIDFromString("n1")
+				id2 := testczarcoin.NodeIDFromString("n2")
+				id3 := testczarcoin.NodeIDFromString("n3")
+				id4 := testczarcoin.NodeIDFromString("n4")
+				return czarcoin.NodeIDList{id1, id2, id3, id4}
 			}(),
 		},
 	}
@@ -109,7 +109,7 @@ func TestChoose(t *testing.T) {
 		})
 		assert.NoError(t, err)
 
-		excludedNodes := make(map[storj.NodeID]bool)
+		excludedNodes := make(map[czarcoin.NodeID]bool)
 		for _, e := range v.excluded {
 			excludedNodes[e] = true
 		}
@@ -138,7 +138,7 @@ func TestLookup(t *testing.T) {
 	nid1 := planet.StorageNodes[0].ID()
 
 	cases := []struct {
-		nodeID    storj.NodeID
+		nodeID    czarcoin.NodeID
 		expectErr bool
 	}{
 		{
@@ -146,7 +146,7 @@ func TestLookup(t *testing.T) {
 			expectErr: false,
 		},
 		{
-			nodeID:    teststorj.NodeIDFromString("n1"),
+			nodeID:    testczarcoin.NodeIDFromString("n1"),
 			expectErr: true,
 		},
 	}
@@ -176,11 +176,11 @@ func TestBulkLookup(t *testing.T) {
 	nid3 := planet.StorageNodes[2].ID()
 
 	cases := []struct {
-		nodeIDs       storj.NodeIDList
+		nodeIDs       czarcoin.NodeIDList
 		expectedCalls int
 	}{
 		{
-			nodeIDs:       storj.NodeIDList{nid1, nid2, nid3},
+			nodeIDs:       czarcoin.NodeIDList{nid1, nid2, nid3},
 			expectedCalls: 1,
 		},
 	}
@@ -203,27 +203,27 @@ func TestBulkLookupV2(t *testing.T) {
 	oc := getOverlayClient(t, planet)
 
 	cache := planet.Satellites[0].Overlay
-	n1 := teststorj.MockNode("n1")
-	n2 := teststorj.MockNode("n2")
-	n3 := teststorj.MockNode("n3")
+	n1 := testczarcoin.MockNode("n1")
+	n2 := testczarcoin.MockNode("n2")
+	n3 := testczarcoin.MockNode("n3")
 	nodes := []*pb.Node{n1, n2, n3}
 	for _, n := range nodes {
 		assert.NoError(t, cache.Put(ctx, n.Id, *n))
 	}
 
-	nid1 := teststorj.NodeIDFromString("n1")
-	nid2 := teststorj.NodeIDFromString("n2")
-	nid3 := teststorj.NodeIDFromString("n3")
-	nid4 := teststorj.NodeIDFromString("n4")
-	nid5 := teststorj.NodeIDFromString("n5")
+	nid1 := testczarcoin.NodeIDFromString("n1")
+	nid2 := testczarcoin.NodeIDFromString("n2")
+	nid3 := testczarcoin.NodeIDFromString("n3")
+	nid4 := testczarcoin.NodeIDFromString("n4")
+	nid5 := testczarcoin.NodeIDFromString("n5")
 
 	{ // empty id
-		_, err := oc.BulkLookup(ctx, storj.NodeIDList{})
+		_, err := oc.BulkLookup(ctx, czarcoin.NodeIDList{})
 		assert.Error(t, err)
 	}
 
 	{ // valid ids
-		idList := storj.NodeIDList{nid1, nid2, nid3}
+		idList := czarcoin.NodeIDList{nid1, nid2, nid3}
 		ns, err := oc.BulkLookup(ctx, idList)
 		assert.NoError(t, err)
 
@@ -233,7 +233,7 @@ func TestBulkLookupV2(t *testing.T) {
 	}
 
 	{ // missing ids
-		idList := storj.NodeIDList{nid4, nid5}
+		idList := czarcoin.NodeIDList{nid4, nid5}
 		ns, err := oc.BulkLookup(ctx, idList)
 		assert.NoError(t, err)
 
@@ -241,7 +241,7 @@ func TestBulkLookupV2(t *testing.T) {
 	}
 
 	{ // different order and missing
-		idList := storj.NodeIDList{nid3, nid4, nid1, nid2, nid5}
+		idList := czarcoin.NodeIDList{nid3, nid4, nid1, nid2, nid5}
 		ns, err := oc.BulkLookup(ctx, idList)
 		assert.NoError(t, err)
 

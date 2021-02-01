@@ -24,7 +24,7 @@ This tool verifies whether imports are divided into three blocks:
 
 	std packages
 	external packages
-	storj.io packages
+	czarcoin.org packages
 
 */
 
@@ -55,7 +55,7 @@ func main() {
 		}
 		includeStd(p)
 
-		if strings.HasPrefix(p.ID, "storj.io") {
+		if strings.HasPrefix(p.ID, "czarcoin.org") {
 			pkgs = append(pkgs, p)
 		}
 
@@ -119,9 +119,9 @@ func correctOrder(specgroups [][]ast.Spec) bool {
 	}
 
 	// remove std group from beginning
-	std, other, storj := countGroup(specgroups[0])
+	std, other, czarcoin := countGroup(specgroups[0])
 	if std > 0 {
-		if other+storj != 0 {
+		if other+czarcoin != 0 {
 			return false
 		}
 		specgroups = specgroups[1:]
@@ -130,9 +130,9 @@ func correctOrder(specgroups [][]ast.Spec) bool {
 		return true
 	}
 
-	// remove storj.io group from the end
-	std, other, storj = countGroup(specgroups[len(specgroups)-1])
-	if storj > 0 {
+	// remove czarcoin.org group from the end
+	std, other, czarcoin = countGroup(specgroups[len(specgroups)-1])
+	if czarcoin > 0 {
 		if std+other > 0 {
 			return false
 		}
@@ -147,26 +147,26 @@ func correctOrder(specgroups [][]ast.Spec) bool {
 		return false
 	}
 
-	std, other, storj = countGroup(specgroups[0])
-	return other > 0 && std+storj == 0
+	std, other, czarcoin = countGroup(specgroups[0])
+	return other > 0 && std+czarcoin == 0
 }
 
-func countGroup(p []ast.Spec) (std, other, storj int) {
+func countGroup(p []ast.Spec) (std, other, czarcoin int) {
 	for _, imp := range p {
 		imp := imp.(*ast.ImportSpec)
 		path, err := strconv.Unquote(imp.Path.Value)
 		if err != nil {
 			panic(err)
 		}
-		if strings.HasPrefix(path, "storj.io/") {
-			storj++
+		if strings.HasPrefix(path, "czarcoin.org/") {
+			czarcoin++
 		} else if stdlib[path] {
 			std++
 		} else {
 			other++
 		}
 	}
-	return std, other, storj
+	return std, other, czarcoin
 }
 
 var root = runtime.GOROOT()

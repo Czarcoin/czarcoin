@@ -6,10 +6,10 @@ package satellitedb
 import (
 	"github.com/zeebo/errs"
 
-	"storj.io/storj/internal/migrate"
-	"storj.io/storj/pkg/bwagreement"
-	"storj.io/storj/pkg/utils"
-	dbx "storj.io/storj/satellite/satellitedb/dbx"
+	"czarcoin.org/czarcoin/internal/migrate"
+	"czarcoin.org/czarcoin/pkg/bwagreement"
+	"czarcoin.org/czarcoin/pkg/utils"
+	dbx "czarcoin.org/czarcoin/satellite/satellitedb/dbx"
 )
 
 var (

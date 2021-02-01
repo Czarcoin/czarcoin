@@ -14,10 +14,10 @@ import (
 	"google.golang.org/grpc/status"
 	monkit "gopkg.in/spacemonkeygo/monkit.v2"
 
-	"storj.io/storj/internal/migrate"
-	dbx "storj.io/storj/pkg/statdb/dbx"
-	pb "storj.io/storj/pkg/statdb/proto"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/internal/migrate"
+	dbx "czarcoin.org/czarcoin/pkg/statdb/dbx"
+	pb "czarcoin.org/czarcoin/pkg/statdb/proto"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 var (
@@ -134,7 +134,7 @@ func (s *StatDB) Get(ctx context.Context, getReq *pb.GetRequest) (resp *pb.GetRe
 func (s *StatDB) FindInvalidNodes(ctx context.Context, getReq *pb.FindInvalidNodesRequest) (resp *pb.FindInvalidNodesResponse, err error) {
 	defer mon.Task()(&ctx)(&err)
 
-	var invalidIds storj.NodeIDList
+	var invalidIds czarcoin.NodeIDList
 
 	nodeIds := getReq.NodeIds
 	maxAuditSuccess := getReq.MaxStats.AuditSuccessRatio
@@ -158,7 +158,7 @@ func (s *StatDB) FindInvalidNodes(ctx context.Context, getReq *pb.FindInvalidNod
 		if err != nil {
 			return nil, err
 		}
-		id, err := storj.NodeIDFromBytes(node.Id)
+		id, err := czarcoin.NodeIDFromBytes(node.Id)
 		if err != nil {
 			return nil, err
 		}
@@ -170,7 +170,7 @@ func (s *StatDB) FindInvalidNodes(ctx context.Context, getReq *pb.FindInvalidNod
 	}, nil
 }
 
-func (s *StatDB) findInvalidNodesQuery(nodeIds storj.NodeIDList, auditSuccess, uptime float64) (*sql.Rows, error) {
+func (s *StatDB) findInvalidNodesQuery(nodeIds czarcoin.NodeIDList, auditSuccess, uptime float64) (*sql.Rows, error) {
 	args := make([]interface{}, len(nodeIds))
 	for i, id := range nodeIds {
 		args[i] = id.Bytes()

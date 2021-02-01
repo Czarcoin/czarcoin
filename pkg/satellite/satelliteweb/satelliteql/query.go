@@ -6,7 +6,7 @@ package satelliteql
 import (
 	"github.com/graphql-go/graphql"
 	"github.com/skyrings/skyring-common/tools/uuid"
-	"storj.io/storj/pkg/satellite"
+	"czarcoin.org/czarcoin/pkg/satellite"
 )
 
 const (

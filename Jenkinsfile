@@ -44,10 +44,10 @@ node('node') {
     echo "Setting build result to FAILURE"
     currentBuild.result = "FAILURE"
 
-    mail from: 'builds@storj.io',
-      replyTo: 'builds@storj.io',
-      to: 'builds@storj.io',
-      subject: "storj/storj branch ${env.BRANCH_NAME} build failed",
+    mail from: 'builds@czarcoin.org',
+      replyTo: 'builds@czarcoin.org',
+      to: 'builds@czarcoin.org',
+      subject: "czarcoin/czarcoin branch ${env.BRANCH_NAME} build failed",
       body: "Project build log: ${env.BUILD_URL}"
 
       throw err

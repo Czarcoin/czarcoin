@@ -13,17 +13,17 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 
-	"storj.io/storj/pkg/auth/grpcauth"
-	"storj.io/storj/pkg/kademlia"
-	"storj.io/storj/pkg/overlay"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/pointerdb/pdbclient"
-	"storj.io/storj/pkg/provider"
-	"storj.io/storj/pkg/statdb"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/pkg/transport"
-	"storj.io/storj/pkg/utils"
-	"storj.io/storj/storage/teststore"
+	"czarcoin.org/czarcoin/pkg/auth/grpcauth"
+	"czarcoin.org/czarcoin/pkg/kademlia"
+	"czarcoin.org/czarcoin/pkg/overlay"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/pointerdb/pdbclient"
+	"czarcoin.org/czarcoin/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/statdb"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/pkg/transport"
+	"czarcoin.org/czarcoin/pkg/utils"
+	"czarcoin.org/czarcoin/storage/teststore"
 )
 
 // Node is a general purpose
@@ -88,7 +88,7 @@ func (planet *Planet) newNode(name string, nodeType pb.NodeType) (*Node, error) 
 }
 
 // ID returns node id
-func (node *Node) ID() storj.NodeID { return node.Info.Id }
+func (node *Node) ID() czarcoin.NodeID { return node.Info.Id }
 
 // Addr retursn node address
 func (node *Node) Addr() string { return node.Info.Address.Address }

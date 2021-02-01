@@ -9,10 +9,10 @@ import (
 
 	"go.uber.org/zap"
 
-	"storj.io/storj/pkg/overlay"
-	"storj.io/storj/pkg/pointerdb/pdbclient"
-	"storj.io/storj/pkg/provider"
-	"storj.io/storj/pkg/transport"
+	"czarcoin.org/czarcoin/pkg/overlay"
+	"czarcoin.org/czarcoin/pkg/pointerdb/pdbclient"
+	"czarcoin.org/czarcoin/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/transport"
 )
 
 // Service helps coordinate Cursor and Verifier to run the audit process continuously

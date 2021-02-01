@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"storj.io/storj/storage"
+	"czarcoin.org/czarcoin/storage"
 )
 
 // RunQueueTests runs common storage.Queue tests

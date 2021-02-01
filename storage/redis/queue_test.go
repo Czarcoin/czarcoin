@@ -6,8 +6,8 @@ package redis
 import (
 	"testing"
 
-	"storj.io/storj/storage/redis/redisserver"
-	"storj.io/storj/storage/testsuite"
+	"czarcoin.org/czarcoin/storage/redis/redisserver"
+	"czarcoin.org/czarcoin/storage/testsuite"
 )
 
 func TestQueue(t *testing.T) {

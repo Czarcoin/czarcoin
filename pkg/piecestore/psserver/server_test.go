@@ -26,11 +26,11 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
-	"storj.io/storj/internal/identity"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/piecestore"
-	"storj.io/storj/pkg/piecestore/psserver/psdb"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/internal/identity"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/piecestore"
+	"czarcoin.org/czarcoin/pkg/piecestore/psserver/psdb"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 var ctx = context.Background()
@@ -480,7 +480,7 @@ func TestDelete(t *testing.T) {
 }
 
 func newTestServerStruct(t *testing.T) (*Server, func()) {
-	tmp, err := ioutil.TempDir("", "storj-piecestore")
+	tmp, err := ioutil.TempDir("", "czarcoin-piecestore")
 	if err != nil {
 		log.Fatalf("failed temp-dir: %v", err)
 	}
@@ -547,7 +547,7 @@ func NewTestServer(t *testing.T) *TestServer {
 	check(err)
 	fiC, err := caC.NewIdentity()
 	check(err)
-	co, err := fiC.DialOption(storj.NodeID{})
+	co, err := fiC.DialOption(czarcoin.NodeID{})
 	check(err)
 
 	s, cleanup := newTestServerStruct(t)

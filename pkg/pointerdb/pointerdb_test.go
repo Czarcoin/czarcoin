@@ -21,12 +21,12 @@ import (
 	"google.golang.org/grpc/peer"
 	"google.golang.org/grpc/status"
 
-	"storj.io/storj/internal/identity"
-	"storj.io/storj/pkg/auth"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/storage/meta"
-	"storj.io/storj/storage"
-	"storj.io/storj/storage/teststore"
+	"czarcoin.org/czarcoin/internal/identity"
+	"czarcoin.org/czarcoin/pkg/auth"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/storage/meta"
+	"czarcoin.org/czarcoin/storage"
+	"czarcoin.org/czarcoin/storage/teststore"
 )
 
 func TestServicePut(t *testing.T) {

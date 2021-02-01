@@ -12,8 +12,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/vivint/infectious"
 
-	"storj.io/storj/internal/teststorj"
-	"storj.io/storj/pkg/pb"
+	"czarcoin.org/czarcoin/internal/testczarcoin"
+	"czarcoin.org/czarcoin/pkg/pb"
 )
 
 type mockDownloader struct {
@@ -211,7 +211,7 @@ func (m *mockDownloader) DownloadShares(ctx context.Context, pointer *pb.Pointer
 
 	for i := 0; i < 30; i++ {
 		nodes[i] = &pb.Node{
-			Id:   teststorj.NodeIDFromString(strconv.Itoa(i)),
+			Id:   testczarcoin.NodeIDFromString(strconv.Itoa(i)),
 			Type: pb.NodeType_STORAGE,
 			Address: &pb.NodeAddress{
 				Address: strconv.Itoa(i),
@@ -226,7 +226,7 @@ func makePointer(nodeAmt int) *pb.Pointer {
 	for i := 0; i < nodeAmt; i++ {
 		rps = append(rps, &pb.RemotePiece{
 			PieceNum: int32(i),
-			NodeId:   teststorj.NodeIDFromString("test" + strconv.Itoa(i)),
+			NodeId:   testczarcoin.NodeIDFromString("test" + strconv.Itoa(i)),
 		})
 	}
 	pr := &pb.Pointer{

@@ -16,7 +16,7 @@ case $1 in
 	;;
 	new)
 		shift
-		check_help $1 	"usage: storj.sh new <label> <output dir> [<whitelist path>]"
+		check_help $1 	"usage: czarcoin.sh new <label> <output dir> [<whitelist path>]"
 		temp_build identity
 		label=$1
 		out_dir=$2

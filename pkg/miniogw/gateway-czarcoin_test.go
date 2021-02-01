@@ -19,17 +19,17 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/vivint/infectious"
 
-	"storj.io/storj/internal/memory"
-	"storj.io/storj/internal/testcontext"
-	"storj.io/storj/internal/testplanet"
-	"storj.io/storj/pkg/eestream"
-	"storj.io/storj/pkg/metainfo/kvmetainfo"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/storage/buckets"
-	"storj.io/storj/pkg/storage/ec"
-	"storj.io/storj/pkg/storage/segments"
-	"storj.io/storj/pkg/storage/streams"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/internal/memory"
+	"czarcoin.org/czarcoin/internal/testcontext"
+	"czarcoin.org/czarcoin/internal/testplanet"
+	"czarcoin.org/czarcoin/pkg/eestream"
+	"czarcoin.org/czarcoin/pkg/metainfo/kvmetainfo"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/storage/buckets"
+	"czarcoin.org/czarcoin/pkg/storage/ec"
+	"czarcoin.org/czarcoin/pkg/storage/segments"
+	"czarcoin.org/czarcoin/pkg/storage/streams"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 const (
@@ -42,7 +42,7 @@ const (
 )
 
 func TestMakeBucketWithLocation(t *testing.T) {
-	runTest(t, func(ctx context.Context, layer minio.ObjectLayer, metainfo storj.Metainfo, streams streams.Store) {
+	runTest(t, func(ctx context.Context, layer minio.ObjectLayer, metainfo czarcoin.Metainfo, streams streams.Store) {
 		// Check the error when creating bucket with empty name
 		err := layer.MakeBucketWithLocation(ctx, "", "")
 		assert.Equal(t, minio.BucketNameInvalid{}, err)
@@ -56,7 +56,7 @@ func TestMakeBucketWithLocation(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, TestBucket, bucket.Name)
 		assert.True(t, time.Since(bucket.Created) < 1*time.Second)
-		assert.Equal(t, storj.AESGCM, bucket.PathCipher)
+		assert.Equal(t, czarcoin.AESGCM, bucket.PathCipher)
 
 		// Check the error when trying to create an existing bucket
 		err = layer.MakeBucketWithLocation(ctx, TestBucket, "")
@@ -65,7 +65,7 @@ func TestMakeBucketWithLocation(t *testing.T) {
 }
 
 func TestGetBucketInfo(t *testing.T) {
-	runTest(t, func(ctx context.Context, layer minio.ObjectLayer, metainfo storj.Metainfo, streams streams.Store) {
+	runTest(t, func(ctx context.Context, layer minio.ObjectLayer, metainfo czarcoin.Metainfo, streams streams.Store) {
 		// Check the error when getting info about bucket with empty name
 		_, err := layer.GetBucketInfo(ctx, "")
 		assert.Equal(t, minio.BucketNameInvalid{}, err)
@@ -88,7 +88,7 @@ func TestGetBucketInfo(t *testing.T) {
 }
 
 func TestDeleteBucket(t *testing.T) {
-	runTest(t, func(ctx context.Context, layer minio.ObjectLayer, metainfo storj.Metainfo, streams streams.Store) {
+	runTest(t, func(ctx context.Context, layer minio.ObjectLayer, metainfo czarcoin.Metainfo, streams streams.Store) {
 		// Check the error when deleting bucket with empty name
 		err := layer.DeleteBucket(ctx, "")
 		assert.Equal(t, minio.BucketNameInvalid{}, err)
@@ -118,12 +118,12 @@ func TestDeleteBucket(t *testing.T) {
 
 		// Check that the bucket is deleted using the Metainfo API
 		_, err = metainfo.GetBucket(ctx, TestBucket)
-		assert.True(t, storj.ErrBucketNotFound.Has(err))
+		assert.True(t, czarcoin.ErrBucketNotFound.Has(err))
 	})
 }
 
 func TestListBuckets(t *testing.T) {
-	runTest(t, func(ctx context.Context, layer minio.ObjectLayer, metainfo storj.Metainfo, streams streams.Store) {
+	runTest(t, func(ctx context.Context, layer minio.ObjectLayer, metainfo czarcoin.Metainfo, streams streams.Store) {
 		// Check that empty list is return if no buckets exist yet
 		bucketInfos, err := layer.ListBuckets(ctx)
 		assert.NoError(t, err)
@@ -131,7 +131,7 @@ func TestListBuckets(t *testing.T) {
 
 		// Create all expected buckets using the Metainfo API
 		bucketNames := []string{"bucket 1", "bucket 2", "bucket 3"}
-		buckets := make([]storj.Bucket, len(bucketNames))
+		buckets := make([]czarcoin.Bucket, len(bucketNames))
 		for i, bucketName := range bucketNames {
 			bucket, err := metainfo.CreateBucket(ctx, bucketName, nil)
 			buckets[i] = bucket
@@ -173,7 +173,7 @@ func TestPutObject(t *testing.T) {
 		},
 	}
 
-	runTest(t, func(ctx context.Context, layer minio.ObjectLayer, metainfo storj.Metainfo, streams streams.Store) {
+	runTest(t, func(ctx context.Context, layer minio.ObjectLayer, metainfo czarcoin.Metainfo, streams streams.Store) {
 		// Check the error when putting an object to a bucket with empty name
 		_, err := layer.PutObject(ctx, "", "", nil, nil)
 		assert.Equal(t, minio.BucketNameInvalid{}, err)
@@ -219,7 +219,7 @@ func TestPutObject(t *testing.T) {
 }
 
 func TestGetObjectInfo(t *testing.T) {
-	runTest(t, func(ctx context.Context, layer minio.ObjectLayer, metainfo storj.Metainfo, streams streams.Store) {
+	runTest(t, func(ctx context.Context, layer minio.ObjectLayer, metainfo czarcoin.Metainfo, streams streams.Store) {
 		// Check the error when getting an object from a bucket with empty name
 		_, err := layer.GetObjectInfo(ctx, "", "")
 		assert.Equal(t, minio.BucketNameInvalid{}, err)
@@ -241,7 +241,7 @@ func TestGetObjectInfo(t *testing.T) {
 		assert.Equal(t, minio.ObjectNotFound{Bucket: TestBucket, Object: TestFile}, err)
 
 		// Create the object using the Metainfo API
-		createInfo := storj.CreateObject{
+		createInfo := czarcoin.CreateObject{
 			ContentType: "text/plain",
 			Metadata:    map[string]string{"key1": "value1", "key2": "value2"},
 		}
@@ -264,7 +264,7 @@ func TestGetObjectInfo(t *testing.T) {
 }
 
 func TestGetObject(t *testing.T) {
-	runTest(t, func(ctx context.Context, layer minio.ObjectLayer, metainfo storj.Metainfo, streams streams.Store) {
+	runTest(t, func(ctx context.Context, layer minio.ObjectLayer, metainfo czarcoin.Metainfo, streams streams.Store) {
 		// Check the error when getting an object from a bucket with empty name
 		err := layer.GetObject(ctx, "", "", 0, 0, nil, "")
 		assert.Equal(t, minio.BucketNameInvalid{}, err)
@@ -286,7 +286,7 @@ func TestGetObject(t *testing.T) {
 		assert.Equal(t, minio.ObjectNotFound{Bucket: TestBucket, Object: TestFile}, err)
 
 		// Create the object using the Metainfo API
-		createInfo := storj.CreateObject{
+		createInfo := czarcoin.CreateObject{
 			ContentType: "text/plain",
 			Metadata:    map[string]string{"key1": "value1", "key2": "value2"},
 		}
@@ -327,7 +327,7 @@ func TestGetObject(t *testing.T) {
 }
 
 func TestCopyObject(t *testing.T) {
-	runTest(t, func(ctx context.Context, layer minio.ObjectLayer, metainfo storj.Metainfo, streams streams.Store) {
+	runTest(t, func(ctx context.Context, layer minio.ObjectLayer, metainfo czarcoin.Metainfo, streams streams.Store) {
 		// Check the error when copying an object from a bucket with empty name
 		_, err := layer.CopyObject(ctx, "", TestFile, DestBucket, DestFile, minio.ObjectInfo{})
 		assert.Equal(t, minio.BucketNameInvalid{}, err)
@@ -345,7 +345,7 @@ func TestCopyObject(t *testing.T) {
 		assert.Equal(t, minio.ObjectNameInvalid{Bucket: TestBucket}, err)
 
 		// Create the source object using the Metainfo API
-		createInfo := storj.CreateObject{
+		createInfo := czarcoin.CreateObject{
 			ContentType: "text/plain",
 			Metadata:    map[string]string{"key1": "value1", "key2": "value2"},
 		}
@@ -397,7 +397,7 @@ func TestCopyObject(t *testing.T) {
 }
 
 func TestDeleteObject(t *testing.T) {
-	runTest(t, func(ctx context.Context, layer minio.ObjectLayer, metainfo storj.Metainfo, streams streams.Store) {
+	runTest(t, func(ctx context.Context, layer minio.ObjectLayer, metainfo czarcoin.Metainfo, streams streams.Store) {
 		// Check the error when deleting an object from a bucket with empty name
 		err := layer.DeleteObject(ctx, "", "")
 		assert.Equal(t, minio.BucketNameInvalid{}, err)
@@ -428,7 +428,7 @@ func TestDeleteObject(t *testing.T) {
 
 		// Check that the object is deleted using the Metainfo API
 		_, err = metainfo.GetObject(ctx, TestBucket, TestFile)
-		assert.True(t, storj.ErrObjectNotFound.Has(err))
+		assert.True(t, czarcoin.ErrObjectNotFound.Has(err))
 	})
 }
 
@@ -453,7 +453,7 @@ func TestListObjectsV2(t *testing.T) {
 }
 
 func testListObjects(t *testing.T, listObjects func(context.Context, minio.ObjectLayer, string, string, string, string, int) ([]string, []minio.ObjectInfo, bool, error)) {
-	runTest(t, func(ctx context.Context, layer minio.ObjectLayer, metainfo storj.Metainfo, streams streams.Store) {
+	runTest(t, func(ctx context.Context, layer minio.ObjectLayer, metainfo czarcoin.Metainfo, streams streams.Store) {
 		// Check the error when listing objects with unsupported delimiter
 		_, err := layer.ListObjects(ctx, TestBucket, "", "", "#", 0)
 		assert.Equal(t, minio.UnsupportedDelimiter{Delimiter: "#"}, err)
@@ -467,7 +467,7 @@ func testListObjects(t *testing.T, listObjects func(context.Context, minio.Objec
 		assert.Equal(t, minio.BucketNotFound{Bucket: TestBucket}, err)
 
 		// Create the bucket and files using the Metainfo API
-		_, err = metainfo.CreateBucket(ctx, TestBucket, &storj.Bucket{PathCipher: storj.Unencrypted})
+		_, err = metainfo.CreateBucket(ctx, TestBucket, &czarcoin.Bucket{PathCipher: czarcoin.Unencrypted})
 		assert.NoError(t, err)
 
 		filePaths := []string{
@@ -476,8 +476,8 @@ func testListObjects(t *testing.T, listObjects func(context.Context, minio.Objec
 			"b/ya", "b/yaa", "b/yb", "b/ybb", "b/yc",
 		}
 
-		files := make(map[string]storj.Object, len(filePaths))
-		createInfo := storj.CreateObject{
+		files := make(map[string]czarcoin.Object, len(filePaths))
+		createInfo := czarcoin.CreateObject{
 			ContentType: "text/plain",
 			Metadata:    map[string]string{"key1": "value1", "key2": "value2"},
 		}
@@ -615,7 +615,7 @@ func testListObjects(t *testing.T, listObjects func(context.Context, minio.Objec
 				for i, objectInfo := range objects {
 					path := objectInfo.Name
 					if tt.prefix != "" {
-						path = storj.JoinPaths(strings.TrimSuffix(tt.prefix, "/"), path)
+						path = czarcoin.JoinPaths(strings.TrimSuffix(tt.prefix, "/"), path)
 					}
 					obj := files[path]
 
@@ -633,7 +633,7 @@ func testListObjects(t *testing.T, listObjects func(context.Context, minio.Objec
 	})
 }
 
-func runTest(t *testing.T, test func(context.Context, minio.ObjectLayer, storj.Metainfo, streams.Store)) {
+func runTest(t *testing.T, test func(context.Context, minio.ObjectLayer, czarcoin.Metainfo, streams.Store)) {
 	ctx := testcontext.New(t)
 	defer ctx.Cleanup()
 
@@ -654,7 +654,7 @@ func runTest(t *testing.T, test func(context.Context, minio.ObjectLayer, storj.M
 	test(ctx, layer, metainfo, streams)
 }
 
-func initEnv(planet *testplanet.Planet) (minio.ObjectLayer, storj.Metainfo, streams.Store, error) {
+func initEnv(planet *testplanet.Planet) (minio.ObjectLayer, czarcoin.Metainfo, streams.Store, error) {
 	// TODO(kaloyan): We should have a better way for configuring the Satellite's API Key
 	err := flag.Set("pointer-db.auth.api-key", TestAPIKey)
 	if err != nil {
@@ -684,10 +684,10 @@ func initEnv(planet *testplanet.Planet) (minio.ObjectLayer, storj.Metainfo, stre
 
 	segments := segments.NewSegmentStore(oc, ec, pdb, rs, int(8*memory.KB))
 
-	key := new(storj.Key)
+	key := new(czarcoin.Key)
 	copy(key[:], TestEncKey)
 
-	streams, err := streams.NewStreamStore(segments, int64(64*memory.MB), key, int(1*memory.KB), storj.AESGCM)
+	streams, err := streams.NewStreamStore(segments, int64(64*memory.MB), key, int(1*memory.KB), czarcoin.AESGCM)
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -696,16 +696,16 @@ func initEnv(planet *testplanet.Planet) (minio.ObjectLayer, storj.Metainfo, stre
 
 	metainfo := kvmetainfo.New(buckets, streams, segments, pdb, key)
 
-	gateway := NewStorjGateway(
+	gateway := NewCzarcoinGateway(
 		metainfo,
 		streams,
-		storj.AESGCM,
-		storj.EncryptionScheme{
-			Cipher:    storj.AESGCM,
+		czarcoin.AESGCM,
+		czarcoin.EncryptionScheme{
+			Cipher:    czarcoin.AESGCM,
 			BlockSize: 1 * memory.KB.Int32(),
 		},
-		storj.RedundancyScheme{
-			Algorithm:      storj.ReedSolomon,
+		czarcoin.RedundancyScheme{
+			Algorithm:      czarcoin.ReedSolomon,
 			RequiredShares: int16(rs.RequiredCount()),
 			RepairShares:   int16(rs.RepairThreshold()),
 			OptimalShares:  int16(rs.OptimalThreshold()),
@@ -719,20 +719,20 @@ func initEnv(planet *testplanet.Planet) (minio.ObjectLayer, storj.Metainfo, stre
 	return layer, metainfo, streams, err
 }
 
-func createFile(ctx context.Context, metainfo storj.Metainfo, streams streams.Store, bucket string, path storj.Path, createInfo *storj.CreateObject, data []byte) (storj.Object, error) {
+func createFile(ctx context.Context, metainfo czarcoin.Metainfo, streams streams.Store, bucket string, path czarcoin.Path, createInfo *czarcoin.CreateObject, data []byte) (czarcoin.Object, error) {
 	mutableObject, err := metainfo.CreateObject(ctx, bucket, path, createInfo)
 	if err != nil {
-		return storj.Object{}, err
+		return czarcoin.Object{}, err
 	}
 
 	err = upload(ctx, streams, mutableObject, bytes.NewReader(data))
 	if err != nil {
-		return storj.Object{}, err
+		return czarcoin.Object{}, err
 	}
 
 	err = mutableObject.Commit(ctx)
 	if err != nil {
-		return storj.Object{}, err
+		return czarcoin.Object{}, err
 	}
 
 	return mutableObject.Info(), nil

@@ -6,7 +6,7 @@ package memory_test
 import (
 	"testing"
 
-	"storj.io/storj/internal/memory"
+	"czarcoin.org/czarcoin/internal/memory"
 )
 
 const (

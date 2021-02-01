@@ -10,11 +10,11 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"storj.io/storj/internal/fpath"
-	"storj.io/storj/pkg/cfgstruct"
-	"storj.io/storj/pkg/miniogw"
-	"storj.io/storj/pkg/storage/streams"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/internal/fpath"
+	"czarcoin.org/czarcoin/pkg/cfgstruct"
+	"czarcoin.org/czarcoin/pkg/miniogw"
+	"czarcoin.org/czarcoin/pkg/storage/streams"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 // Config is miniogw.Config configuration
@@ -27,29 +27,29 @@ var cfg Config
 // CLICmd represents the base CLI command when called without any subcommands
 var CLICmd = &cobra.Command{
 	Use:   "uplink",
-	Short: "The Storj client-side CLI",
+	Short: "The Czarcoin client-side CLI",
 }
 
 // GWCmd represents the base gateway command when called without any subcommands
 var GWCmd = &cobra.Command{
 	Use:   "gateway",
-	Short: "The Storj client-side S3 gateway",
+	Short: "The Czarcoin client-side S3 gateway",
 }
 
 func addCmd(cmd *cobra.Command, root *cobra.Command) *cobra.Command {
 	root.AddCommand(cmd)
 
-	defaultConfDir := fpath.ApplicationDir("storj", "uplink")
+	defaultConfDir := fpath.ApplicationDir("czarcoin", "uplink")
 	cfgstruct.Bind(cmd.Flags(), &cfg, cfgstruct.ConfDir(defaultConfDir))
 	cmd.Flags().String("config", filepath.Join(defaultConfDir, "config.yaml"), "path to configuration")
 	return cmd
 }
 
-// Metainfo loads the storj.Metainfo
+// Metainfo loads the czarcoin.Metainfo
 //
 // Temporarily it also returns an instance of streams.Store until we improve
 // the metainfo and streas implementations.
-func (c *Config) Metainfo(ctx context.Context) (storj.Metainfo, streams.Store, error) {
+func (c *Config) Metainfo(ctx context.Context) (czarcoin.Metainfo, streams.Store, error) {
 	identity, err := c.Identity.Load()
 	if err != nil {
 		return nil, nil, err
@@ -59,11 +59,11 @@ func (c *Config) Metainfo(ctx context.Context) (storj.Metainfo, streams.Store, e
 }
 
 func convertError(err error, path fpath.FPath) error {
-	if storj.ErrBucketNotFound.Has(err) {
+	if czarcoin.ErrBucketNotFound.Has(err) {
 		return fmt.Errorf("Bucket not found: %s", path.Bucket())
 	}
 
-	if storj.ErrObjectNotFound.Has(err) {
+	if czarcoin.ErrObjectNotFound.Has(err) {
 		return fmt.Errorf("Object not found: %s", path.String())
 	}
 

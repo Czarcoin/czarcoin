@@ -22,7 +22,7 @@ import (
 	"github.com/alicebob/miniredis"
 	"github.com/go-redis/redis"
 
-	"storj.io/storj/internal/processgroup"
+	"czarcoin.org/czarcoin/internal/processgroup"
 )
 
 const (
@@ -56,7 +56,7 @@ func Start() (addr string, cleanup func(), err error) {
 
 // Process starts a redis-server test process
 func Process() (addr string, cleanup func(), err error) {
-	tmpdir, err := ioutil.TempDir("", "storj-redis")
+	tmpdir, err := ioutil.TempDir("", "czarcoin-redis")
 	if err != nil {
 		return "", nil, err
 	}

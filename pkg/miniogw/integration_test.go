@@ -16,13 +16,13 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zaptest"
 
-	"storj.io/storj/internal/identity"
-	"storj.io/storj/internal/s3client"
-	"storj.io/storj/internal/testcontext"
-	"storj.io/storj/internal/testplanet"
-	"storj.io/storj/pkg/cfgstruct"
-	"storj.io/storj/pkg/miniogw/logging"
-	"storj.io/storj/pkg/provider"
+	"czarcoin.org/czarcoin/internal/identity"
+	"czarcoin.org/czarcoin/internal/s3client"
+	"czarcoin.org/czarcoin/internal/testcontext"
+	"czarcoin.org/czarcoin/internal/testplanet"
+	"czarcoin.org/czarcoin/pkg/cfgstruct"
+	"czarcoin.org/czarcoin/pkg/miniogw/logging"
+	"czarcoin.org/czarcoin/pkg/provider"
 )
 
 func TestUploadDownload(t *testing.T) {

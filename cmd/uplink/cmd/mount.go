@@ -20,12 +20,12 @@ import (
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 
-	"storj.io/storj/internal/fpath"
-	"storj.io/storj/pkg/process"
-	"storj.io/storj/pkg/storage/streams"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/pkg/stream"
-	"storj.io/storj/pkg/utils"
+	"czarcoin.org/czarcoin/internal/fpath"
+	"czarcoin.org/czarcoin/pkg/process"
+	"czarcoin.org/czarcoin/pkg/storage/streams"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/pkg/stream"
+	"czarcoin.org/czarcoin/pkg/utils"
 )
 
 func init() {
@@ -64,7 +64,7 @@ func mountBucket(cmd *cobra.Command, args []string) (err error) {
 		return convertError(err, src)
 	}
 
-	nfs := pathfs.NewPathNodeFs(newStorjFS(ctx, metainfo, streams, bucket), nil)
+	nfs := pathfs.NewPathNodeFs(newCzarcoinFS(ctx, metainfo, streams, bucket), nil)
 	conn := nodefs.NewFileSystemConnector(nfs.Root(), nil)
 
 	// workaround to avoid async (unordered) reading
@@ -89,32 +89,32 @@ func mountBucket(cmd *cobra.Command, args []string) (err error) {
 	return nil
 }
 
-type storjFS struct {
+type czarcoinFS struct {
 	ctx          context.Context
-	metainfo     storj.Metainfo
+	metainfo     czarcoin.Metainfo
 	streams      streams.Store
-	bucket       storj.Bucket
-	createdFiles map[string]*storjFile
+	bucket       czarcoin.Bucket
+	createdFiles map[string]*czarcoinFile
 	nodeFS       *pathfs.PathNodeFs
 	pathfs.FileSystem
 }
 
-func newStorjFS(ctx context.Context, metainfo storj.Metainfo, streams streams.Store, bucket storj.Bucket) *storjFS {
-	return &storjFS{
+func newCzarcoinFS(ctx context.Context, metainfo czarcoin.Metainfo, streams streams.Store, bucket czarcoin.Bucket) *czarcoinFS {
+	return &czarcoinFS{
 		ctx:          ctx,
 		metainfo:     metainfo,
 		streams:      streams,
 		bucket:       bucket,
-		createdFiles: make(map[string]*storjFile),
+		createdFiles: make(map[string]*czarcoinFile),
 		FileSystem:   pathfs.NewDefaultFileSystem(),
 	}
 }
 
-func (sf *storjFS) OnMount(nodeFS *pathfs.PathNodeFs) {
+func (sf *czarcoinFS) OnMount(nodeFS *pathfs.PathNodeFs) {
 	sf.nodeFS = nodeFS
 }
 
-func (sf *storjFS) GetAttr(name string, context *fuse.Context) (*fuse.Attr, fuse.Status) {
+func (sf *czarcoinFS) GetAttr(name string, context *fuse.Context) (*fuse.Attr, fuse.Status) {
 	zap.S().Debug("GetAttr: ", name)
 
 	if name == "" {
@@ -135,13 +135,13 @@ func (sf *storjFS) GetAttr(name string, context *fuse.Context) (*fuse.Attr, fuse
 	}
 
 	object, err := sf.metainfo.GetObject(sf.ctx, sf.bucket.Name, name)
-	if err != nil && !storj.ErrObjectNotFound.Has(err) {
+	if err != nil && !czarcoin.ErrObjectNotFound.Has(err) {
 		return nil, fuse.EIO
 	}
 
 	// file not found so maybe it's a prefix/directory
 	if err != nil {
-		list, err := sf.metainfo.ListObjects(sf.ctx, sf.bucket.Name, storj.ListOptions{Direction: storj.After, Prefix: name, Limit: 1})
+		list, err := sf.metainfo.ListObjects(sf.ctx, sf.bucket.Name, czarcoin.ListOptions{Direction: czarcoin.After, Prefix: name, Limit: 1})
 		if err != nil {
 			return nil, fuse.EIO
 		}
@@ -162,11 +162,11 @@ func (sf *storjFS) GetAttr(name string, context *fuse.Context) (*fuse.Attr, fuse
 	}, fuse.OK
 }
 
-func (sf *storjFS) OpenDir(name string, context *fuse.Context) (c []fuse.DirEntry, code fuse.Status) {
+func (sf *czarcoinFS) OpenDir(name string, context *fuse.Context) (c []fuse.DirEntry, code fuse.Status) {
 	zap.S().Debug("OpenDir: ", name)
 
 	var entries []fuse.DirEntry
-	err := sf.listObjects(sf.ctx, name, false, func(items []storj.Object) error {
+	err := sf.listObjects(sf.ctx, name, false, func(items []czarcoin.Object) error {
 		for _, item := range items {
 			path := item.Path
 
@@ -187,10 +187,10 @@ func (sf *storjFS) OpenDir(name string, context *fuse.Context) (c []fuse.DirEntr
 	return entries, fuse.OK
 }
 
-func (sf *storjFS) Mkdir(name string, mode uint32, context *fuse.Context) fuse.Status {
+func (sf *czarcoinFS) Mkdir(name string, mode uint32, context *fuse.Context) fuse.Status {
 	zap.S().Debug("Mkdir: ", name)
 
-	createInfo := storj.CreateObject{
+	createInfo := czarcoin.CreateObject{
 		ContentType:      "application/directory",
 		RedundancyScheme: cfg.GetRedundancyScheme(),
 		EncryptionScheme: cfg.GetEncryptionScheme(),
@@ -218,12 +218,12 @@ func (sf *storjFS) Mkdir(name string, mode uint32, context *fuse.Context) fuse.S
 	return fuse.OK
 }
 
-func (sf *storjFS) Rmdir(name string, context *fuse.Context) (code fuse.Status) {
+func (sf *czarcoinFS) Rmdir(name string, context *fuse.Context) (code fuse.Status) {
 	zap.S().Debug("Rmdir: ", name)
 
-	err := sf.listObjects(sf.ctx, name, true, func(items []storj.Object) error {
+	err := sf.listObjects(sf.ctx, name, true, func(items []czarcoin.Object) error {
 		for _, item := range items {
-			err := sf.metainfo.DeleteObject(sf.ctx, sf.bucket.Name, storj.JoinPaths(name, item.Path))
+			err := sf.metainfo.DeleteObject(sf.ctx, sf.bucket.Name, czarcoin.JoinPaths(name, item.Path))
 			if err != nil {
 				return err
 			}
@@ -238,32 +238,32 @@ func (sf *storjFS) Rmdir(name string, context *fuse.Context) (code fuse.Status) 
 	return fuse.OK
 }
 
-func (sf *storjFS) Open(name string, flags uint32, context *fuse.Context) (file nodefs.File, code fuse.Status) {
+func (sf *czarcoinFS) Open(name string, flags uint32, context *fuse.Context) (file nodefs.File, code fuse.Status) {
 	zap.S().Debug("Open: ", name)
-	return newStorjFile(sf.ctx, name, sf.metainfo, sf.streams, sf.bucket, false, sf), fuse.OK
+	return newCzarcoinFile(sf.ctx, name, sf.metainfo, sf.streams, sf.bucket, false, sf), fuse.OK
 }
 
-func (sf *storjFS) Create(name string, flags uint32, mode uint32, context *fuse.Context) (file nodefs.File, code fuse.Status) {
+func (sf *czarcoinFS) Create(name string, flags uint32, mode uint32, context *fuse.Context) (file nodefs.File, code fuse.Status) {
 	zap.S().Debug("Create: ", name)
 
-	return sf.addCreatedFile(name, newStorjFile(sf.ctx, name, sf.metainfo, sf.streams, sf.bucket, true, sf)), fuse.OK
+	return sf.addCreatedFile(name, newCzarcoinFile(sf.ctx, name, sf.metainfo, sf.streams, sf.bucket, true, sf)), fuse.OK
 }
 
-func (sf *storjFS) addCreatedFile(name string, file *storjFile) *storjFile {
+func (sf *czarcoinFS) addCreatedFile(name string, file *czarcoinFile) *czarcoinFile {
 	sf.createdFiles[name] = file
 	return file
 }
 
-func (sf *storjFS) removeCreatedFile(name string) {
+func (sf *czarcoinFS) removeCreatedFile(name string) {
 	delete(sf.createdFiles, name)
 }
 
-func (sf *storjFS) listObjects(ctx context.Context, name string, recursive bool, handler func([]storj.Object) error) error {
+func (sf *czarcoinFS) listObjects(ctx context.Context, name string, recursive bool, handler func([]czarcoin.Object) error) error {
 	startAfter := ""
 
 	for {
-		list, err := sf.metainfo.ListObjects(sf.ctx, sf.bucket.Name, storj.ListOptions{
-			Direction: storj.After,
+		list, err := sf.metainfo.ListObjects(sf.ctx, sf.bucket.Name, czarcoin.ListOptions{
+			Direction: czarcoin.After,
 			Cursor:    startAfter,
 			Prefix:    name,
 			Recursive: recursive,
@@ -287,12 +287,12 @@ func (sf *storjFS) listObjects(ctx context.Context, name string, recursive bool,
 	return nil
 }
 
-func (sf *storjFS) Unlink(name string, context *fuse.Context) (code fuse.Status) {
+func (sf *czarcoinFS) Unlink(name string, context *fuse.Context) (code fuse.Status) {
 	zap.S().Debug("Unlink: ", name)
 
 	err := sf.metainfo.DeleteObject(sf.ctx, sf.bucket.Name, name)
 	if err != nil {
-		if storj.ErrObjectNotFound.Has(err) {
+		if czarcoin.ErrObjectNotFound.Has(err) {
 			return fuse.ENOENT
 		}
 		return fuse.EIO
@@ -301,26 +301,26 @@ func (sf *storjFS) Unlink(name string, context *fuse.Context) (code fuse.Status)
 	return fuse.OK
 }
 
-type storjFile struct {
+type czarcoinFile struct {
 	ctx             context.Context
-	metainfo        storj.Metainfo
+	metainfo        czarcoin.Metainfo
 	streams         streams.Store
-	bucket          storj.Bucket
+	bucket          czarcoin.Bucket
 	created         bool
 	name            string
 	size            uint64
 	mtime           uint64
 	reader          io.ReadCloser
 	writer          io.WriteCloser
-	mutableObject   storj.MutableObject
+	mutableObject   czarcoin.MutableObject
 	predictedOffset int64
-	FS              *storjFS
+	FS              *czarcoinFS
 
 	nodefs.File
 }
 
-func newStorjFile(ctx context.Context, name string, metainfo storj.Metainfo, streams streams.Store, bucket storj.Bucket, created bool, FS *storjFS) *storjFile {
-	return &storjFile{
+func newCzarcoinFile(ctx context.Context, name string, metainfo czarcoin.Metainfo, streams streams.Store, bucket czarcoin.Bucket, created bool, FS *czarcoinFS) *czarcoinFile {
+	return &czarcoinFile{
 		name:     name,
 		ctx:      ctx,
 		metainfo: metainfo,
@@ -333,7 +333,7 @@ func newStorjFile(ctx context.Context, name string, metainfo storj.Metainfo, str
 	}
 }
 
-func (f *storjFile) GetAttr(attr *fuse.Attr) fuse.Status {
+func (f *czarcoinFile) GetAttr(attr *fuse.Attr) fuse.Status {
 	zap.S().Debug("GetAttr file: ", f.name)
 
 	if f.created {
@@ -347,7 +347,7 @@ func (f *storjFile) GetAttr(attr *fuse.Attr) fuse.Status {
 	return fuse.ENOSYS
 }
 
-func (f *storjFile) Read(buf []byte, off int64) (res fuse.ReadResult, code fuse.Status) {
+func (f *czarcoinFile) Read(buf []byte, off int64) (res fuse.ReadResult, code fuse.Status) {
 	// Detect if offset was moved manually (e.g. stream rev/fwd)
 	if off != f.predictedOffset {
 		f.closeReader()
@@ -355,7 +355,7 @@ func (f *storjFile) Read(buf []byte, off int64) (res fuse.ReadResult, code fuse.
 
 	reader, err := f.getReader(off)
 	if err != nil {
-		if storj.ErrObjectNotFound.Has(err) {
+		if czarcoin.ErrObjectNotFound.Has(err) {
 			return nil, fuse.ENOENT
 		}
 		return nil, fuse.EIO
@@ -371,7 +371,7 @@ func (f *storjFile) Read(buf []byte, off int64) (res fuse.ReadResult, code fuse.
 	return fuse.ReadResultData(buf[:n]), fuse.OK
 }
 
-func (f *storjFile) Write(data []byte, off int64) (uint32, fuse.Status) {
+func (f *czarcoinFile) Write(data []byte, off int64) (uint32, fuse.Status) {
 	writer, err := f.getWriter(off)
 	if err != nil {
 		return 0, fuse.EIO
@@ -391,7 +391,7 @@ func (f *storjFile) Write(data []byte, off int64) (uint32, fuse.Status) {
 	return uint32(written), fuse.OK
 }
 
-func (f *storjFile) getReader(off int64) (io.ReadCloser, error) {
+func (f *czarcoinFile) getReader(off int64) (io.ReadCloser, error) {
 	if f.reader == nil {
 		readOnlyStream, err := f.metainfo.GetObjectStream(f.ctx, f.bucket.Name, f.name)
 		if err != nil {
@@ -409,12 +409,12 @@ func (f *storjFile) getReader(off int64) (io.ReadCloser, error) {
 	return f.reader, nil
 }
 
-func (f *storjFile) getWriter(off int64) (io.Writer, error) {
+func (f *czarcoinFile) getWriter(off int64) (io.Writer, error) {
 	if off == 0 {
 		f.size = 0
 		f.closeWriter()
 
-		createInfo := storj.CreateObject{
+		createInfo := czarcoin.CreateObject{
 			RedundancyScheme: cfg.GetRedundancyScheme(),
 			EncryptionScheme: cfg.GetEncryptionScheme(),
 		}
@@ -434,7 +434,7 @@ func (f *storjFile) getWriter(off int64) (io.Writer, error) {
 	return f.writer, nil
 }
 
-func (f *storjFile) Flush() fuse.Status {
+func (f *czarcoinFile) Flush() fuse.Status {
 	zap.S().Debug("Flush: ", f.name)
 
 	f.closeReader()
@@ -442,14 +442,14 @@ func (f *storjFile) Flush() fuse.Status {
 	return fuse.OK
 }
 
-func (f *storjFile) closeReader() {
+func (f *czarcoinFile) closeReader() {
 	if f.reader != nil {
 		utils.LogClose(f.reader)
 		f.reader = nil
 	}
 }
 
-func (f *storjFile) closeWriter() {
+func (f *czarcoinFile) closeWriter() {
 	if f.writer != nil {
 		utils.LogClose(f.writer)
 		f.FS.removeCreatedFile(f.name)

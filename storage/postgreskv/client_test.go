@@ -13,19 +13,19 @@ import (
 	"github.com/zeebo/errs"
 	"go.uber.org/zap/zaptest"
 
-	"storj.io/storj/pkg/utils"
-	"storj.io/storj/storage"
-	"storj.io/storj/storage/storelogger"
-	"storj.io/storj/storage/testsuite"
+	"czarcoin.org/czarcoin/pkg/utils"
+	"czarcoin.org/czarcoin/storage"
+	"czarcoin.org/czarcoin/storage/storelogger"
+	"czarcoin.org/czarcoin/storage/testsuite"
 )
 
 const (
-	// this connstring is expected to work under the storj-test docker-compose instance
-	defaultPostgresConn = "postgres://storj:storj-pass@test-postgres/teststorj?sslmode=disable"
+	// this connstring is expected to work under the czarcoin-test docker-compose instance
+	defaultPostgresConn = "postgres://czarcoin:czarcoin-pass@test-postgres/testczarcoin?sslmode=disable"
 )
 
 var (
-	testPostgres = flag.String("postgres-test-db", os.Getenv("STORJ_POSTGRES_TEST"), "PostgreSQL test database connection string")
+	testPostgres = flag.String("postgres-test-db", os.Getenv("CZARCOIN_POSTGRES_TEST"), "PostgreSQL test database connection string")
 )
 
 func newTestPostgres(t testing.TB) (store *Client, cleanup func()) {

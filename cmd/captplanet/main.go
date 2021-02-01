@@ -16,9 +16,9 @@ import (
 	"github.com/spf13/cobra"
 	monkit "gopkg.in/spacemonkeygo/monkit.v2"
 
-	"storj.io/storj/internal/fpath"
-	"storj.io/storj/internal/memory"
-	"storj.io/storj/pkg/process"
+	"czarcoin.org/czarcoin/internal/fpath"
+	"czarcoin.org/czarcoin/internal/memory"
+	"czarcoin.org/czarcoin/pkg/process"
 )
 
 var (
@@ -38,7 +38,7 @@ func main() {
 }
 
 func init() {
-	defaultConfDir = fpath.ApplicationDir("storj", "capt")
+	defaultConfDir = fpath.ApplicationDir("czarcoin", "capt")
 	runCmd.Flags().String("config",
 		filepath.Join(defaultConfDir, "config.yaml"), "path to configuration")
 	setupCmd.Flags().String("config",

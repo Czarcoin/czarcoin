@@ -10,12 +10,12 @@ import (
 	"github.com/zeebo/errs"
 	"go.uber.org/zap"
 
-	"storj.io/storj/pkg/accounting"
-	"storj.io/storj/pkg/bwagreement"
-	"storj.io/storj/pkg/kademlia"
-	"storj.io/storj/pkg/overlay"
-	"storj.io/storj/pkg/pointerdb"
-	"storj.io/storj/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/accounting"
+	"czarcoin.org/czarcoin/pkg/bwagreement"
+	"czarcoin.org/czarcoin/pkg/kademlia"
+	"czarcoin.org/czarcoin/pkg/overlay"
+	"czarcoin.org/czarcoin/pkg/pointerdb"
+	"czarcoin.org/czarcoin/pkg/provider"
 )
 
 // Config contains configurable values for tally

@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/zeebo/errs"
 
-	"storj.io/storj/pkg/utils"
+	"czarcoin.org/czarcoin/pkg/utils"
 )
 
 func TestCollectSingleError(t *testing.T) {

@@ -38,7 +38,7 @@
                     <Checkbox class="new-project-popup__form-container__terms-area__checkbox"
                               @setData="setTermsAccepted"
                               :isCheckboxError="termsAcceptedError"/>
-                    <h2>I agree to the Storj Bridge Hosting <a>Terms & Conditions</a></h2>
+                    <h2>I agree to the Czarcoin Bridge Hosting <a>Terms & Conditions</a></h2>
                 </div>
                 <div class="new-project-popup__form-container__button-container">
                     <Button label="Cancel" width="205px" height="48px" :onPress="onCloseClick" isWhite/>

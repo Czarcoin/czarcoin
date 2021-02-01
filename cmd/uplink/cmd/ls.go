@@ -10,9 +10,9 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"storj.io/storj/internal/fpath"
-	"storj.io/storj/pkg/process"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/internal/fpath"
+	"czarcoin.org/czarcoin/pkg/process"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 var (
@@ -55,7 +55,7 @@ func list(cmd *cobra.Command, args []string) error {
 	noBuckets := true
 
 	for {
-		list, err := metainfo.ListBuckets(ctx, storj.BucketListOptions{Direction: storj.After, Cursor: startAfter})
+		list, err := metainfo.ListBuckets(ctx, czarcoin.BucketListOptions{Direction: czarcoin.After, Cursor: startAfter})
 		if err != nil {
 			return err
 		}
@@ -88,12 +88,12 @@ func list(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func listFiles(ctx context.Context, metainfo storj.Metainfo, prefix fpath.FPath, prependBucket bool) error {
+func listFiles(ctx context.Context, metainfo czarcoin.Metainfo, prefix fpath.FPath, prependBucket bool) error {
 	startAfter := ""
 
 	for {
-		list, err := metainfo.ListObjects(ctx, prefix.Bucket(), storj.ListOptions{
-			Direction: storj.After,
+		list, err := metainfo.ListObjects(ctx, prefix.Bucket(), czarcoin.ListOptions{
+			Direction: czarcoin.After,
 			Cursor:    startAfter,
 			Prefix:    prefix.Path(),
 			Recursive: *recursiveFlag,

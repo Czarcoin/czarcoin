@@ -25,7 +25,7 @@ build() {
 		dots_on
 		local path=${tmp_dir}/${cmd}
 		declare -g ${cmd}=${path}
-		go build -o ${path} storj.io/storj/cmd/${cmd}
+		go build -o ${path} czarcoin.org/czarcoin/cmd/${cmd}
 		dots_off
 		echo "done"
 	done

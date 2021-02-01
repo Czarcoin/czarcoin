@@ -6,7 +6,7 @@ package main
 import (
 	"github.com/spf13/cobra"
 
-	"storj.io/storj/pkg/process"
+	"czarcoin.org/czarcoin/pkg/process"
 )
 
 var (
@@ -15,7 +15,7 @@ var (
 		Short: "Identity management",
 	}
 
-	defaultConfDir = "$HOME/.storj/identity"
+	defaultConfDir = "$HOME/.czarcoin/identity"
 )
 
 func main() {

@@ -9,12 +9,12 @@ import (
 	"github.com/graphql-go/graphql"
 	"go.uber.org/zap"
 
-	"storj.io/storj/pkg/provider"
-	"storj.io/storj/pkg/satellite"
-	"storj.io/storj/pkg/satellite/satelliteauth"
-	"storj.io/storj/pkg/satellite/satellitedb"
-	"storj.io/storj/pkg/satellite/satelliteweb/satelliteql"
-	"storj.io/storj/pkg/utils"
+	"czarcoin.org/czarcoin/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/satellite"
+	"czarcoin.org/czarcoin/pkg/satellite/satelliteauth"
+	"czarcoin.org/czarcoin/pkg/satellite/satellitedb"
+	"czarcoin.org/czarcoin/pkg/satellite/satelliteweb/satelliteql"
+	"czarcoin.org/czarcoin/pkg/utils"
 )
 
 // Config contains info needed for satellite account related services

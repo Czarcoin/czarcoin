@@ -9,8 +9,8 @@ import (
 	"io"
 	"io/ioutil"
 
-	"storj.io/storj/internal/readcloser"
-	"storj.io/storj/pkg/ranger"
+	"czarcoin.org/czarcoin/internal/readcloser"
+	"czarcoin.org/czarcoin/pkg/ranger"
 )
 
 // A Transformer is a data transformation that may change the size of the blocks

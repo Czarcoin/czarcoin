@@ -14,7 +14,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"storj.io/storj/pkg/ranger"
+	"czarcoin.org/czarcoin/pkg/ranger"
 )
 
 func TestCalcEncompassingBlocks(t *testing.T) {

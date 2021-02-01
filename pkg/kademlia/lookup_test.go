@@ -8,9 +8,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"storj.io/storj/internal/testcontext"
-	"storj.io/storj/internal/testplanet"
-	"storj.io/storj/pkg/provider"
+	"czarcoin.org/czarcoin/internal/testcontext"
+	"czarcoin.org/czarcoin/internal/testplanet"
+	"czarcoin.org/czarcoin/pkg/provider"
 )
 
 func newTestIdentity() (*provider.FullIdentity, error) {

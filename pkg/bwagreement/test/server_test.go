@@ -13,20 +13,20 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
 
-	"storj.io/storj/internal/identity"
-	"storj.io/storj/internal/testcontext"
-	"storj.io/storj/pkg/bwagreement"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/satellite/satellitedb"
+	"czarcoin.org/czarcoin/internal/identity"
+	"czarcoin.org/czarcoin/internal/testcontext"
+	"czarcoin.org/czarcoin/pkg/bwagreement"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/satellite/satellitedb"
 )
 
 const (
 	// postgres connstring that works with docker-compose
-	defaultPostgresConn = "postgres://storj:storj-pass@test-postgres/teststorj?sslmode=disable"
+	defaultPostgresConn = "postgres://czarcoin:czarcoin-pass@test-postgres/testczarcoin?sslmode=disable"
 )
 
 var (
-	testPostgres = flag.String("postgres-test-db", os.Getenv("STORJ_POSTGRES_TEST"), "PostgreSQL test database connection string")
+	testPostgres = flag.String("postgres-test-db", os.Getenv("CZARCOIN_POSTGRES_TEST"), "PostgreSQL test database connection string")
 )
 
 func TestBandwidthAgreements(t *testing.T) {

@@ -7,8 +7,8 @@ import (
 	"github.com/graphql-go/graphql"
 	"github.com/skyrings/skyring-common/tools/uuid"
 
-	"storj.io/storj/pkg/satellite"
-	"storj.io/storj/pkg/utils"
+	"czarcoin.org/czarcoin/pkg/satellite"
+	"czarcoin.org/czarcoin/pkg/utils"
 )
 
 const (

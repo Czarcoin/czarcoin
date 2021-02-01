@@ -1,7 +1,7 @@
 language: go
 
 go: 1.11.x
-go_import_path: "storj.io/storj"
+go_import_path: "czarcoin.org/czarcoin"
 
 git:
   depth: 1
@@ -16,7 +16,7 @@ before_script:
   - if [ "${TRAVIS_OS_NAME}" == "linux" ]; then 
       sudo sh -c 'echo 0 > /proc/sys/net/ipv6/conf/all/disable_ipv6';
       sudo sh -c 'echo "\n::1 localhost\n" >> /etc/hosts';
-      psql -c 'create database teststorj' -U postgres;
+      psql -c 'create database testczarcoin' -U postgres;
     fi;
 
 before_install:
@@ -28,7 +28,7 @@ matrix:
     ### tests ###
     - env:
         - MODE=tests
-        - STORJ_POSTGRES_TEST=postgres://postgres@localhost/teststorj?sslmode=disable
+        - CZARCOIN_POSTGRES_TEST=postgres://postgres@localhost/testczarcoin?sslmode=disable
       services:
         - redis
         - postgresql
@@ -69,7 +69,7 @@ matrix:
         - redis
       install:
         - source scripts/install-awscli.sh
-        - go install storj.io/storj/cmd/captplanet
+        - go install czarcoin.org/czarcoin/cmd/captplanet
       script:
         - make test-captplanet
     

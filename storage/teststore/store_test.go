@@ -6,7 +6,7 @@ package teststore
 import (
 	"testing"
 
-	"storj.io/storj/storage/testsuite"
+	"czarcoin.org/czarcoin/storage/testsuite"
 )
 
 func TestSuite(t *testing.T)      { testsuite.RunTests(t, New()) }

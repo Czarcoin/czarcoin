@@ -14,10 +14,10 @@ import (
 
 	"github.com/vivint/infectious"
 
-	"storj.io/storj/pkg/eestream"
-	"storj.io/storj/pkg/encryption"
-	"storj.io/storj/pkg/ranger"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/pkg/eestream"
+	"czarcoin.org/czarcoin/pkg/encryption"
+	"czarcoin.org/czarcoin/pkg/ranger"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 var (
@@ -38,14 +38,14 @@ func main() {
 
 // Main is the exported CLI executable function
 func Main() error {
-	encKey := storj.Key(sha256.Sum256([]byte(*key)))
+	encKey := czarcoin.Key(sha256.Sum256([]byte(*key)))
 	fc, err := infectious.NewFEC(*rsk, *rsn)
 	if err != nil {
 		return err
 	}
 	es := eestream.NewRSScheme(fc, *erasureShareSize)
-	var firstNonce storj.Nonce
-	decrypter, err := encryption.NewDecrypter(storj.AESGCM, &encKey, &firstNonce, es.StripeSize())
+	var firstNonce czarcoin.Nonce
+	decrypter, err := encryption.NewDecrypter(czarcoin.AESGCM, &encKey, &firstNonce, es.StripeSize())
 	if err != nil {
 		return err
 	}

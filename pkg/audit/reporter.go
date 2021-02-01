@@ -6,10 +6,10 @@ package audit
 import (
 	"context"
 
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/statdb"
-	statsproto "storj.io/storj/pkg/statdb/proto"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/statdb"
+	statsproto "czarcoin.org/czarcoin/pkg/statdb/proto"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 type reporter interface {
@@ -48,7 +48,7 @@ func (reporter *Reporter) RecordAudits(ctx context.Context, nodes []*pb.Node) (e
 	return nil
 }
 
-func setAuditFailStatus(ctx context.Context, failedNodes storj.NodeIDList) (failStatusNodes []*pb.Node) {
+func setAuditFailStatus(ctx context.Context, failedNodes czarcoin.NodeIDList) (failStatusNodes []*pb.Node) {
 	for i := range failedNodes {
 		setNode := &pb.Node{
 			Id:                 failedNodes[i],
@@ -63,7 +63,7 @@ func setAuditFailStatus(ctx context.Context, failedNodes storj.NodeIDList) (fail
 }
 
 // TODO: offline nodes should maybe be marked as failing the audit in the future
-func setOfflineStatus(ctx context.Context, offlineNodeIDs storj.NodeIDList) (offlineStatusNodes []*pb.Node) {
+func setOfflineStatus(ctx context.Context, offlineNodeIDs czarcoin.NodeIDList) (offlineStatusNodes []*pb.Node) {
 	for i := range offlineNodeIDs {
 		setNode := &pb.Node{
 			Id:           offlineNodeIDs[i],
@@ -75,7 +75,7 @@ func setOfflineStatus(ctx context.Context, offlineNodeIDs storj.NodeIDList) (off
 	return offlineStatusNodes
 }
 
-func setSuccessStatus(ctx context.Context, offlineNodeIDs storj.NodeIDList) (successStatusNodes []*pb.Node) {
+func setSuccessStatus(ctx context.Context, offlineNodeIDs czarcoin.NodeIDList) (successStatusNodes []*pb.Node) {
 	for i := range offlineNodeIDs {
 		setNode := &pb.Node{
 			Id:                 offlineNodeIDs[i],

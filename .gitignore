@@ -21,7 +21,7 @@ debug
 
 # Binaries
 ./main
-./storj
+./czarcoin
 
 # Jetbrains
 .idea/

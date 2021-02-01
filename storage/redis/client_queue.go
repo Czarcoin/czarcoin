@@ -6,7 +6,7 @@ package redis
 import (
 	"github.com/go-redis/redis"
 
-	"storj.io/storj/storage"
+	"czarcoin.org/czarcoin/storage"
 )
 
 // Queue is the aliased entrypoint into Redis

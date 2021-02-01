@@ -8,9 +8,9 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"storj.io/storj/internal/fpath"
-	"storj.io/storj/pkg/process"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/internal/fpath"
+	"czarcoin.org/czarcoin/pkg/process"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 func init() {
@@ -46,7 +46,7 @@ func deleteBucket(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	list, err := metainfo.ListObjects(ctx, dst.Bucket(), storj.ListOptions{Direction: storj.After, Recursive: true, Limit: 1})
+	list, err := metainfo.ListObjects(ctx, dst.Bucket(), czarcoin.ListOptions{Direction: czarcoin.After, Recursive: true, Limit: 1})
 	if err != nil {
 		return convertError(err, dst)
 	}

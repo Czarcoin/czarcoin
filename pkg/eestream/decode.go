@@ -9,10 +9,10 @@ import (
 	"io/ioutil"
 	"sync"
 
-	"storj.io/storj/internal/readcloser"
-	"storj.io/storj/pkg/encryption"
-	"storj.io/storj/pkg/ranger"
-	"storj.io/storj/pkg/utils"
+	"czarcoin.org/czarcoin/internal/readcloser"
+	"czarcoin.org/czarcoin/pkg/encryption"
+	"czarcoin.org/czarcoin/pkg/ranger"
+	"czarcoin.org/czarcoin/pkg/utils"
 )
 
 type decodedReader struct {

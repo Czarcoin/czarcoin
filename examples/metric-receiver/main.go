@@ -9,8 +9,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"storj.io/storj/pkg/process"
-	"storj.io/storj/pkg/telemetry"
+	"czarcoin.org/czarcoin/pkg/process"
+	"czarcoin.org/czarcoin/pkg/telemetry"
 )
 
 var (

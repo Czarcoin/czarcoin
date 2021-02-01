@@ -10,9 +10,9 @@ import (
 	"github.com/zeebo/errs"
 	"go.uber.org/zap"
 
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/piecestore"
-	"storj.io/storj/pkg/utils"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/piecestore"
+	"czarcoin.org/czarcoin/pkg/utils"
 )
 
 // OK - Success!

@@ -10,15 +10,15 @@ import (
 	"github.com/vivint/infectious"
 	"go.uber.org/zap"
 
-	"storj.io/storj/pkg/datarepair/queue"
-	"storj.io/storj/pkg/eestream"
-	"storj.io/storj/pkg/miniogw"
-	"storj.io/storj/pkg/overlay"
-	"storj.io/storj/pkg/pointerdb/pdbclient"
-	"storj.io/storj/pkg/provider"
-	ecclient "storj.io/storj/pkg/storage/ec"
-	segment "storj.io/storj/pkg/storage/segments"
-	"storj.io/storj/storage/redis"
+	"czarcoin.org/czarcoin/pkg/datarepair/queue"
+	"czarcoin.org/czarcoin/pkg/eestream"
+	"czarcoin.org/czarcoin/pkg/miniogw"
+	"czarcoin.org/czarcoin/pkg/overlay"
+	"czarcoin.org/czarcoin/pkg/pointerdb/pdbclient"
+	"czarcoin.org/czarcoin/pkg/provider"
+	ecclient "czarcoin.org/czarcoin/pkg/storage/ec"
+	segment "czarcoin.org/czarcoin/pkg/storage/segments"
+	"czarcoin.org/czarcoin/storage/redis"
 )
 
 // Config contains configurable values for repairer

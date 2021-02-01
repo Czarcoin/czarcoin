@@ -5,12 +5,12 @@ RUN apt-get update \
 
 RUN cd / \
  && rm -rf /go \
- && git clone --recursive https://github.com/storj/storj-vendor.git /go \
+ && git clone --recursive https://github.com/czarcoin/czarcoin-vendor.git /go \
  && cd /go \
  && ./setup.sh
 
-COPY . /go/src/storj.io/storj
+COPY . /go/src/czarcoin.org/czarcoin
 
-WORKDIR /go/src/storj.io/storj
+WORKDIR /go/src/czarcoin.org/czarcoin
 
 RUN make build-dev-deps

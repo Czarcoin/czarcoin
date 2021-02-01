@@ -13,8 +13,8 @@ import (
 
 	"github.com/zeebo/errs"
 
-	"storj.io/storj/pkg/utils"
-	"storj.io/storj/storage"
+	"czarcoin.org/czarcoin/pkg/utils"
+	"czarcoin.org/czarcoin/storage"
 )
 
 // Error is the default filestore error class

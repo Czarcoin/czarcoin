@@ -7,7 +7,7 @@
             <img class="login-container__logo" src="../../static/images/login/Logo.svg" alt="logo">
             <div class="login-area">
                 <div class="login-area__title-container">
-                    <h1>Welcome to Storj</h1>
+                    <h1>Welcome to Czarcoin</h1>
                 </div>
                 <HeaderlessInput
                         class="login-area__email-input"

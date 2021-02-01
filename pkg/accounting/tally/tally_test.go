@@ -13,20 +13,20 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
 
-	"storj.io/storj/internal/identity"
-	"storj.io/storj/internal/testcontext"
-	"storj.io/storj/internal/teststorj"
-	"storj.io/storj/pkg/accounting"
-	"storj.io/storj/pkg/bwagreement"
-	"storj.io/storj/pkg/bwagreement/test"
-	"storj.io/storj/pkg/kademlia"
-	"storj.io/storj/pkg/overlay"
-	"storj.io/storj/pkg/overlay/mocks"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/pointerdb"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/satellite/satellitedb"
-	"storj.io/storj/storage/teststore"
+	"czarcoin.org/czarcoin/internal/identity"
+	"czarcoin.org/czarcoin/internal/testcontext"
+	"czarcoin.org/czarcoin/internal/testczarcoin"
+	"czarcoin.org/czarcoin/pkg/accounting"
+	"czarcoin.org/czarcoin/pkg/bwagreement"
+	"czarcoin.org/czarcoin/pkg/bwagreement/test"
+	"czarcoin.org/czarcoin/pkg/kademlia"
+	"czarcoin.org/czarcoin/pkg/overlay"
+	"czarcoin.org/czarcoin/pkg/overlay/mocks"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/pointerdb"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/satellite/satellitedb"
+	"czarcoin.org/czarcoin/storage/teststore"
 )
 
 func TestIdentifyActiveNodes(t *testing.T) {
@@ -41,14 +41,14 @@ func TestOnlineNodes(t *testing.T) {
 
 	const N = 50
 	nodes := []*pb.Node{}
-	nodeIDs := storj.NodeIDList{}
+	nodeIDs := czarcoin.NodeIDList{}
 	expectedOnline := []*pb.Node{}
 	for i := 0; i < N; i++ {
-		nodeID := teststorj.NodeIDFromString(strconv.Itoa(i))
+		nodeID := testczarcoin.NodeIDFromString(strconv.Itoa(i))
 		n := &pb.Node{Id: nodeID, Type: pb.NodeType_STORAGE, Address: &pb.NodeAddress{Address: ""}}
 		nodes = append(nodes, n)
 		if i%(rand.Intn(5)+2) == 0 {
-			id := teststorj.NodeIDFromString("id" + nodeID.String())
+			id := testczarcoin.NodeIDFromString("id" + nodeID.String())
 			nodeIDs = append(nodeIDs, id)
 		} else {
 			nodeIDs = append(nodeIDs, nodeID)

@@ -14,11 +14,11 @@ import (
 	progressbar "github.com/cheggaaa/pb"
 	"github.com/spf13/cobra"
 
-	"storj.io/storj/internal/fpath"
-	"storj.io/storj/pkg/process"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/pkg/stream"
-	"storj.io/storj/pkg/utils"
+	"czarcoin.org/czarcoin/internal/fpath"
+	"czarcoin.org/czarcoin/pkg/process"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/pkg/stream"
+	"czarcoin.org/czarcoin/pkg/utils"
 )
 
 var (
@@ -28,7 +28,7 @@ var (
 func init() {
 	cpCmd := addCmd(&cobra.Command{
 		Use:   "cp",
-		Short: "Copies a local file or Storj object to another location locally or in Storj",
+		Short: "Copies a local file or Czarcoin object to another location locally or in Czarcoin",
 		RunE:  copyMain,
 	}, CLICmd)
 	progress = cpCmd.Flags().Bool("progress", true, "if true, show progress")
@@ -41,7 +41,7 @@ func upload(ctx context.Context, src fpath.FPath, dst fpath.FPath, showProgress 
 	}
 
 	if dst.IsLocal() {
-		return fmt.Errorf("destination must be Storj URL: %s", dst)
+		return fmt.Errorf("destination must be Czarcoin URL: %s", dst)
 	}
 
 	// if object name not specified, default to filename
@@ -75,7 +75,7 @@ func upload(ctx context.Context, src fpath.FPath, dst fpath.FPath, showProgress 
 		return err
 	}
 
-	createInfo := storj.CreateObject{
+	createInfo := czarcoin.CreateObject{
 		RedundancyScheme: cfg.GetRedundancyScheme(),
 		EncryptionScheme: cfg.GetEncryptionScheme(),
 	}
@@ -121,7 +121,7 @@ func upload(ctx context.Context, src fpath.FPath, dst fpath.FPath, showProgress 
 // download transfers s3 compatible object src to dst on local machine
 func download(ctx context.Context, src fpath.FPath, dst fpath.FPath, showProgress bool) error {
 	if src.IsLocal() {
-		return fmt.Errorf("source must be Storj URL: %s", src)
+		return fmt.Errorf("source must be Czarcoin URL: %s", src)
 	}
 
 	if !dst.IsLocal() {
@@ -185,11 +185,11 @@ func download(ctx context.Context, src fpath.FPath, dst fpath.FPath, showProgres
 // copy copies s3 compatible object src to s3 compatible object dst
 func copy(ctx context.Context, src fpath.FPath, dst fpath.FPath) error {
 	if src.IsLocal() {
-		return fmt.Errorf("source must be Storj URL: %s", src)
+		return fmt.Errorf("source must be Czarcoin URL: %s", src)
 	}
 
 	if dst.IsLocal() {
-		return fmt.Errorf("destination must be Storj URL: %s", dst)
+		return fmt.Errorf("destination must be Czarcoin URL: %s", dst)
 	}
 
 	metainfo, streams, err := cfg.Metainfo(ctx)
@@ -220,7 +220,7 @@ func copy(ctx context.Context, src fpath.FPath, dst fpath.FPath) error {
 		dst = dst.Join(src.Base())
 	}
 
-	createInfo := storj.CreateObject{
+	createInfo := czarcoin.CreateObject{
 		RedundancyScheme: cfg.GetRedundancyScheme(),
 		EncryptionScheme: cfg.GetEncryptionScheme(),
 	}
@@ -273,7 +273,7 @@ func copyMain(cmd *cobra.Command, args []string) (err error) {
 
 	// if both local
 	if src.IsLocal() && dst.IsLocal() {
-		return errors.New("At least one of the source or the desination must be a Storj URL")
+		return errors.New("At least one of the source or the desination must be a Czarcoin URL")
 	}
 
 	// if uploading

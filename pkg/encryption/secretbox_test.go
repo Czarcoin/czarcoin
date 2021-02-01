@@ -9,7 +9,7 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 func randData(amount int) []byte {
@@ -22,10 +22,10 @@ func randData(amount int) []byte {
 }
 
 func TestSecretbox(t *testing.T) {
-	var key storj.Key
-	copy(key[:], randData(storj.KeySize))
-	var firstNonce storj.Nonce
-	copy(firstNonce[:], randData(storj.NonceSize))
+	var key czarcoin.Key
+	copy(key[:], randData(czarcoin.KeySize))
+	var firstNonce czarcoin.Nonce
+	copy(firstNonce[:], randData(czarcoin.NonceSize))
 	encrypter, err := NewSecretboxEncrypter(&key, &firstNonce, 4*1024)
 	if err != nil {
 		t.Fatal(err)

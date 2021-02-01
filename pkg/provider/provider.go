@@ -15,7 +15,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"storj.io/storj/storage"
+	"czarcoin.org/czarcoin/storage"
 )
 
 var (

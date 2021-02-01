@@ -12,17 +12,17 @@ import (
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 
-	"storj.io/storj/internal/identity"
-	"storj.io/storj/internal/testcontext"
-	"storj.io/storj/internal/teststorj"
-	"storj.io/storj/pkg/dht/mocks"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/provider"
+	"czarcoin.org/czarcoin/internal/identity"
+	"czarcoin.org/czarcoin/internal/testcontext"
+	"czarcoin.org/czarcoin/internal/testczarcoin"
+	"czarcoin.org/czarcoin/pkg/dht/mocks"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/provider"
 )
 
 var (
 	ctx     = context.Background()
-	helloID = teststorj.NodeIDFromString("hello")
+	helloID = testczarcoin.NodeIDFromString("hello")
 )
 
 func TestLookup(t *testing.T) {

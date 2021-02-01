@@ -9,8 +9,8 @@ import (
 	"github.com/skyrings/skyring-common/tools/uuid"
 	"github.com/zeebo/errs"
 
-	"storj.io/storj/pkg/satellite"
-	"storj.io/storj/pkg/satellite/satellitedb/dbx"
+	"czarcoin.org/czarcoin/pkg/satellite"
+	"czarcoin.org/czarcoin/pkg/satellite/satellitedb/dbx"
 )
 
 // implementation of Users interface repository using spacemonkeygo/dbx orm

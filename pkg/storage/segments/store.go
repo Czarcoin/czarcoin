@@ -14,15 +14,15 @@ import (
 	"go.uber.org/zap"
 	monkit "gopkg.in/spacemonkeygo/monkit.v2"
 
-	"storj.io/storj/pkg/eestream"
-	"storj.io/storj/pkg/overlay"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/piecestore/psclient"
-	"storj.io/storj/pkg/pointerdb/pdbclient"
-	"storj.io/storj/pkg/ranger"
-	ecclient "storj.io/storj/pkg/storage/ec"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/pkg/utils"
+	"czarcoin.org/czarcoin/pkg/eestream"
+	"czarcoin.org/czarcoin/pkg/overlay"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/piecestore/psclient"
+	"czarcoin.org/czarcoin/pkg/pointerdb/pdbclient"
+	"czarcoin.org/czarcoin/pkg/ranger"
+	ecclient "czarcoin.org/czarcoin/pkg/storage/ec"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/pkg/utils"
 )
 
 var (
@@ -39,19 +39,19 @@ type Meta struct {
 
 // ListItem is a single item in a listing
 type ListItem struct {
-	Path     storj.Path
+	Path     czarcoin.Path
 	Meta     Meta
 	IsPrefix bool
 }
 
 // Store for segments
 type Store interface {
-	Meta(ctx context.Context, path storj.Path) (meta Meta, err error)
-	Get(ctx context.Context, path storj.Path) (rr ranger.Ranger, meta Meta, err error)
-	Repair(ctx context.Context, path storj.Path, lostPieces []int32) (err error)
-	Put(ctx context.Context, data io.Reader, expiration time.Time, segmentInfo func() (storj.Path, []byte, error)) (meta Meta, err error)
-	Delete(ctx context.Context, path storj.Path) (err error)
-	List(ctx context.Context, prefix, startAfter, endBefore storj.Path, recursive bool, limit int, metaFlags uint32) (items []ListItem, more bool, err error)
+	Meta(ctx context.Context, path czarcoin.Path) (meta Meta, err error)
+	Get(ctx context.Context, path czarcoin.Path) (rr ranger.Ranger, meta Meta, err error)
+	Repair(ctx context.Context, path czarcoin.Path, lostPieces []int32) (err error)
+	Put(ctx context.Context, data io.Reader, expiration time.Time, segmentInfo func() (czarcoin.Path, []byte, error)) (meta Meta, err error)
+	Delete(ctx context.Context, path czarcoin.Path) (err error)
+	List(ctx context.Context, prefix, startAfter, endBefore czarcoin.Path, recursive bool, limit int, metaFlags uint32) (items []ListItem, more bool, err error)
 }
 
 type segmentStore struct {
@@ -68,7 +68,7 @@ func NewSegmentStore(oc overlay.Client, ec ecclient.Client, pdb pdbclient.Client
 }
 
 // Meta retrieves the metadata of the segment
-func (s *segmentStore) Meta(ctx context.Context, path storj.Path) (meta Meta, err error) {
+func (s *segmentStore) Meta(ctx context.Context, path czarcoin.Path) (meta Meta, err error) {
 	defer mon.Task()(&ctx)(&err)
 
 	pr, _, _, err := s.pdb.Get(ctx, path)
@@ -80,7 +80,7 @@ func (s *segmentStore) Meta(ctx context.Context, path storj.Path) (meta Meta, er
 }
 
 // Put uploads a segment to an erasure code client
-func (s *segmentStore) Put(ctx context.Context, data io.Reader, expiration time.Time, segmentInfo func() (storj.Path, []byte, error)) (meta Meta, err error) {
+func (s *segmentStore) Put(ctx context.Context, data io.Reader, expiration time.Time, segmentInfo func() (czarcoin.Path, []byte, error)) (meta Meta, err error) {
 	defer mon.Task()(&ctx)(&err)
 
 	exp, err := ptypes.TimestampProto(expiration)
@@ -94,7 +94,7 @@ func (s *segmentStore) Put(ctx context.Context, data io.Reader, expiration time.
 		return Meta{}, err
 	}
 
-	var path storj.Path
+	var path czarcoin.Path
 	var pointer *pb.Pointer
 	if !remoteSized {
 		p, metadata, err := segmentInfo()
@@ -191,7 +191,7 @@ func (s *segmentStore) makeRemotePointer(nodes []*pb.Node, pieceID psclient.Piec
 }
 
 // Get retrieves a segment using erasure code, overlay, and pointerdb clients
-func (s *segmentStore) Get(ctx context.Context, path storj.Path) (rr ranger.Ranger, meta Meta, err error) {
+func (s *segmentStore) Get(ctx context.Context, path czarcoin.Path) (rr ranger.Ranger, meta Meta, err error) {
 	defer mon.Task()(&ctx)(&err)
 
 	pr, nodes, pba, err := s.pdb.Get(ctx, path)
@@ -252,7 +252,7 @@ func makeErasureScheme(rs *pb.RedundancyScheme) (eestream.ErasureScheme, error) 
 }
 
 // Delete tells piece stores to delete a segment and deletes pointer from pointerdb
-func (s *segmentStore) Delete(ctx context.Context, path storj.Path) (err error) {
+func (s *segmentStore) Delete(ctx context.Context, path czarcoin.Path) (err error) {
 	defer mon.Task()(&ctx)(&err)
 
 	pr, nodes, _, err := s.pdb.Get(ctx, path)
@@ -285,7 +285,7 @@ func (s *segmentStore) Delete(ctx context.Context, path storj.Path) (err error) 
 }
 
 // Repair retrieves an at-risk segment and repairs and stores lost pieces on new nodes
-func (s *segmentStore) Repair(ctx context.Context, path storj.Path, lostPieces []int32) (err error) {
+func (s *segmentStore) Repair(ctx context.Context, path czarcoin.Path, lostPieces []int32) (err error) {
 	defer mon.Task()(&ctx)(&err)
 
 	//Read the segment's pointer's info from the PointerDB
@@ -311,7 +311,7 @@ func (s *segmentStore) Repair(ctx context.Context, path storj.Path, lostPieces [
 	}
 
 	// get the nodes list that needs to be excluded
-	var excludeNodeIDs storj.NodeIDList
+	var excludeNodeIDs czarcoin.NodeIDList
 
 	// count the number of nil nodes thats needs to be repaired
 	totalNilNodes := 0
@@ -418,7 +418,7 @@ func (s *segmentStore) Repair(ctx context.Context, path storj.Path, lostPieces [
 // lookupNodes calls Lookup to get node addresses from the overlay
 func (s *segmentStore) lookupNodes(ctx context.Context, seg *pb.RemoteSegment) (nodes []*pb.Node, err error) {
 	// Get list of all nodes IDs storing a piece from the segment
-	var nodeIds storj.NodeIDList
+	var nodeIds czarcoin.NodeIDList
 	for _, p := range seg.RemotePieces {
 		nodeIds = append(nodeIds, p.NodeId)
 	}
@@ -437,7 +437,7 @@ func (s *segmentStore) lookupNodes(ctx context.Context, seg *pb.RemoteSegment) (
 }
 
 // List retrieves paths to segments and their metadata stored in the pointerdb
-func (s *segmentStore) List(ctx context.Context, prefix, startAfter, endBefore storj.Path, recursive bool, limit int, metaFlags uint32) (items []ListItem, more bool, err error) {
+func (s *segmentStore) List(ctx context.Context, prefix, startAfter, endBefore czarcoin.Path, recursive bool, limit int, metaFlags uint32) (items []ListItem, more bool, err error) {
 	defer mon.Task()(&ctx)(&err)
 
 	pdbItems, more, err := s.pdb.List(ctx, prefix, startAfter, endBefore, recursive, limit, metaFlags)

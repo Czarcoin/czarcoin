@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"testing"
 
-	"storj.io/storj/storage"
+	"czarcoin.org/czarcoin/storage"
 )
 
 func testParallel(t *testing.T, store storage.KeyValueStore) {

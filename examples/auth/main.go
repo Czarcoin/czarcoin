@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 
-	"storj.io/storj/pkg/pointerdb/auth"
+	"czarcoin.org/czarcoin/pkg/pointerdb/auth"
 )
 
 // example of how the auth package is working.

@@ -16,7 +16,7 @@ import (
 
 	"golang.org/x/sync/errgroup"
 
-	"storj.io/storj/internal/memory"
+	"czarcoin.org/czarcoin/internal/memory"
 )
 
 const defaultTimeout = 3 * time.Minute

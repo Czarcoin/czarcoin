@@ -7,13 +7,13 @@ import (
 	"github.com/zeebo/errs"
 	monkit "gopkg.in/spacemonkeygo/monkit.v2"
 
-	"storj.io/storj/internal/memory"
-	"storj.io/storj/pkg/pointerdb/pdbclient"
-	"storj.io/storj/pkg/storage/buckets"
-	"storj.io/storj/pkg/storage/segments"
-	"storj.io/storj/pkg/storage/streams"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/storage"
+	"czarcoin.org/czarcoin/internal/memory"
+	"czarcoin.org/czarcoin/pkg/pointerdb/pdbclient"
+	"czarcoin.org/czarcoin/pkg/storage/buckets"
+	"czarcoin.org/czarcoin/pkg/storage/segments"
+	"czarcoin.org/czarcoin/pkg/storage/streams"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/storage"
 )
 
 var mon = monkit.Package()
@@ -22,7 +22,7 @@ var errClass = errs.Class("kvmetainfo")
 
 const defaultSegmentLimit = 8 // TODO
 
-var _ storj.Metainfo = (*DB)(nil)
+var _ czarcoin.Metainfo = (*DB)(nil)
 
 // DB implements metainfo database
 type DB struct {
@@ -31,11 +31,11 @@ type DB struct {
 	segments segments.Store
 	pointers pdbclient.Client
 
-	rootKey *storj.Key
+	rootKey *czarcoin.Key
 }
 
 // New creates a new metainfo database
-func New(buckets buckets.Store, streams streams.Store, segments segments.Store, pointers pdbclient.Client, rootKey *storj.Key) *DB {
+func New(buckets buckets.Store, streams streams.Store, segments segments.Store, pointers pdbclient.Client, rootKey *czarcoin.Key) *DB {
 	return &DB{
 		buckets:  buckets,
 		streams:  streams,
@@ -46,8 +46,8 @@ func New(buckets buckets.Store, streams streams.Store, segments segments.Store, 
 }
 
 // Limits returns limits for this metainfo database
-func (db *DB) Limits() (storj.MetainfoLimits, error) {
-	return storj.MetainfoLimits{
+func (db *DB) Limits() (czarcoin.MetainfoLimits, error) {
+	return czarcoin.MetainfoLimits{
 		ListLimit:                storage.LookupLimit,
 		MinimumRemoteSegmentSize: int64(memory.KB), // TODO: is this needed here?
 		MaximumInlineSegmentSize: int64(memory.MB),

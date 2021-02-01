@@ -14,8 +14,8 @@ import (
 
 	"github.com/zeebo/errs"
 
-	"storj.io/storj/pkg/peertls"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/pkg/peertls"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 // TLSFilesStatus is the status of keys
@@ -58,7 +58,7 @@ func decodePEM(PEMBytes []byte) ([][]byte, error) {
 func newCAWorker(ctx context.Context, difficulty uint16, parentCert *x509.Certificate, parentKey crypto.PrivateKey, caC chan FullCertificateAuthority, eC chan error) {
 	var (
 		k   crypto.PrivateKey
-		i   storj.NodeID
+		i   czarcoin.NodeID
 		err error
 	)
 	for {

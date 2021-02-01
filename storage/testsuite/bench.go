@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"testing"
 
-	"storj.io/storj/storage"
+	"czarcoin.org/czarcoin/storage"
 )
 
 // RunBenchmarks runs common storage.KeyValueStore benchmarks

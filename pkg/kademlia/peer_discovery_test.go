@@ -10,22 +10,22 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 func TestDiscoveryQueue(t *testing.T) {
-	target := storj.NodeID{1, 1} // 00000001
+	target := czarcoin.NodeID{1, 1} // 00000001
 
 	//                                          // id                -> id ^ target
-	nodeA := &pb.Node{Id: storj.NodeID{3, 2}}   // 00000011:00000010 -> 00000010:00000011
-	nodeB := &pb.Node{Id: storj.NodeID{6, 5}}   // 00000110:00000101 -> 00000111:00000100
-	nodeC := &pb.Node{Id: storj.NodeID{7, 7}}   // 00000111:00000111 -> 00000110:00000110
-	nodeD := &pb.Node{Id: storj.NodeID{8, 4}}   // 00001000:00000100 -> 00001001:00000101
-	nodeE := &pb.Node{Id: storj.NodeID{12, 1}}  // 00001100:00000001 -> 00001101:00000000
-	nodeF := &pb.Node{Id: storj.NodeID{15, 16}} // 00001111:00010000 -> 00001110:00010001
-	nodeG := &pb.Node{Id: storj.NodeID{18, 74}} // 00010010:01001010 -> 00010011:01001011
-	nodeH := &pb.Node{Id: storj.NodeID{25, 61}} // 00011001:00111101 -> 00011000:00111100
+	nodeA := &pb.Node{Id: czarcoin.NodeID{3, 2}}   // 00000011:00000010 -> 00000010:00000011
+	nodeB := &pb.Node{Id: czarcoin.NodeID{6, 5}}   // 00000110:00000101 -> 00000111:00000100
+	nodeC := &pb.Node{Id: czarcoin.NodeID{7, 7}}   // 00000111:00000111 -> 00000110:00000110
+	nodeD := &pb.Node{Id: czarcoin.NodeID{8, 4}}   // 00001000:00000100 -> 00001001:00000101
+	nodeE := &pb.Node{Id: czarcoin.NodeID{12, 1}}  // 00001100:00000001 -> 00001101:00000000
+	nodeF := &pb.Node{Id: czarcoin.NodeID{15, 16}} // 00001111:00010000 -> 00001110:00010001
+	nodeG := &pb.Node{Id: czarcoin.NodeID{18, 74}} // 00010010:01001010 -> 00010011:01001011
+	nodeH := &pb.Node{Id: czarcoin.NodeID{25, 61}} // 00011001:00111101 -> 00011000:00111100
 
 	nodes := []*pb.Node{nodeA, nodeB, nodeC, nodeD, nodeE, nodeF, nodeG, nodeH}
 
@@ -68,12 +68,12 @@ func TestDiscoveryQueueRandom(t *testing.T) {
 	r := rand.New(rand.NewSource(seed))
 
 	for i := 0; i < 100; i++ {
-		var target storj.NodeID
+		var target czarcoin.NodeID
 		_, _ = r.Read(target[:])
 
 		var initial []*pb.Node
 		for k := 0; k < 10; k++ {
-			var nodeID storj.NodeID
+			var nodeID czarcoin.NodeID
 			_, _ = r.Read(nodeID[:])
 			initial = append(initial, &pb.Node{Id: nodeID})
 		}
@@ -82,14 +82,14 @@ func TestDiscoveryQueueRandom(t *testing.T) {
 		queue.Insert(target, initial...)
 
 		for k := 0; k < 10; k++ {
-			var nodeID storj.NodeID
+			var nodeID czarcoin.NodeID
 			_, _ = r.Read(nodeID[:])
 			queue.Insert(target, &pb.Node{Id: nodeID})
 		}
 
 		assert.Equal(t, queue.Len(), maxLen)
 
-		previousPriority := storj.NodeID{}
+		previousPriority := czarcoin.NodeID{}
 		for queue.Len() > 0 {
 			next := queue.Closest()
 			priority := xorNodeID(target, next.Id)

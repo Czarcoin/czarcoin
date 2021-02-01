@@ -19,8 +19,8 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/zeebo/errs"
 
-	"storj.io/storj/pkg/utils"
-	"storj.io/storj/storage"
+	"czarcoin.org/czarcoin/pkg/utils"
+	"czarcoin.org/czarcoin/storage"
 )
 
 const (
@@ -34,7 +34,7 @@ const (
 )
 
 var (
-	// see https://github.com/storj/test-path-corpus
+	// see https://github.com/czarcoin/test-path-corpus
 	longBenchmarksData = flag.String("test-bench-long", "", "Run the long benchmark suite against eligible KeyValueStores using the given paths dataset")
 
 	noInitDb  = flag.Bool("test-bench-long-noinit", false, "Don't import the large dataset for the long benchmarks; assume it is already loaded")

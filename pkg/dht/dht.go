@@ -7,18 +7,18 @@ import (
 	"context"
 	"time"
 
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/storage"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/storage"
 )
 
-// DHT is the interface for the DHT in the Storj network
+// DHT is the interface for the DHT in the Czarcoin network
 type DHT interface {
-	GetNodes(ctx context.Context, start storj.NodeID, limit int, restrictions ...pb.Restriction) ([]*pb.Node, error)
+	GetNodes(ctx context.Context, start czarcoin.NodeID, limit int, restrictions ...pb.Restriction) ([]*pb.Node, error)
 	GetRoutingTable(ctx context.Context) (RoutingTable, error)
 	Bootstrap(ctx context.Context) error
 	Ping(ctx context.Context, node pb.Node) (pb.Node, error)
-	FindNode(ctx context.Context, ID storj.NodeID) (pb.Node, error)
+	FindNode(ctx context.Context, ID czarcoin.NodeID) (pb.Node, error)
 	Disconnect() error
 	Seen() []*pb.Node
 }
@@ -31,11 +31,11 @@ type RoutingTable interface {
 	CacheSize() int
 
 	// Bucket methods
-	GetBucket(id storj.NodeID) (bucket Bucket, ok bool)
+	GetBucket(id czarcoin.NodeID) (bucket Bucket, ok bool)
 	GetBuckets() ([]Bucket, error)
 	GetBucketIds() (storage.Keys, error)
 
-	FindNear(id storj.NodeID, limit int) ([]*pb.Node, error)
+	FindNear(id czarcoin.NodeID, limit int) ([]*pb.Node, error)
 
 	ConnectionSuccess(node *pb.Node) error
 	ConnectionFailed(node *pb.Node) error

@@ -15,8 +15,8 @@ import (
 	"go/format"
 	"os"
 
-	"storj.io/storj/pkg/peertls"
-	"storj.io/storj/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/peertls"
+	"czarcoin.org/czarcoin/pkg/provider"
 )
 
 func main() {

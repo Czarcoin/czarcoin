@@ -7,7 +7,7 @@ import (
 	"encoding/binary"
 	"hash/crc32"
 
-	"storj.io/storj/pkg/ranger"
+	"czarcoin.org/czarcoin/pkg/ranger"
 )
 
 const (

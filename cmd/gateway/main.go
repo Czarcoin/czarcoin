@@ -4,8 +4,8 @@
 package main
 
 import (
-	"storj.io/storj/cmd/uplink/cmd"
-	"storj.io/storj/pkg/process"
+	"czarcoin.org/czarcoin/cmd/uplink/cmd"
+	"czarcoin.org/czarcoin/pkg/process"
 )
 
 func main() {

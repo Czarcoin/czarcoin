@@ -13,10 +13,10 @@ import (
 	"os"
 
 	"github.com/zeebo/errs"
-	"storj.io/storj/pkg/utils"
+	"czarcoin.org/czarcoin/pkg/utils"
 
-	"storj.io/storj/pkg/peertls"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/pkg/peertls"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 // PeerCertificateAuthority represents the CA which is used to validate peer identities
@@ -25,7 +25,7 @@ type PeerCertificateAuthority struct {
 	// Cert is the x509 certificate of the CA
 	Cert *x509.Certificate
 	// The ID is calculated from the CA public key.
-	ID storj.NodeID
+	ID czarcoin.NodeID
 }
 
 // FullCertificateAuthority represents the CA which is used to author and validate full identities
@@ -34,7 +34,7 @@ type FullCertificateAuthority struct {
 	// Cert is the x509 certificate of the CA
 	Cert *x509.Certificate
 	// The ID is calculated from the CA public key.
-	ID storj.NodeID
+	ID czarcoin.NodeID
 	// Key is the private key of the CA
 	Key crypto.PrivateKey
 }

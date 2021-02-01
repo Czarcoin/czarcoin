@@ -10,13 +10,13 @@ import (
 	"path/filepath"
 	"testing"
 
-	"storj.io/storj/pkg/utils"
-	"storj.io/storj/storage"
-	"storj.io/storj/storage/testsuite"
+	"czarcoin.org/czarcoin/pkg/utils"
+	"czarcoin.org/czarcoin/storage"
+	"czarcoin.org/czarcoin/storage/testsuite"
 )
 
 func TestSuite(t *testing.T) {
-	tempdir, err := ioutil.TempDir("", "storj-bolt")
+	tempdir, err := ioutil.TempDir("", "czarcoin-bolt")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -37,7 +37,7 @@ func TestSuite(t *testing.T) {
 }
 
 func BenchmarkSuite(b *testing.B) {
-	tempdir, err := ioutil.TempDir("", "storj-bolt")
+	tempdir, err := ioutil.TempDir("", "czarcoin-bolt")
 	if err != nil {
 		b.Fatal(err)
 	}
@@ -58,7 +58,7 @@ func BenchmarkSuite(b *testing.B) {
 }
 
 func TestSuiteShared(t *testing.T) {
-	tempdir, err := ioutil.TempDir("", "storj-bolt")
+	tempdir, err := ioutil.TempDir("", "czarcoin-bolt")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -112,7 +112,7 @@ func (store *boltLongBenchmarkStore) BulkDelete() error {
 }
 
 func BenchmarkSuiteLong(b *testing.B) {
-	tempdir, err := ioutil.TempDir("", "storj-bolt")
+	tempdir, err := ioutil.TempDir("", "czarcoin-bolt")
 	if err != nil {
 		b.Fatal(err)
 	}

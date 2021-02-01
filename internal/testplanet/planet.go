@@ -18,19 +18,19 @@ import (
 	"go.uber.org/zap/zaptest"
 	"google.golang.org/grpc"
 
-	"storj.io/storj/internal/memory"
-	"storj.io/storj/pkg/node"
-	"storj.io/storj/pkg/overlay"
-	"storj.io/storj/pkg/pb"
-	pieceserver "storj.io/storj/pkg/piecestore/psserver"
-	"storj.io/storj/pkg/piecestore/psserver/psdb"
-	"storj.io/storj/pkg/pointerdb"
-	"storj.io/storj/pkg/provider"
-	"storj.io/storj/pkg/utils"
-	"storj.io/storj/storage/teststore"
+	"czarcoin.org/czarcoin/internal/memory"
+	"czarcoin.org/czarcoin/pkg/node"
+	"czarcoin.org/czarcoin/pkg/overlay"
+	"czarcoin.org/czarcoin/pkg/pb"
+	pieceserver "czarcoin.org/czarcoin/pkg/piecestore/psserver"
+	"czarcoin.org/czarcoin/pkg/piecestore/psserver/psdb"
+	"czarcoin.org/czarcoin/pkg/pointerdb"
+	"czarcoin.org/czarcoin/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/utils"
+	"czarcoin.org/czarcoin/storage/teststore"
 )
 
-// Planet is a full storj system setup.
+// Planet is a full czarcoin system setup.
 type Planet struct {
 	log       *zap.Logger
 	directory string // TODO: ensure that everything is in-memory to speed things up

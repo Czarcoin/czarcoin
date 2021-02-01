@@ -13,14 +13,14 @@ import (
 	"github.com/vivint/infectious"
 	"gopkg.in/spacemonkeygo/monkit.v2"
 
-	"storj.io/storj/pkg/overlay"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/piecestore/psclient"
-	"storj.io/storj/pkg/provider"
-	sdbproto "storj.io/storj/pkg/statdb/proto"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/pkg/transport"
-	"storj.io/storj/pkg/utils"
+	"czarcoin.org/czarcoin/pkg/overlay"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/piecestore/psclient"
+	"czarcoin.org/czarcoin/pkg/provider"
+	sdbproto "czarcoin.org/czarcoin/pkg/statdb/proto"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/pkg/transport"
+	"czarcoin.org/czarcoin/pkg/utils"
 )
 
 var mon = monkit.Package()
@@ -119,7 +119,7 @@ func (d *defaultDownloader) DownloadShares(ctx context.Context, pointer *pb.Poin
 	stripeIndex int, authorization *pb.SignedMessage) (shares map[int]share, nodes map[int]*pb.Node, err error) {
 	defer mon.Task()(&ctx)(&err)
 
-	var nodeIds storj.NodeIDList
+	var nodeIds czarcoin.NodeIDList
 	pieces := pointer.Remote.GetRemotePieces()
 
 	for _, p := range pieces {
@@ -216,7 +216,7 @@ func (verifier *Verifier) verify(ctx context.Context, stripeIndex int, pointer *
 		return nil, err
 	}
 
-	var offlineNodes storj.NodeIDList
+	var offlineNodes czarcoin.NodeIDList
 	for pieceNum := range shares {
 		if shares[pieceNum].Error != nil {
 			offlineNodes = append(offlineNodes, nodes[pieceNum].Id)
@@ -230,7 +230,7 @@ func (verifier *Verifier) verify(ctx context.Context, stripeIndex int, pointer *
 		return nil, err
 	}
 
-	var failedNodes storj.NodeIDList
+	var failedNodes czarcoin.NodeIDList
 	for _, pieceNum := range pieceNums {
 		failedNodes = append(failedNodes, nodes[pieceNum].Id)
 	}
@@ -242,8 +242,8 @@ func (verifier *Verifier) verify(ctx context.Context, stripeIndex int, pointer *
 }
 
 // getSuccessNodes uses the failed nodes and offline nodes arrays to determine which nodes passed the audit
-func getSuccessNodes(ctx context.Context, nodes map[int]*pb.Node, failedNodes, offlineNodes storj.NodeIDList) (successNodes storj.NodeIDList) {
-	fails := make(map[storj.NodeID]bool)
+func getSuccessNodes(ctx context.Context, nodes map[int]*pb.Node, failedNodes, offlineNodes czarcoin.NodeIDList) (successNodes czarcoin.NodeIDList) {
+	fails := make(map[czarcoin.NodeID]bool)
 	for _, fail := range failedNodes {
 		fails[fail] = true
 	}
@@ -260,7 +260,7 @@ func getSuccessNodes(ctx context.Context, nodes map[int]*pb.Node, failedNodes, o
 }
 
 // setVerifiedNodes creates a combined array of offline nodes, failed audit nodes, and success nodes with their stats set to the statdb proto Node type
-func setVerifiedNodes(ctx context.Context, offlineNodes, failedNodes, successNodes storj.NodeIDList) (verifiedNodes []*sdbproto.Node) {
+func setVerifiedNodes(ctx context.Context, offlineNodes, failedNodes, successNodes czarcoin.NodeIDList) (verifiedNodes []*sdbproto.Node) {
 	offlineStatusNodes := setOfflineStatus(ctx, offlineNodes)
 	failStatusNodes := setAuditFailStatus(ctx, failedNodes)
 	successStatusNodes := setSuccessStatus(ctx, successNodes)

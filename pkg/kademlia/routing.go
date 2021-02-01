@@ -10,11 +10,11 @@ import (
 
 	"github.com/zeebo/errs"
 
-	"storj.io/storj/pkg/dht"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/pkg/utils"
-	"storj.io/storj/storage"
+	"czarcoin.org/czarcoin/pkg/dht"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/pkg/utils"
+	"czarcoin.org/czarcoin/storage"
 )
 
 const (
@@ -28,7 +28,7 @@ const (
 var RoutingErr = errs.Class("routing table error")
 
 // Bucket IDs exist in the same address space as node IDs
-type bucketID [len(storj.NodeID{})]byte
+type bucketID [len(czarcoin.NodeID{})]byte
 
 // RoutingTable implements the RoutingTable interface
 type RoutingTable struct {
@@ -37,7 +37,7 @@ type RoutingTable struct {
 	nodeBucketDB     storage.KeyValueStore
 	transport        *pb.NodeTransport
 	mutex            *sync.Mutex
-	seen             map[storj.NodeID]*pb.Node
+	seen             map[czarcoin.NodeID]*pb.Node
 	replacementCache map[bucketID][]*pb.Node
 	bucketSize       int // max number of nodes stored in a kbucket = 20 (k)
 	rcBucketSize     int // replacementCache bucket max length
@@ -53,7 +53,7 @@ func NewRoutingTable(localNode pb.Node, kdb, ndb storage.KeyValueStore) (*Routin
 		transport:    &defaultTransport,
 
 		mutex:            &sync.Mutex{},
-		seen:             make(map[storj.NodeID]*pb.Node),
+		seen:             make(map[czarcoin.NodeID]*pb.Node),
 		replacementCache: make(map[bucketID][]*pb.Node),
 
 		bucketSize:   *flagBucketSize,
@@ -91,7 +91,7 @@ func (rt *RoutingTable) CacheSize() int {
 
 // GetBucket retrieves the corresponding kbucket from node id
 // Note: id doesn't need to be stored at time of search
-func (rt *RoutingTable) GetBucket(id storj.NodeID) (bucket dht.Bucket, ok bool) {
+func (rt *RoutingTable) GetBucket(id czarcoin.NodeID) (bucket dht.Bucket, ok bool) {
 	bID, err := rt.getKBucketID(id)
 	if err != nil {
 		return &KBucket{}, false
@@ -135,7 +135,7 @@ func (rt *RoutingTable) GetBucketIds() (storage.Keys, error) {
 // FindNear returns the node corresponding to the provided nodeID
 // returns all Nodes closest via XOR to the provided nodeID up to the provided limit
 // always returns limit + self
-func (rt *RoutingTable) FindNear(id storj.NodeID, limit int) (nodes []*pb.Node, err error) {
+func (rt *RoutingTable) FindNear(id czarcoin.NodeID, limit int) (nodes []*pb.Node, err error) {
 	// if id is not in the routing table
 	nodeIDsKeys, err := rt.nodeBucketDB.List(nil, 0)
 	if err != nil {
@@ -145,7 +145,7 @@ func (rt *RoutingTable) FindNear(id storj.NodeID, limit int) (nodes []*pb.Node, 
 	if len(nodeIDsKeys) >= limit {
 		nodeIDsKeys = nodeIDsKeys[:limit]
 	}
-	nodeIDs, err := storj.NodeIDsFromBytes(nodeIDsKeys.ByteSlices())
+	nodeIDs, err := czarcoin.NodeIDsFromBytes(nodeIDsKeys.ByteSlices())
 	if err != nil {
 		return nodes, RoutingErr.Wrap(err)
 	}
@@ -162,7 +162,7 @@ func (rt *RoutingTable) FindNear(id storj.NodeID, limit int) (nodes []*pb.Node, 
 // a successful connection is made to the node on the network
 func (rt *RoutingTable) ConnectionSuccess(node *pb.Node) error {
 	// valid to connect to node without ID but don't store connection
-	if node.Id == (storj.NodeID{}) {
+	if node.Id == (czarcoin.NodeID{}) {
 		return nil
 	}
 

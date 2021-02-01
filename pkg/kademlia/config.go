@@ -11,10 +11,10 @@ import (
 	"go.uber.org/zap"
 	monkit "gopkg.in/spacemonkeygo/monkit.v2"
 
-	"storj.io/storj/pkg/node"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/provider"
-	"storj.io/storj/pkg/utils"
+	"czarcoin.org/czarcoin/pkg/node"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/utils"
 )
 
 var (
@@ -48,7 +48,7 @@ type FarmerConfig struct {
 // Config defines all of the things that are needed to start up Kademlia
 // server endpoints (and not necessarily client code).
 type Config struct {
-	BootstrapAddr   string `help:"the kademlia node to bootstrap against" default:"bootstrap-dev.storj.io:8080"`
+	BootstrapAddr   string `help:"the kademlia node to bootstrap against" default:"bootstrap-dev.czarcoin.org:8080"`
 	DBPath          string `help:"the path for our db services to be created on" default:"$CONFDIR/kademlia"`
 	Alpha           int    `help:"alpha is a system wide concurrency parameter." default:"5"`
 	ExternalAddress string `help:"the public address of the kademlia node; defaults to the gRPC server address." default:""`

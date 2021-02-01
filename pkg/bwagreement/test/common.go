@@ -13,8 +13,8 @@ import (
 	"github.com/gtank/cryptopasta"
 	"github.com/zeebo/errs"
 
-	"storj.io/storj/internal/teststorj"
-	"storj.io/storj/pkg/pb"
+	"czarcoin.org/czarcoin/internal/testczarcoin"
+	"czarcoin.org/czarcoin/pkg/pb"
 )
 
 //GeneratePayerBandwidthAllocation creates a signed PayerBandwidthAllocation from a PayerBandwidthAllocation_Action
@@ -27,8 +27,8 @@ func GeneratePayerBandwidthAllocation(action pb.PayerBandwidthAllocation_Action,
 	// Generate PayerBandwidthAllocation_Data
 	data, _ := proto.Marshal(
 		&pb.PayerBandwidthAllocation_Data{
-			SatelliteId:       teststorj.NodeIDFromString("SatelliteID"),
-			UplinkId:          teststorj.NodeIDFromString("UplinkID"),
+			SatelliteId:       testczarcoin.NodeIDFromString("SatelliteID"),
+			UplinkId:          testczarcoin.NodeIDFromString("UplinkID"),
 			ExpirationUnixSec: time.Now().Add(time.Hour * 24 * 10).Unix(),
 			SerialNumber:      "SerialNumber",
 			Action:            action,
@@ -67,7 +67,7 @@ func GenerateRenterBandwidthAllocation(pba *pb.PayerBandwidthAllocation, uplinkK
 		&pb.RenterBandwidthAllocation_Data{
 			PayerAllocation: pba,
 			PubKey:          pubbytes, // TODO: Take this out. It will be kept in a database on the satellite
-			StorageNodeId:   teststorj.NodeIDFromString("StorageNodeID"),
+			StorageNodeId:   testczarcoin.NodeIDFromString("StorageNodeID"),
 			Total:           int64(666),
 		},
 	)

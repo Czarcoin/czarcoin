@@ -11,10 +11,10 @@ import (
 	"github.com/zeebo/errs"
 	"go.uber.org/zap"
 
-	"storj.io/storj/pkg/cfgstruct"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/process"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/pkg/cfgstruct"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/process"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 var (
@@ -58,7 +58,7 @@ func cmdList(cmd *cobra.Command, args []string) (err error) {
 		return err
 	}
 
-	nodeIDs, err := storj.NodeIDsFromBytes(keys.ByteSlices())
+	nodeIDs, err := czarcoin.NodeIDsFromBytes(keys.ByteSlices())
 	if err != nil {
 		return err
 	}
@@ -94,7 +94,7 @@ func cmdAdd(cmd *cobra.Command, args []string) (err error) {
 	}
 
 	for i, a := range nodes {
-		id, err := storj.NodeIDFromString(i)
+		id, err := czarcoin.NodeIDFromString(i)
 		if err != nil {
 			zap.S().Error(err)
 		}

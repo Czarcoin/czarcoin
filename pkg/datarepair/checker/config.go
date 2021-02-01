@@ -9,13 +9,13 @@ import (
 
 	"go.uber.org/zap"
 
-	"storj.io/storj/pkg/datarepair/irreparabledb"
-	"storj.io/storj/pkg/datarepair/queue"
-	"storj.io/storj/pkg/overlay"
-	"storj.io/storj/pkg/pointerdb"
-	"storj.io/storj/pkg/provider"
-	"storj.io/storj/pkg/statdb"
-	"storj.io/storj/storage/redis"
+	"czarcoin.org/czarcoin/pkg/datarepair/irreparabledb"
+	"czarcoin.org/czarcoin/pkg/datarepair/queue"
+	"czarcoin.org/czarcoin/pkg/overlay"
+	"czarcoin.org/czarcoin/pkg/pointerdb"
+	"czarcoin.org/czarcoin/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/statdb"
+	"czarcoin.org/czarcoin/storage/redis"
 )
 
 // Config contains configurable values for checker

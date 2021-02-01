@@ -1,11 +1,11 @@
 ARG CGO_ENABLED=1
-ARG REPOSITORY=../storj.io/storj
-ARG PACKAGE=storj.io/storj/cmd/uplink
-FROM storjlabs/golang as build-env
+ARG REPOSITORY=../czarcoin.org/czarcoin
+ARG PACKAGE=czarcoin.org/czarcoin/cmd/uplink
+FROM czarcoin/golang as build-env
 
 # final stage
 FROM alpine
-ENV CONF_PATH=/root/.storj/uplink/config.yaml \
+ENV CONF_PATH=/root/.czarcoin/uplink/config.yaml \
     API_KEY= \
     SATELLITE_ADDR=
 EXPOSE 7776/udp \

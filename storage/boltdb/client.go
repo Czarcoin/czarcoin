@@ -10,8 +10,8 @@ import (
 
 	"github.com/boltdb/bolt"
 
-	"storj.io/storj/pkg/utils"
-	"storj.io/storj/storage"
+	"czarcoin.org/czarcoin/pkg/utils"
+	"czarcoin.org/czarcoin/storage"
 )
 
 // Client is the entrypoint into a bolt data store

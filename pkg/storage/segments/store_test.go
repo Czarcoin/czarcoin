@@ -13,17 +13,17 @@ import (
 	"github.com/golang/protobuf/ptypes"
 	"github.com/stretchr/testify/assert"
 
-	"storj.io/storj/internal/teststorj"
-	"storj.io/storj/pkg/eestream"
-	"storj.io/storj/pkg/eestream/mocks"
-	mock_overlay "storj.io/storj/pkg/overlay/mocks"
-	"storj.io/storj/pkg/pb"
-	pdb "storj.io/storj/pkg/pointerdb/pdbclient"
-	"storj.io/storj/pkg/pointerdb/pdbclient/mocks"
-	"storj.io/storj/pkg/ranger"
-	"storj.io/storj/pkg/storage/ec/mocks"
-	"storj.io/storj/pkg/storage/meta"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/internal/testczarcoin"
+	"czarcoin.org/czarcoin/pkg/eestream"
+	"czarcoin.org/czarcoin/pkg/eestream/mocks"
+	mock_overlay "czarcoin.org/czarcoin/pkg/overlay/mocks"
+	"czarcoin.org/czarcoin/pkg/pb"
+	pdb "czarcoin.org/czarcoin/pkg/pointerdb/pdbclient"
+	"czarcoin.org/czarcoin/pkg/pointerdb/pdbclient/mocks"
+	"czarcoin.org/czarcoin/pkg/ranger"
+	"czarcoin.org/czarcoin/pkg/storage/ec/mocks"
+	"czarcoin.org/czarcoin/pkg/storage/meta"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 var (
@@ -113,7 +113,7 @@ func TestSegmentStorePutRemote(t *testing.T) {
 			mockOC.EXPECT().Choose(
 				gomock.Any(), gomock.Any(),
 			).Return([]*pb.Node{
-				{Id: teststorj.NodeIDFromString("im-a-node")},
+				{Id: testczarcoin.NodeIDFromString("im-a-node")},
 			}, nil),
 			mockPDB.EXPECT().SignedMessage(),
 			mockPDB.EXPECT().PayerBandwidthAllocation(gomock.Any(), gomock.Any()),
@@ -132,7 +132,7 @@ func TestSegmentStorePutRemote(t *testing.T) {
 		}
 		gomock.InOrder(calls...)
 
-		_, err := ss.Put(ctx, strings.NewReader(tt.readerContent), tt.expiration, func() (storj.Path, []byte, error) {
+		_, err := ss.Put(ctx, strings.NewReader(tt.readerContent), tt.expiration, func() (czarcoin.Path, []byte, error) {
 			return tt.pathInput, tt.mdInput, nil
 		})
 		assert.NoError(t, err, tt.name)
@@ -174,7 +174,7 @@ func TestSegmentStorePutInline(t *testing.T) {
 		}
 		gomock.InOrder(calls...)
 
-		_, err := ss.Put(ctx, strings.NewReader(tt.readerContent), tt.expiration, func() (storj.Path, []byte, error) {
+		_, err := ss.Put(ctx, strings.NewReader(tt.readerContent), tt.expiration, func() (czarcoin.Path, []byte, error) {
 			return tt.pathInput, tt.mdInput, nil
 		})
 		assert.NoError(t, err, tt.name)
@@ -258,8 +258,8 @@ func TestSegmentStoreRepairRemote(t *testing.T) {
 			[]byte("metadata"),
 			[]int32{},
 			[]*pb.Node{
-				teststorj.MockNode("1"),
-				teststorj.MockNode("2"),
+				testczarcoin.MockNode("1"),
+				testczarcoin.MockNode("2"),
 			},
 			"abcdefghijkl",
 			12,

@@ -8,10 +8,10 @@ import (
 
 	"github.com/zeebo/errs"
 
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/provider"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/pkg/transport"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/pkg/transport"
 )
 
 // Client is the interface that defines an overlay client.
@@ -28,8 +28,8 @@ var ClientError = errs.Class("Client Error")
 //Client implements the Overlay Client interface
 type Client interface {
 	Choose(ctx context.Context, op Options) ([]*pb.Node, error)
-	Lookup(ctx context.Context, nodeID storj.NodeID) (*pb.Node, error)
-	BulkLookup(ctx context.Context, nodeIDs storj.NodeIDList) ([]*pb.Node, error)
+	Lookup(ctx context.Context, nodeID czarcoin.NodeID) (*pb.Node, error)
+	BulkLookup(ctx context.Context, nodeIDs czarcoin.NodeIDList) ([]*pb.Node, error)
 }
 
 // Overlay is the overlay concrete implementation of the client interface
@@ -45,7 +45,7 @@ type Options struct {
 	UptimeCount  int64
 	AuditSuccess float64
 	AuditCount   int64
-	Excluded     storj.NodeIDList
+	Excluded     czarcoin.NodeIDList
 }
 
 // NewOverlayClient returns a new intialized Overlay Client
@@ -69,7 +69,7 @@ var _ Client = (*Overlay)(nil)
 
 // Choose implements the client.Choose interface
 func (o *Overlay) Choose(ctx context.Context, op Options) ([]*pb.Node, error) {
-	var exIDs storj.NodeIDList
+	var exIDs czarcoin.NodeIDList
 	exIDs = append(exIDs, op.Excluded...)
 	// TODO(coyle): We will also need to communicate with the reputation service here
 	resp, err := o.client.FindStorageNodes(ctx, &pb.FindStorageNodesRequest{
@@ -93,7 +93,7 @@ func (o *Overlay) Choose(ctx context.Context, op Options) ([]*pb.Node, error) {
 }
 
 // Lookup provides a Node with the given ID
-func (o *Overlay) Lookup(ctx context.Context, nodeID storj.NodeID) (*pb.Node, error) {
+func (o *Overlay) Lookup(ctx context.Context, nodeID czarcoin.NodeID) (*pb.Node, error) {
 	resp, err := o.client.Lookup(ctx, &pb.LookupRequest{NodeId: nodeID})
 	if err != nil {
 		return nil, err
@@ -103,7 +103,7 @@ func (o *Overlay) Lookup(ctx context.Context, nodeID storj.NodeID) (*pb.Node, er
 }
 
 // BulkLookup provides a list of Nodes with the given IDs
-func (o *Overlay) BulkLookup(ctx context.Context, nodeIDs storj.NodeIDList) ([]*pb.Node, error) {
+func (o *Overlay) BulkLookup(ctx context.Context, nodeIDs czarcoin.NodeIDList) ([]*pb.Node, error) {
 	var reqs pb.LookupRequests
 	for _, v := range nodeIDs {
 		reqs.LookupRequest = append(reqs.LookupRequest, &pb.LookupRequest{NodeId: v})

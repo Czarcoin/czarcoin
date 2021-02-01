@@ -11,14 +11,14 @@ import (
 	"github.com/zeebo/errs"
 	"go.uber.org/zap"
 
-	"storj.io/storj/pkg/node"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/pkg/node"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 type peerDiscovery struct {
 	client node.Client
-	target storj.NodeID
+	target czarcoin.NodeID
 	opts   discoveryOptions
 
 	cond  sync.Cond
@@ -28,7 +28,7 @@ type peerDiscovery struct {
 // ErrMaxRetries is used when a lookup has been retried the max number of times
 var ErrMaxRetries = errs.Class("max retries exceeded for id:")
 
-func newPeerDiscovery(nodes []*pb.Node, client node.Client, target storj.NodeID, opts discoveryOptions) *peerDiscovery {
+func newPeerDiscovery(nodes []*pb.Node, client node.Client, target czarcoin.NodeID, opts discoveryOptions) *peerDiscovery {
 	discovery := &peerDiscovery{
 		client: client,
 		target: target,
@@ -130,26 +130,26 @@ func isDone(ctx context.Context) bool {
 type discoveryQueue struct {
 	maxLen int
 	mu     sync.Mutex
-	added  map[storj.NodeID]int
+	added  map[czarcoin.NodeID]int
 	items  []queueItem
 }
 
 // queueItem is node with a priority
 type queueItem struct {
 	node     *pb.Node
-	priority storj.NodeID
+	priority czarcoin.NodeID
 }
 
 // newDiscoveryQueue returns a items with priority based on XOR from targetBytes
 func newDiscoveryQueue(size int) *discoveryQueue {
 	return &discoveryQueue{
-		added:  make(map[storj.NodeID]int),
+		added:  make(map[czarcoin.NodeID]int),
 		maxLen: size,
 	}
 }
 
 // Insert adds nodes into the queue.
-func (queue *discoveryQueue) Insert(target storj.NodeID, nodes ...*pb.Node) {
+func (queue *discoveryQueue) Insert(target czarcoin.NodeID, nodes ...*pb.Node) {
 	queue.mu.Lock()
 	defer queue.mu.Unlock()
 
@@ -172,7 +172,7 @@ func (queue *discoveryQueue) Insert(target storj.NodeID, nodes ...*pb.Node) {
 }
 
 // Reinsert adds a Nodes into the queue, only if it's has been added less than limit times.
-func (queue *discoveryQueue) Reinsert(target storj.NodeID, node *pb.Node, limit int) bool {
+func (queue *discoveryQueue) Reinsert(target czarcoin.NodeID, node *pb.Node, limit int) bool {
 	queue.mu.Lock()
 	defer queue.mu.Unlock()
 
@@ -187,7 +187,7 @@ func (queue *discoveryQueue) Reinsert(target storj.NodeID, node *pb.Node, limit 
 }
 
 // insert must hold lock while adding
-func (queue *discoveryQueue) insert(target storj.NodeID, nodes ...*pb.Node) {
+func (queue *discoveryQueue) insert(target czarcoin.NodeID, nodes ...*pb.Node) {
 	for _, node := range nodes {
 		queue.items = append(queue.items, queueItem{
 			node:     node,
@@ -227,8 +227,8 @@ func (queue *discoveryQueue) Len() int {
 }
 
 // xorNodeID returns the xor of each byte in NodeID
-func xorNodeID(a, b storj.NodeID) storj.NodeID {
-	r := storj.NodeID{}
+func xorNodeID(a, b czarcoin.NodeID) czarcoin.NodeID {
+	r := czarcoin.NodeID{}
 	for i, av := range a {
 		r[i] = av ^ b[i]
 	}

@@ -7,7 +7,7 @@ import (
 	"math/rand"
 	"testing"
 
-	"storj.io/storj/storage"
+	"czarcoin.org/czarcoin/storage"
 )
 
 func testPrefix(t *testing.T, store storage.KeyValueStore) {

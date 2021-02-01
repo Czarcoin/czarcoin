@@ -6,8 +6,8 @@ package psserver
 import (
 	"github.com/gogo/protobuf/proto"
 
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/utils"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/utils"
 )
 
 // StreamWriter -- Struct for writing piece to server upload stream

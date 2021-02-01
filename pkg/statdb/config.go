@@ -8,7 +8,7 @@ import (
 
 	"go.uber.org/zap"
 
-	"storj.io/storj/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/provider"
 )
 
 //CtxKey Used as statdb key

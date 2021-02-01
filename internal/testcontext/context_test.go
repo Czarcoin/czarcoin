@@ -10,7 +10,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"storj.io/storj/internal/testcontext"
+	"czarcoin.org/czarcoin/internal/testcontext"
 )
 
 func TestBasic(t *testing.T) {

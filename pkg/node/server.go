@@ -8,8 +8,8 @@ import (
 
 	"go.uber.org/zap"
 
-	"storj.io/storj/pkg/dht"
-	"storj.io/storj/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/dht"
+	"czarcoin.org/czarcoin/pkg/pb"
 )
 
 // Server implements the grpc Node Server

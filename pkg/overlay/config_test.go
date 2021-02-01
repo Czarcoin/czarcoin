@@ -8,8 +8,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"storj.io/storj/pkg/kademlia"
-	"storj.io/storj/pkg/statdb"
+	"czarcoin.org/czarcoin/pkg/kademlia"
+	"czarcoin.org/czarcoin/pkg/statdb"
 )
 
 func TestRun(t *testing.T) {

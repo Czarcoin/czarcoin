@@ -14,15 +14,15 @@ import (
 	"github.com/gogo/protobuf/proto"
 	"github.com/spf13/cobra"
 
-	"storj.io/storj/internal/fpath"
-	"storj.io/storj/pkg/cfgstruct"
-	"storj.io/storj/pkg/kademlia"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/piecestore/psserver"
-	"storj.io/storj/pkg/piecestore/psserver/psdb"
-	"storj.io/storj/pkg/process"
-	"storj.io/storj/pkg/provider"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/internal/fpath"
+	"czarcoin.org/czarcoin/pkg/cfgstruct"
+	"czarcoin.org/czarcoin/pkg/kademlia"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/piecestore/psserver"
+	"czarcoin.org/czarcoin/pkg/piecestore/psserver/psdb"
+	"czarcoin.org/czarcoin/pkg/process"
+	"czarcoin.org/czarcoin/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 var (
@@ -61,11 +61,11 @@ var (
 	}
 
 	defaultConfDir string
-	defaultDiagDir = "$HOME/.storj/capt/f37/data"
+	defaultDiagDir = "$HOME/.czarcoin/capt/f37/data"
 )
 
 func init() {
-	defaultConfDir = fpath.ApplicationDir("storj", "storagenode")
+	defaultConfDir = fpath.ApplicationDir("czarcoin", "storagenode")
 	rootCmd.AddCommand(runCmd)
 	rootCmd.AddCommand(setupCmd)
 	rootCmd.AddCommand(diagCmd)
@@ -147,8 +147,8 @@ func cmdDiag(cmd *cobra.Command, args []string) (err error) {
 	}
 
 	// attributes per satelliteid
-	summaries := make(map[storj.NodeID]*SatelliteSummary)
-	satelliteIDs := storj.NodeIDList{}
+	summaries := make(map[czarcoin.NodeID]*SatelliteSummary)
+	satelliteIDs := czarcoin.NodeIDList{}
 
 	for _, rbaVal := range bwAgreements {
 		for _, rbaDataVal := range rbaVal {

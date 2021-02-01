@@ -6,7 +6,7 @@ package testqueue
 import (
 	"testing"
 
-	"storj.io/storj/storage/testsuite"
+	"czarcoin.org/czarcoin/storage/testsuite"
 )
 
 func TestQueue(t *testing.T) {

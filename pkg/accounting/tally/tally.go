@@ -10,16 +10,16 @@ import (
 	"github.com/gogo/protobuf/proto"
 	"go.uber.org/zap"
 
-	"storj.io/storj/pkg/accounting"
-	dbx "storj.io/storj/pkg/accounting/dbx"
-	"storj.io/storj/pkg/bwagreement"
-	"storj.io/storj/pkg/kademlia"
-	"storj.io/storj/pkg/node"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/pointerdb"
-	"storj.io/storj/pkg/provider"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/storage"
+	"czarcoin.org/czarcoin/pkg/accounting"
+	dbx "czarcoin.org/czarcoin/pkg/accounting/dbx"
+	"czarcoin.org/czarcoin/pkg/bwagreement"
+	"czarcoin.org/czarcoin/pkg/kademlia"
+	"czarcoin.org/czarcoin/pkg/node"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/pointerdb"
+	"czarcoin.org/czarcoin/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/storage"
 )
 
 // Tally is the service for accounting for data stored on each storage node
@@ -99,7 +99,7 @@ func (t *tally) identifyActiveNodes(ctx context.Context) (err error) {
 					return Error.Wrap(err)
 				}
 				pieces := pointer.Remote.RemotePieces
-				var nodeIDs storj.NodeIDList
+				var nodeIDs czarcoin.NodeIDList
 				for _, p := range pieces {
 					nodeIDs = append(nodeIDs, p.NodeId)
 				}
@@ -115,7 +115,7 @@ func (t *tally) identifyActiveNodes(ctx context.Context) (err error) {
 	return err
 }
 
-func (t *tally) onlineNodes(ctx context.Context, nodeIDs storj.NodeIDList) (online []*pb.Node, err error) {
+func (t *tally) onlineNodes(ctx context.Context, nodeIDs czarcoin.NodeIDList) (online []*pb.Node, err error) {
 	responses, err := t.overlay.BulkLookup(ctx, pb.NodeIDsToLookupRequests(nodeIDs))
 	if err != nil {
 		return []*pb.Node{}, err
@@ -157,13 +157,13 @@ func (t *tally) tallyAtRestStorage(ctx context.Context, pointer *pb.Pointer, nod
 	}
 }
 
-func (t *tally) needToContact(id storj.NodeID) bool {
+func (t *tally) needToContact(id czarcoin.NodeID) bool {
 	//TODO
 	//check db if node was updated within the last time period
 	return true
 }
 
-func (t *tally) updateGranularTable(id storj.NodeID, pieceSize int64) error {
+func (t *tally) updateGranularTable(id czarcoin.NodeID, pieceSize int64) error {
 	//TODO
 	return nil
 }

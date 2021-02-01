@@ -9,7 +9,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"storj.io/storj/pkg/process"
+	"czarcoin.org/czarcoin/pkg/process"
 )
 
 func main() {

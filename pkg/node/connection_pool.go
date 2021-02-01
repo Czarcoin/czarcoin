@@ -12,11 +12,11 @@ import (
 	"github.com/zeebo/errs"
 	"google.golang.org/grpc"
 
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/provider"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/pkg/transport"
-	"storj.io/storj/pkg/utils"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/pkg/transport"
+	"czarcoin.org/czarcoin/pkg/utils"
 )
 
 // Error defines a connection pool error
@@ -26,7 +26,7 @@ var Error = errs.Class("connection pool error")
 type ConnectionPool struct {
 	tc    transport.Client
 	mu    sync.RWMutex
-	items map[storj.NodeID]*Conn
+	items map[czarcoin.NodeID]*Conn
 }
 
 // Conn is the connection that is stored in the connection pool
@@ -46,14 +46,14 @@ func NewConn(addr string) *Conn { return &Conn{addr: addr} }
 func NewConnectionPool(identity *provider.FullIdentity) *ConnectionPool {
 	return &ConnectionPool{
 		tc:    transport.NewClient(identity),
-		items: make(map[storj.NodeID]*Conn),
+		items: make(map[czarcoin.NodeID]*Conn),
 		mu:    sync.RWMutex{},
 	}
 }
 
 // Get retrieves a node connection with the provided nodeID
 // nil is returned if the NodeID is not in the connection pool
-func (pool *ConnectionPool) Get(id storj.NodeID) (interface{}, error) {
+func (pool *ConnectionPool) Get(id czarcoin.NodeID) (interface{}, error) {
 	pool.mu.Lock()
 	defer pool.mu.Unlock()
 
@@ -66,7 +66,7 @@ func (pool *ConnectionPool) Get(id storj.NodeID) (interface{}, error) {
 }
 
 // Disconnect deletes a connection associated with the provided NodeID
-func (pool *ConnectionPool) Disconnect(id storj.NodeID) error {
+func (pool *ConnectionPool) Disconnect(id czarcoin.NodeID) error {
 	pool.mu.Lock()
 	defer pool.mu.Unlock()
 
@@ -74,7 +74,7 @@ func (pool *ConnectionPool) Disconnect(id storj.NodeID) error {
 
 }
 
-func (pool *ConnectionPool) disconnect(id storj.NodeID) error {
+func (pool *ConnectionPool) disconnect(id czarcoin.NodeID) error {
 	conn, ok := pool.items[id]
 	if !ok {
 		return nil
@@ -138,6 +138,6 @@ func (pool *ConnectionPool) DisconnectAll() error {
 // Init initializes the cache
 func (pool *ConnectionPool) Init() {
 	pool.mu.Lock()
-	pool.items = make(map[storj.NodeID]*Conn)
+	pool.items = make(map[czarcoin.NodeID]*Conn)
 	pool.mu.Unlock()
 }

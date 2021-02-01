@@ -9,7 +9,7 @@ import (
 	"sort"
 	"sync"
 
-	"storj.io/storj/storage"
+	"czarcoin.org/czarcoin/storage"
 )
 
 var errInternal = errors.New("internal error")

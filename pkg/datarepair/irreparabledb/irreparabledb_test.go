@@ -12,17 +12,17 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"storj.io/storj/internal/testcontext"
-	"storj.io/storj/pkg/datarepair/irreparabledb"
+	"czarcoin.org/czarcoin/internal/testcontext"
+	"czarcoin.org/czarcoin/pkg/datarepair/irreparabledb"
 )
 
 const (
 	// postgres connstring that works with docker-compose
-	defaultPostgresConn = "postgres://storj:storj-pass@test-postgres/teststorj?sslmode=disable"
+	defaultPostgresConn = "postgres://czarcoin:czarcoin-pass@test-postgres/testczarcoin?sslmode=disable"
 )
 
 var (
-	testPostgres = flag.String("postgres-test-db", os.Getenv("STORJ_POSTGRES_TEST"), "PostgreSQL test database connection string")
+	testPostgres = flag.String("postgres-test-db", os.Getenv("CZARCOIN_POSTGRES_TEST"), "PostgreSQL test database connection string")
 )
 
 func TestPostgres(t *testing.T) {

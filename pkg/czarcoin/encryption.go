@@ -1,7 +1,7 @@
 // Copyright (C) 2018 Storj Labs, Inc.
 // See LICENSE for copying information.
 
-package storj
+package czarcoin
 
 // EncryptionScheme is the scheme and parameters used for encryption
 type EncryptionScheme struct {

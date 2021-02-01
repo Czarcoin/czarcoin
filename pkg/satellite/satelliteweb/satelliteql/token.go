@@ -6,8 +6,8 @@ package satelliteql
 import (
 	"github.com/graphql-go/graphql"
 
-	"storj.io/storj/pkg/auth"
-	"storj.io/storj/pkg/satellite"
+	"czarcoin.org/czarcoin/pkg/auth"
+	"czarcoin.org/czarcoin/pkg/satellite"
 )
 
 const (

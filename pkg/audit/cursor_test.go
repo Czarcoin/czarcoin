@@ -16,16 +16,16 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 
-	"storj.io/storj/internal/identity"
-	"storj.io/storj/internal/teststorj"
-	"storj.io/storj/pkg/auth"
-	"storj.io/storj/pkg/overlay"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/pointerdb"
-	"storj.io/storj/pkg/pointerdb/pdbclient"
-	"storj.io/storj/pkg/storage/meta"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/storage/teststore"
+	"czarcoin.org/czarcoin/internal/identity"
+	"czarcoin.org/czarcoin/internal/testczarcoin"
+	"czarcoin.org/czarcoin/pkg/auth"
+	"czarcoin.org/czarcoin/pkg/overlay"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/pointerdb"
+	"czarcoin.org/czarcoin/pkg/pointerdb/pdbclient"
+	"czarcoin.org/czarcoin/pkg/storage/meta"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/storage/teststore"
 )
 
 var (
@@ -65,7 +65,7 @@ func (pbd *pointerDBWrapper) PayerBandwidthAllocation(ctx context.Context, in *p
 
 func TestAuditSegment(t *testing.T) {
 	type pathCount struct {
-		path  storj.Path
+		path  czarcoin.Path
 		count int
 	}
 
@@ -79,7 +79,7 @@ func TestAuditSegment(t *testing.T) {
 	// list api call, default is  0 == 1000 listing
 	tests := []struct {
 		bm   string
-		path storj.Path
+		path czarcoin.Path
 	}{
 		{
 			bm:   "success-1",
@@ -237,11 +237,11 @@ func TestAuditSegment(t *testing.T) {
 	})
 }
 
-func makePutRequest(path storj.Path) pb.PutRequest {
+func makePutRequest(path czarcoin.Path) pb.PutRequest {
 	var rps []*pb.RemotePiece
 	rps = append(rps, &pb.RemotePiece{
 		PieceNum: 1,
-		NodeId:   teststorj.NodeIDFromString("testId"),
+		NodeId:   testczarcoin.NodeIDFromString("testId"),
 	})
 	pr := pb.PutRequest{
 		Path: path,

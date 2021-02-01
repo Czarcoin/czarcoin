@@ -17,14 +17,14 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 
-	"storj.io/storj/pkg/dht"
-	"storj.io/storj/pkg/node"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/provider"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/pkg/utils"
-	"storj.io/storj/storage"
-	"storj.io/storj/storage/boltdb"
+	"czarcoin.org/czarcoin/pkg/dht"
+	"czarcoin.org/czarcoin/pkg/node"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/pkg/utils"
+	"czarcoin.org/czarcoin/storage"
+	"czarcoin.org/czarcoin/storage/boltdb"
 )
 
 var (
@@ -58,7 +58,7 @@ type Kademlia struct {
 }
 
 // NewKademlia returns a newly configured Kademlia instance
-func NewKademlia(id storj.NodeID, nodeType pb.NodeType, bootstrapNodes []pb.Node, address string, metadata *pb.NodeMetadata, identity *provider.FullIdentity, path string, alpha int) (*Kademlia, error) {
+func NewKademlia(id czarcoin.NodeID, nodeType pb.NodeType, bootstrapNodes []pb.Node, address string, metadata *pb.NodeMetadata, identity *provider.FullIdentity, path string, alpha int) (*Kademlia, error) {
 	self := pb.Node{
 		Id:       id,
 		Type:     nodeType,
@@ -125,14 +125,14 @@ func (k *Kademlia) Disconnect() error {
 
 // GetNodes returns all nodes from a starting node up to a maximum limit
 // stored in the local routing table limiting the result by the specified restrictions
-func (k *Kademlia) GetNodes(ctx context.Context, start storj.NodeID, limit int, restrictions ...pb.Restriction) ([]*pb.Node, error) {
+func (k *Kademlia) GetNodes(ctx context.Context, start czarcoin.NodeID, limit int, restrictions ...pb.Restriction) ([]*pb.Node, error) {
 	nodes := []*pb.Node{}
 	iteratorMethod := func(it storage.Iterator) error {
 		var item storage.ListItem
 		maxLimit := storage.LookupLimit
 		for ; maxLimit > 0 && it.Next(&item); maxLimit-- {
 			var (
-				id   storj.NodeID
+				id   czarcoin.NodeID
 				node = &pb.Node{}
 			)
 			err := id.Unmarshal(item.Key)
@@ -189,7 +189,7 @@ func (k *Kademlia) Bootstrap(ctx context.Context) error {
 	})
 }
 
-func (k *Kademlia) lookup(ctx context.Context, target storj.NodeID, opts discoveryOptions) error {
+func (k *Kademlia) lookup(ctx context.Context, target czarcoin.NodeID, opts discoveryOptions) error {
 	kb := k.routingTable.K()
 	// look in routing table for targetID
 	nodes, err := k.routingTable.FindNear(target, kb)
@@ -230,7 +230,7 @@ func (k *Kademlia) Ping(ctx context.Context, node pb.Node) (pb.Node, error) {
 
 // FindNode looks up the provided NodeID first in the local Node, and if it is not found
 // begins searching the network for the NodeID. Returns and error if node was not found
-func (k *Kademlia) FindNode(ctx context.Context, ID storj.NodeID) (pb.Node, error) {
+func (k *Kademlia) FindNode(ctx context.Context, ID czarcoin.NodeID) (pb.Node, error) {
 	kb := k.routingTable.K()
 	nodes, err := k.routingTable.FindNear(ID, kb)
 	if err != nil {
@@ -288,7 +288,7 @@ func (k *Kademlia) Seen() []*pb.Node {
 // GetIntroNode determines the best node to bootstrap a new node onto the network
 func GetIntroNode(addr string) (*pb.Node, error) {
 	if addr == "" {
-		addr = "bootstrap.storj.io:8080"
+		addr = "bootstrap.czarcoin.org:8080"
 	}
 
 	return &pb.Node{

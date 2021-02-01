@@ -10,7 +10,7 @@ import (
 	"github.com/graphql-go/graphql"
 	"go.uber.org/zap"
 
-	"storj.io/storj/pkg/satellite"
+	"czarcoin.org/czarcoin/pkg/satellite"
 )
 
 // GatewayConfig contains configuration for gateway

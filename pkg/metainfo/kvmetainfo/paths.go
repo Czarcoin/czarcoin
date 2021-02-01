@@ -6,7 +6,7 @@ package kvmetainfo
 import (
 	"fmt"
 
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 // TODO: known issue:
@@ -33,6 +33,6 @@ func keyAfter(cursor string) string {
 }
 
 // getSegmentPath returns the unique path for a particular segment
-func getSegmentPath(encryptedPath storj.Path, segNum int64) storj.Path {
-	return storj.JoinPaths(fmt.Sprintf("s%d", segNum), encryptedPath)
+func getSegmentPath(encryptedPath czarcoin.Path, segNum int64) czarcoin.Path {
+	return czarcoin.JoinPaths(fmt.Sprintf("s%d", segNum), encryptedPath)
 }

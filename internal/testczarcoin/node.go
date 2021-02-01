@@ -1,29 +1,29 @@
 // Copyright (C) 2018 Storj Labs, Inc.
 // See LICENSE for copying information.
 
-package teststorj
+package testczarcoin
 
 import (
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 // NodeIDFromBytes returns a node ID consisting of the bytes
 // and padding to the node ID length
-func NodeIDFromBytes(b []byte) storj.NodeID {
-	id, _ := storj.NodeIDFromBytes(fit(b))
+func NodeIDFromBytes(b []byte) czarcoin.NodeID {
+	id, _ := czarcoin.NodeIDFromBytes(fit(b))
 	return id
 }
 
 // NodeIDFromString returns node ID consisting of the strings
 // and padding to the node ID length
-func NodeIDFromString(s string) storj.NodeID {
+func NodeIDFromString(s string) czarcoin.NodeID {
 	return NodeIDFromBytes([]byte(s))
 }
 
 // NodeIDsFromBytes returns node IDs consisting of the byte slices
 // and padding to the node ID length
-func NodeIDsFromBytes(bs ...[]byte) (ids storj.NodeIDList) {
+func NodeIDsFromBytes(bs ...[]byte) (ids czarcoin.NodeIDList) {
 	for _, b := range bs {
 		ids = append(ids, NodeIDFromBytes(b))
 	}
@@ -32,7 +32,7 @@ func NodeIDsFromBytes(bs ...[]byte) (ids storj.NodeIDList) {
 
 // NodeIDsFromStrings returns node IDs consisting of the strings
 // and padding to the node ID length
-func NodeIDsFromStrings(strs ...string) (ids storj.NodeIDList) {
+func NodeIDsFromStrings(strs ...string) (ids czarcoin.NodeIDList) {
 	for _, s := range strs {
 		ids = append(ids, NodeIDFromString(s))
 	}
@@ -41,7 +41,7 @@ func NodeIDsFromStrings(strs ...string) (ids storj.NodeIDList) {
 
 // used to pad node IDs
 func fit(b []byte) []byte {
-	l := len(storj.NodeID{})
+	l := len(czarcoin.NodeID{})
 	if len(b) < l {
 		return fit(append(b, 255))
 		// return fit(append([]byte{1}, b...))

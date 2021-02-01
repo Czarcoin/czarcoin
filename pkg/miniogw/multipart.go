@@ -15,7 +15,7 @@ import (
 	minio "github.com/minio/minio/cmd"
 	"github.com/minio/minio/pkg/hash"
 
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 func (layer *gatewayLayer) NewMultipartUpload(ctx context.Context, bucket, object string, metadata map[string]string) (uploadID string, err error) {
@@ -32,7 +32,7 @@ func (layer *gatewayLayer) NewMultipartUpload(ctx context.Context, bucket, objec
 		contentType := metadata["content-type"]
 		delete(metadata, "content-type")
 
-		createInfo := storj.CreateObject{
+		createInfo := czarcoin.CreateObject{
 			ContentType:      contentType,
 			Metadata:         metadata,
 			RedundancyScheme: layer.gateway.redundancy,

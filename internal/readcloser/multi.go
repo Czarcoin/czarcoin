@@ -6,7 +6,7 @@ package readcloser
 import (
 	"io"
 
-	"storj.io/storj/pkg/utils"
+	"czarcoin.org/czarcoin/pkg/utils"
 )
 
 type eofReadCloser struct{}

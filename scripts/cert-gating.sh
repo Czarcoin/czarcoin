@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 source $(dirname $0)/utils.sh
-basepath=$HOME/.storj/capt
+basepath=$HOME/.czarcoin/capt
 alpha_config=$basepath/config-alpha.yaml
 unauthorized_config=$basepath/config-unauthorized.yaml
 ca_whitelist=$basepath/ca-alpha-whitelist.cert

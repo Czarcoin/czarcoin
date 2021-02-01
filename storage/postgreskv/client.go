@@ -10,9 +10,9 @@ import (
 	"github.com/lib/pq"
 	"github.com/zeebo/errs"
 
-	"storj.io/storj/pkg/utils"
-	"storj.io/storj/storage"
-	"storj.io/storj/storage/postgreskv/schema"
+	"czarcoin.org/czarcoin/pkg/utils"
+	"czarcoin.org/czarcoin/storage"
+	"czarcoin.org/czarcoin/storage/postgreskv/schema"
 )
 
 const (

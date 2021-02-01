@@ -6,9 +6,9 @@ package accounting
 import (
 	"github.com/zeebo/errs"
 
-	"storj.io/storj/internal/migrate"
-	dbx "storj.io/storj/pkg/accounting/dbx"
-	"storj.io/storj/pkg/utils"
+	"czarcoin.org/czarcoin/internal/migrate"
+	dbx "czarcoin.org/czarcoin/pkg/accounting/dbx"
+	"czarcoin.org/czarcoin/pkg/utils"
 )
 
 var (

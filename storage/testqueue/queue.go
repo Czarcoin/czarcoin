@@ -7,7 +7,7 @@ import (
 	"container/list"
 	"sync"
 
-	"storj.io/storj/storage"
+	"czarcoin.org/czarcoin/storage"
 )
 
 //Queue is a threadsafe FIFO queue implementing storage.Queue

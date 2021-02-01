@@ -10,9 +10,9 @@ import (
 	"github.com/skyrings/skyring-common/tools/uuid"
 	"github.com/stretchr/testify/assert"
 
-	"storj.io/storj/internal/testcontext"
-	"storj.io/storj/pkg/satellite"
-	"storj.io/storj/pkg/satellite/satellitedb/dbx"
+	"czarcoin.org/czarcoin/internal/testcontext"
+	"czarcoin.org/czarcoin/pkg/satellite"
+	"czarcoin.org/czarcoin/pkg/satellite/satellitedb/dbx"
 )
 
 func TestUserRepository(t *testing.T) {

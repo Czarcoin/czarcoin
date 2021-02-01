@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"storj.io/storj/pkg/ranger"
+	"czarcoin.org/czarcoin/pkg/ranger"
 )
 
 func TestPad(t *testing.T) {

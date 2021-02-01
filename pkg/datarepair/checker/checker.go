@@ -10,14 +10,14 @@ import (
 	"github.com/gogo/protobuf/proto"
 	"go.uber.org/zap"
 
-	"storj.io/storj/pkg/datarepair/irreparabledb"
-	"storj.io/storj/pkg/datarepair/queue"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/pointerdb"
-	"storj.io/storj/pkg/statdb"
-	statpb "storj.io/storj/pkg/statdb/proto"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/storage"
+	"czarcoin.org/czarcoin/pkg/datarepair/irreparabledb"
+	"czarcoin.org/czarcoin/pkg/datarepair/queue"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/pointerdb"
+	"czarcoin.org/czarcoin/pkg/statdb"
+	statpb "czarcoin.org/czarcoin/pkg/statdb/proto"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/storage"
 )
 
 // Checker is the interface for data repair checker
@@ -96,7 +96,7 @@ func (c *checker) identifyInjuredSegments(ctx context.Context) (err error) {
 					c.logger.Debug("no pieces on remote segment")
 					continue
 				}
-				var nodeIDs storj.NodeIDList
+				var nodeIDs czarcoin.NodeIDList
 				for _, p := range pieces {
 					nodeIDs = append(nodeIDs, p.NodeId)
 				}
@@ -147,7 +147,7 @@ func (c *checker) identifyInjuredSegments(ctx context.Context) (err error) {
 }
 
 // returns the indices of offline nodes
-func (c *checker) offlineNodes(ctx context.Context, nodeIDs storj.NodeIDList) (offline []int32, err error) {
+func (c *checker) offlineNodes(ctx context.Context, nodeIDs czarcoin.NodeIDList) (offline []int32, err error) {
 	responses, err := c.overlay.BulkLookup(ctx, pb.NodeIDsToLookupRequests(nodeIDs))
 	if err != nil {
 		return []int32{}, err
@@ -162,7 +162,7 @@ func (c *checker) offlineNodes(ctx context.Context, nodeIDs storj.NodeIDList) (o
 }
 
 // Find invalidNodes by checking the audit results that are place in statdb
-func (c *checker) invalidNodes(ctx context.Context, nodeIDs storj.NodeIDList) (invalidNodes []int32, err error) {
+func (c *checker) invalidNodes(ctx context.Context, nodeIDs czarcoin.NodeIDList) (invalidNodes []int32, err error) {
 	// filter if nodeIDs have invalid pieces from auditing results
 	findInvalidNodesReq := &statpb.FindInvalidNodesRequest{
 		NodeIds: nodeIDs,
@@ -177,7 +177,7 @@ func (c *checker) invalidNodes(ctx context.Context, nodeIDs storj.NodeIDList) (i
 		return nil, Error.New("error getting valid nodes from statdb %s", err)
 	}
 
-	invalidNodesMap := make(map[storj.NodeID]bool)
+	invalidNodesMap := make(map[czarcoin.NodeID]bool)
 	for _, invalidID := range resp.InvalidIds {
 		invalidNodesMap[invalidID] = true
 	}

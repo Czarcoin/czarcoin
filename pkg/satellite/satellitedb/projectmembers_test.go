@@ -10,8 +10,8 @@ import (
 	"github.com/skyrings/skyring-common/tools/uuid"
 	"github.com/stretchr/testify/assert"
 
-	"storj.io/storj/internal/testcontext"
-	"storj.io/storj/pkg/satellite"
+	"czarcoin.org/czarcoin/internal/testcontext"
+	"czarcoin.org/czarcoin/pkg/satellite"
 )
 
 func TestProjectMembersRepository(t *testing.T) {

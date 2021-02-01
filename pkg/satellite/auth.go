@@ -9,7 +9,7 @@ import (
 
 	"github.com/zeebo/errs"
 
-	"storj.io/storj/pkg/satellite/satelliteauth"
+	"czarcoin.org/czarcoin/pkg/satellite/satelliteauth"
 )
 
 //TODO: change to JWT or Macaroon based auth

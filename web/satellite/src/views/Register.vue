@@ -126,7 +126,7 @@
                                 class="register-area__scrollable__form-area__terms-area__checkbox"
                                 @setData="setTermsAccepted"
                                 :isCheckboxError="isTermsAcceptedError"/>
-                        <h2>I agree to the Storj Bridge Hosting <a>Terms & Conditions</a></h2>
+                        <h2>I agree to the Czarcoin Bridge Hosting <a>Terms & Conditions</a></h2>
                     </div>
                     <Button class="register-area__scrollable__form-area__create-button" label="Create Account"
                             width="100%" height="48px" :onPress="onCreateClick"/>

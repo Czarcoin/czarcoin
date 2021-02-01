@@ -7,22 +7,22 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"storj.io/storj/pkg/encryption"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/pkg/encryption"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 func ExampleEncryptPath() {
 	var path = "fold1/fold2/fold3/file.txt"
 
 	// seed
-	seed := new(storj.Key)
+	seed := new(czarcoin.Key)
 	for i := range seed {
 		seed[i] = byte(i)
 	}
 	fmt.Printf("root key (%d bytes): %s\n", len(seed), hex.EncodeToString(seed[:]))
 
 	// use the seed for encrypting the path
-	encryptedPath, err := encryption.EncryptPath(path, storj.AESGCM, seed)
+	encryptedPath, err := encryption.EncryptPath(path, czarcoin.AESGCM, seed)
 	if err != nil {
 		panic(err)
 	}
@@ -30,14 +30,14 @@ func ExampleEncryptPath() {
 	fmt.Println("encrypted path: ", encryptedPath)
 
 	// decrypting the path
-	decryptedPath, err := encryption.DecryptPath(encryptedPath, storj.AESGCM, seed)
+	decryptedPath, err := encryption.DecryptPath(encryptedPath, czarcoin.AESGCM, seed)
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println("decrypted path: ", decryptedPath)
 
 	// handling of shared path
-	sharedPath := storj.JoinPaths(storj.SplitPath(encryptedPath)[2:]...)
+	sharedPath := czarcoin.JoinPaths(czarcoin.SplitPath(encryptedPath)[2:]...)
 	fmt.Println("shared path:    ", sharedPath)
 	derivedKey, err := encryption.DerivePathKey(decryptedPath, seed, 2)
 	if err != nil {
@@ -45,7 +45,7 @@ func ExampleEncryptPath() {
 	}
 
 	fmt.Printf("derived key (%d bytes): %s\n", len(derivedKey), hex.EncodeToString(derivedKey[:]))
-	decryptedPath, err = encryption.DecryptPath(sharedPath, storj.AESGCM, derivedKey)
+	decryptedPath, err = encryption.DecryptPath(sharedPath, czarcoin.AESGCM, derivedKey)
 	if err != nil {
 		panic(err)
 	}

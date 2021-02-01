@@ -16,8 +16,8 @@ import (
 
 	"github.com/loov/hrtime"
 
-	"storj.io/storj/internal/memory"
-	"storj.io/storj/internal/s3client"
+	"czarcoin.org/czarcoin/internal/memory"
+	"czarcoin.org/czarcoin/internal/s3client"
 )
 
 func main() {

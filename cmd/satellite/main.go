@@ -15,24 +15,24 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/zeebo/errs"
 
-	"storj.io/storj/internal/fpath"
-	"storj.io/storj/pkg/audit"
-	"storj.io/storj/pkg/auth/grpcauth"
-	"storj.io/storj/pkg/bwagreement"
-	"storj.io/storj/pkg/cfgstruct"
-	"storj.io/storj/pkg/datarepair/checker"
-	"storj.io/storj/pkg/datarepair/queue"
-	"storj.io/storj/pkg/datarepair/repairer"
-	"storj.io/storj/pkg/kademlia"
-	"storj.io/storj/pkg/overlay"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/pointerdb"
-	"storj.io/storj/pkg/process"
-	"storj.io/storj/pkg/provider"
-	"storj.io/storj/pkg/statdb"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/satellite/satellitedb"
-	"storj.io/storj/storage/redis"
+	"czarcoin.org/czarcoin/internal/fpath"
+	"czarcoin.org/czarcoin/pkg/audit"
+	"czarcoin.org/czarcoin/pkg/auth/grpcauth"
+	"czarcoin.org/czarcoin/pkg/bwagreement"
+	"czarcoin.org/czarcoin/pkg/cfgstruct"
+	"czarcoin.org/czarcoin/pkg/datarepair/checker"
+	"czarcoin.org/czarcoin/pkg/datarepair/queue"
+	"czarcoin.org/czarcoin/pkg/datarepair/repairer"
+	"czarcoin.org/czarcoin/pkg/kademlia"
+	"czarcoin.org/czarcoin/pkg/overlay"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/pointerdb"
+	"czarcoin.org/czarcoin/pkg/process"
+	"czarcoin.org/czarcoin/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/statdb"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/satellite/satellitedb"
+	"czarcoin.org/czarcoin/storage/redis"
 )
 
 var (
@@ -91,7 +91,7 @@ var (
 )
 
 func init() {
-	defaultConfDir = fpath.ApplicationDir("storj", "satellite")
+	defaultConfDir = fpath.ApplicationDir("czarcoin", "satellite")
 	rootCmd.AddCommand(runCmd)
 	rootCmd.AddCommand(setupCmd)
 	rootCmd.AddCommand(diagCmd)
@@ -206,8 +206,8 @@ func cmdDiag(cmd *cobra.Command, args []string) (err error) {
 	}
 
 	// attributes per uplinkid
-	summaries := make(map[storj.NodeID]*UplinkSummary)
-	uplinkIDs := storj.NodeIDList{}
+	summaries := make(map[czarcoin.NodeID]*UplinkSummary)
+	uplinkIDs := czarcoin.NodeIDList{}
 
 	for _, baRow := range baRows {
 		// deserializing rbad you get payerbwallocation, total & storage node id

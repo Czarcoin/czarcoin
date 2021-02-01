@@ -9,8 +9,8 @@ import (
 
 	"go.uber.org/zap"
 
-	"storj.io/storj/pkg/accounting"
-	"storj.io/storj/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/accounting"
+	"czarcoin.org/czarcoin/pkg/provider"
 )
 
 // Config contains configurable values for rollup

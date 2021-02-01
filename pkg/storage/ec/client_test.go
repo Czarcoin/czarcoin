@@ -19,13 +19,13 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/vivint/infectious"
 
-	"storj.io/storj/internal/teststorj"
-	"storj.io/storj/pkg/eestream"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/piecestore/psclient"
-	"storj.io/storj/pkg/provider"
-	"storj.io/storj/pkg/ranger"
-	"storj.io/storj/pkg/transport"
+	"czarcoin.org/czarcoin/internal/testczarcoin"
+	"czarcoin.org/czarcoin/pkg/eestream"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/piecestore/psclient"
+	"czarcoin.org/czarcoin/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/ranger"
+	"czarcoin.org/czarcoin/pkg/transport"
 )
 
 const (
@@ -39,10 +39,10 @@ var (
 )
 
 var (
-	node0 = teststorj.MockNode("node-0")
-	node1 = teststorj.MockNode("node-1")
-	node2 = teststorj.MockNode("node-2")
-	node3 = teststorj.MockNode("node-3")
+	node0 = testczarcoin.MockNode("node-0")
+	node1 = testczarcoin.MockNode("node-1")
+	node2 = testczarcoin.MockNode("node-2")
+	node3 = testczarcoin.MockNode("node-3")
 )
 
 func TestNewECClient(t *testing.T) {

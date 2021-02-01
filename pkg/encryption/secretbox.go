@@ -6,13 +6,13 @@ package encryption
 import (
 	"golang.org/x/crypto/nacl/secretbox"
 
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 type secretboxEncrypter struct {
 	blockSize     int
-	key           *storj.Key
-	startingNonce *storj.Nonce
+	key           *czarcoin.Key
+	startingNonce *czarcoin.Nonce
 }
 
 // NewSecretboxEncrypter returns a Transformer that encrypts the data passing
@@ -28,7 +28,7 @@ type secretboxEncrypter struct {
 //
 // When in doubt, generate a new key from crypto/rand and a startingNonce
 // from crypto/rand as often as possible.
-func NewSecretboxEncrypter(key *storj.Key, startingNonce *storj.Nonce, encryptedBlockSize int) (Transformer, error) {
+func NewSecretboxEncrypter(key *czarcoin.Key, startingNonce *czarcoin.Nonce, encryptedBlockSize int) (Transformer, error) {
 	if encryptedBlockSize <= secretbox.Overhead {
 		return nil, ErrInvalidConfig.New("encrypted block size %d too small", encryptedBlockSize)
 	}
@@ -47,8 +47,8 @@ func (s *secretboxEncrypter) OutBlockSize() int {
 	return s.blockSize + secretbox.Overhead
 }
 
-func calcNonce(startingNonce *storj.Nonce, blockNum int64) (rv *storj.Nonce, err error) {
-	rv = new(storj.Nonce)
+func calcNonce(startingNonce *czarcoin.Nonce, blockNum int64) (rv *czarcoin.Nonce, err error) {
+	rv = new(czarcoin.Nonce)
 	if copy(rv[:], (*startingNonce)[:]) != len(rv) {
 		return rv, Error.New("didn't copy memory?!")
 	}
@@ -66,14 +66,14 @@ func (s *secretboxEncrypter) Transform(out, in []byte, blockNum int64) ([]byte, 
 
 type secretboxDecrypter struct {
 	blockSize     int
-	key           *storj.Key
-	startingNonce *storj.Nonce
+	key           *czarcoin.Key
+	startingNonce *czarcoin.Nonce
 }
 
 // NewSecretboxDecrypter returns a Transformer that decrypts the data passing
 // through with key. See the comments for NewSecretboxEncrypter about
 // startingNonce.
-func NewSecretboxDecrypter(key *storj.Key, startingNonce *storj.Nonce, encryptedBlockSize int) (Transformer, error) {
+func NewSecretboxDecrypter(key *czarcoin.Key, startingNonce *czarcoin.Nonce, encryptedBlockSize int) (Transformer, error) {
 	if encryptedBlockSize <= secretbox.Overhead {
 		return nil, ErrInvalidConfig.New("encrypted block size %d too small", encryptedBlockSize)
 	}
@@ -105,12 +105,12 @@ func (s *secretboxDecrypter) Transform(out, in []byte, blockNum int64) ([]byte, 
 }
 
 // EncryptSecretBox encrypts byte data with a key and nonce. The cipher data is returned
-func EncryptSecretBox(data []byte, key *storj.Key, nonce *storj.Nonce) (cipherData []byte, err error) {
+func EncryptSecretBox(data []byte, key *czarcoin.Key, nonce *czarcoin.Nonce) (cipherData []byte, err error) {
 	return secretbox.Seal(nil, data, nonce.Raw(), key.Raw()), nil
 }
 
 // DecryptSecretBox decrypts byte data with a key and nonce. The plain data is returned
-func DecryptSecretBox(cipherData []byte, key *storj.Key, nonce *storj.Nonce) (data []byte, err error) {
+func DecryptSecretBox(cipherData []byte, key *czarcoin.Key, nonce *czarcoin.Nonce) (data []byte, err error) {
 	data, success := secretbox.Open(nil, cipherData, nonce.Raw(), key.Raw())
 	if !success {
 		return nil, ErrDecryptFailed.New("")

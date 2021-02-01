@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"testing"
 
-	"storj.io/storj/internal/testplanet"
+	"czarcoin.org/czarcoin/internal/testplanet"
 )
 
 func TestBasic(t *testing.T) {

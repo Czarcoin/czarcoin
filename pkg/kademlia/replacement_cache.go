@@ -4,7 +4,7 @@
 package kademlia
 
 import (
-	"storj.io/storj/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/pb"
 )
 
 func (rt *RoutingTable) addToReplacementCache(kadBucketID bucketID, node *pb.Node) {

@@ -39,7 +39,7 @@ spec:
     spec:
       terminationGracePeriodSeconds: 60
       containers:
-      - image: "docker.io/storjlabs/satellite"
+      - image: "docker.io/czarcoinlabs/satellite"
         imagePullPolicy: Always
         name: satellite
         livenessProbe:

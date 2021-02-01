@@ -8,7 +8,7 @@ import (
 
 	"github.com/zeebo/errs"
 
-	"storj.io/storj/pkg/utils"
+	"czarcoin.org/czarcoin/pkg/utils"
 )
 
 const (

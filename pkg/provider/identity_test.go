@@ -17,7 +17,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"storj.io/storj/pkg/peertls"
+	"czarcoin.org/czarcoin/pkg/peertls"
 )
 
 func TestPeerIdentityFromCertChain(t *testing.T) {
@@ -134,7 +134,7 @@ func TestIdentityConfig_SaveIdentity(t *testing.T) {
 }
 
 func tempIdentityConfig() (*IdentityConfig, func(), error) {
-	tmpDir, err := ioutil.TempDir("", "storj-identity")
+	tmpDir, err := ioutil.TempDir("", "czarcoin-identity")
 	if err != nil {
 		return nil, nil, err
 	}

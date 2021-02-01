@@ -11,11 +11,11 @@ import (
 
 	"github.com/vivint/infectious"
 
-	"storj.io/storj/pkg/eestream"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/pointerdb/pdbclient"
-	"storj.io/storj/pkg/storage/meta"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/pkg/eestream"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/pointerdb/pdbclient"
+	"czarcoin.org/czarcoin/pkg/storage/meta"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 // Stripe keeps track of a stripe's index and its parent segment
@@ -28,7 +28,7 @@ type Stripe struct {
 // Cursor keeps track of audit location in pointer db
 type Cursor struct {
 	pointers pdbclient.Client
-	lastPath storj.Path
+	lastPath czarcoin.Path
 	mutex    sync.Mutex
 }
 
@@ -43,7 +43,7 @@ func (cursor *Cursor) NextStripe(ctx context.Context) (stripe *Stripe, err error
 	defer cursor.mutex.Unlock()
 
 	var pointerItems []pdbclient.ListItem
-	var path storj.Path
+	var path czarcoin.Path
 	var more bool
 
 	if cursor.lastPath == "" {

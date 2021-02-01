@@ -18,14 +18,14 @@ import (
 	"go.uber.org/zap"
 	monkit "gopkg.in/spacemonkeygo/monkit.v2"
 
-	"storj.io/storj/pkg/eestream"
-	"storj.io/storj/pkg/encryption"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/ranger"
-	"storj.io/storj/pkg/storage/meta"
-	"storj.io/storj/pkg/storage/segments"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/storage"
+	"czarcoin.org/czarcoin/pkg/eestream"
+	"czarcoin.org/czarcoin/pkg/encryption"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/ranger"
+	"czarcoin.org/czarcoin/pkg/storage/meta"
+	"czarcoin.org/czarcoin/pkg/storage/segments"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/storage"
 )
 
 var mon = monkit.Package()
@@ -56,24 +56,24 @@ func convertMeta(lastSegmentMeta segments.Meta) (Meta, error) {
 
 // Store interface methods for streams to satisfy to be a store
 type Store interface {
-	Meta(ctx context.Context, path storj.Path, pathCipher storj.Cipher) (Meta, error)
-	Get(ctx context.Context, path storj.Path, pathCipher storj.Cipher) (ranger.Ranger, Meta, error)
-	Put(ctx context.Context, path storj.Path, pathCipher storj.Cipher, data io.Reader, metadata []byte, expiration time.Time) (Meta, error)
-	Delete(ctx context.Context, path storj.Path, pathCipher storj.Cipher) error
-	List(ctx context.Context, prefix, startAfter, endBefore storj.Path, pathCipher storj.Cipher, recursive bool, limit int, metaFlags uint32) (items []ListItem, more bool, err error)
+	Meta(ctx context.Context, path czarcoin.Path, pathCipher czarcoin.Cipher) (Meta, error)
+	Get(ctx context.Context, path czarcoin.Path, pathCipher czarcoin.Cipher) (ranger.Ranger, Meta, error)
+	Put(ctx context.Context, path czarcoin.Path, pathCipher czarcoin.Cipher, data io.Reader, metadata []byte, expiration time.Time) (Meta, error)
+	Delete(ctx context.Context, path czarcoin.Path, pathCipher czarcoin.Cipher) error
+	List(ctx context.Context, prefix, startAfter, endBefore czarcoin.Path, pathCipher czarcoin.Cipher, recursive bool, limit int, metaFlags uint32) (items []ListItem, more bool, err error)
 }
 
 // streamStore is a store for streams
 type streamStore struct {
 	segments     segments.Store
 	segmentSize  int64
-	rootKey      *storj.Key
+	rootKey      *czarcoin.Key
 	encBlockSize int
-	cipher       storj.Cipher
+	cipher       czarcoin.Cipher
 }
 
 // NewStreamStore stuff
-func NewStreamStore(segments segments.Store, segmentSize int64, rootKey *storj.Key, encBlockSize int, cipher storj.Cipher) (Store, error) {
+func NewStreamStore(segments segments.Store, segmentSize int64, rootKey *czarcoin.Key, encBlockSize int, cipher czarcoin.Cipher) (Store, error) {
 	if segmentSize <= 0 {
 		return nil, errs.New("segment size must be larger than 0")
 	}
@@ -97,7 +97,7 @@ func NewStreamStore(segments segments.Store, segmentSize int64, rootKey *storj.K
 // store the first piece at s0/<path>, second piece at s1/<path>, and the
 // *last* piece at l/<path>. Store the given metadata, along with the number
 // of segments, in a new protobuf, in the metadata of l/<path>.
-func (s *streamStore) Put(ctx context.Context, path storj.Path, pathCipher storj.Cipher, data io.Reader, metadata []byte, expiration time.Time) (m Meta, err error) {
+func (s *streamStore) Put(ctx context.Context, path czarcoin.Path, pathCipher czarcoin.Cipher, data io.Reader, metadata []byte, expiration time.Time) (m Meta, err error) {
 	defer mon.Task()(&ctx)(&err)
 	// previously file uploaded?
 	err = s.Delete(ctx, path, pathCipher)
@@ -115,7 +115,7 @@ func (s *streamStore) Put(ctx context.Context, path storj.Path, pathCipher storj
 	return m, err
 }
 
-func (s *streamStore) upload(ctx context.Context, path storj.Path, pathCipher storj.Cipher, data io.Reader, metadata []byte, expiration time.Time) (m Meta, lastSegment int64, err error) {
+func (s *streamStore) upload(ctx context.Context, path czarcoin.Path, pathCipher czarcoin.Cipher, data io.Reader, metadata []byte, expiration time.Time) (m Meta, lastSegment int64, err error) {
 	defer mon.Task()(&ctx)(&err)
 
 	var currentSegment int64
@@ -139,7 +139,7 @@ func (s *streamStore) upload(ctx context.Context, path storj.Path, pathCipher st
 
 	for !eofReader.isEOF() && !eofReader.hasError() {
 		// generate random key for encrypting the segment's content
-		var contentKey storj.Key
+		var contentKey czarcoin.Key
 		_, err = rand.Read(contentKey[:])
 		if err != nil {
 			return Meta{}, currentSegment, err
@@ -148,7 +148,7 @@ func (s *streamStore) upload(ctx context.Context, path storj.Path, pathCipher st
 		// Initialize the content nonce with the segment's index incremented by 1.
 		// The increment by 1 is to avoid nonce reuse with the metadata encryption,
 		// which is encrypted with the zero nonce.
-		var contentNonce storj.Nonce
+		var contentNonce czarcoin.Nonce
 		_, err := encryption.Increment(&contentNonce, currentSegment+1)
 		if err != nil {
 			return Meta{}, currentSegment, err
@@ -160,7 +160,7 @@ func (s *streamStore) upload(ctx context.Context, path storj.Path, pathCipher st
 		}
 
 		// generate random nonce for encrypting the content key
-		var keyNonce storj.Nonce
+		var keyNonce czarcoin.Nonce
 		_, err = rand.Read(keyNonce[:])
 		if err != nil {
 			return Meta{}, currentSegment, err
@@ -194,7 +194,7 @@ func (s *streamStore) upload(ctx context.Context, path storj.Path, pathCipher st
 			transformedReader = bytes.NewReader(cipherData)
 		}
 
-		putMeta, err = s.segments.Put(ctx, transformedReader, expiration, func() (storj.Path, []byte, error) {
+		putMeta, err = s.segments.Put(ctx, transformedReader, expiration, func() (czarcoin.Path, []byte, error) {
 			encPath, err := EncryptAfterBucket(path, pathCipher, s.rootKey)
 			if err != nil {
 				return "", nil, err
@@ -203,7 +203,7 @@ func (s *streamStore) upload(ctx context.Context, path storj.Path, pathCipher st
 			if !eofReader.isEOF() {
 				segmentPath := getSegmentPath(encPath, currentSegment)
 
-				if s.cipher == storj.Unencrypted {
+				if s.cipher == czarcoin.Unencrypted {
 					return segmentPath, nil, nil
 				}
 
@@ -218,7 +218,7 @@ func (s *streamStore) upload(ctx context.Context, path storj.Path, pathCipher st
 				return segmentPath, segmentMeta, nil
 			}
 
-			lastSegmentPath := storj.JoinPaths("l", encPath)
+			lastSegmentPath := czarcoin.JoinPaths("l", encPath)
 
 			streamInfo, err := proto.Marshal(&pb.StreamInfo{
 				NumberOfSegments: currentSegment + 1,
@@ -231,7 +231,7 @@ func (s *streamStore) upload(ctx context.Context, path storj.Path, pathCipher st
 			}
 
 			// encrypt metadata with the content encryption key and zero nonce
-			encryptedStreamInfo, err := encryption.Encrypt(streamInfo, s.cipher, &contentKey, &storj.Nonce{})
+			encryptedStreamInfo, err := encryption.Encrypt(streamInfo, s.cipher, &contentKey, &czarcoin.Nonce{})
 			if err != nil {
 				return "", nil, err
 			}
@@ -242,7 +242,7 @@ func (s *streamStore) upload(ctx context.Context, path storj.Path, pathCipher st
 				EncryptionBlockSize: int32(s.encBlockSize),
 			}
 
-			if s.cipher != storj.Unencrypted {
+			if s.cipher != czarcoin.Unencrypted {
 				streamMeta.LastSegmentMeta = &pb.SegmentMeta{
 					EncryptedKey: encryptedKey,
 					KeyNonce:     keyNonce[:],
@@ -279,14 +279,14 @@ func (s *streamStore) upload(ctx context.Context, path storj.Path, pathCipher st
 }
 
 // getSegmentPath returns the unique path for a particular segment
-func getSegmentPath(path storj.Path, segNum int64) storj.Path {
-	return storj.JoinPaths(fmt.Sprintf("s%d", segNum), path)
+func getSegmentPath(path czarcoin.Path, segNum int64) czarcoin.Path {
+	return czarcoin.JoinPaths(fmt.Sprintf("s%d", segNum), path)
 }
 
 // Get returns a ranger that knows what the overall size is (from l/<path>)
 // and then returns the appropriate data from segments s0/<path>, s1/<path>,
 // ..., l/<path>.
-func (s *streamStore) Get(ctx context.Context, path storj.Path, pathCipher storj.Cipher) (rr ranger.Ranger, meta Meta, err error) {
+func (s *streamStore) Get(ctx context.Context, path czarcoin.Path, pathCipher czarcoin.Cipher) (rr ranger.Ranger, meta Meta, err error) {
 	defer mon.Task()(&ctx)(&err)
 
 	encPath, err := EncryptAfterBucket(path, pathCipher, s.rootKey)
@@ -294,7 +294,7 @@ func (s *streamStore) Get(ctx context.Context, path storj.Path, pathCipher storj
 		return nil, Meta{}, err
 	}
 
-	lastSegmentRanger, lastSegmentMeta, err := s.segments.Get(ctx, storj.JoinPaths("l", encPath))
+	lastSegmentRanger, lastSegmentMeta, err := s.segments.Get(ctx, czarcoin.JoinPaths("l", encPath))
 	if err != nil {
 		return nil, Meta{}, err
 	}
@@ -325,7 +325,7 @@ func (s *streamStore) Get(ctx context.Context, path storj.Path, pathCipher storj
 	for i := int64(0); i < stream.NumberOfSegments-1; i++ {
 		currentPath := getSegmentPath(encPath, i)
 		size := stream.SegmentsSize
-		var contentNonce storj.Nonce
+		var contentNonce czarcoin.Nonce
 		_, err := encryption.Increment(&contentNonce, i+1)
 		if err != nil {
 			return nil, Meta{}, err
@@ -337,12 +337,12 @@ func (s *streamStore) Get(ctx context.Context, path storj.Path, pathCipher storj
 			derivedKey:    derivedKey,
 			startingNonce: &contentNonce,
 			encBlockSize:  int(streamMeta.EncryptionBlockSize),
-			cipher:        storj.Cipher(streamMeta.EncryptionType),
+			cipher:        czarcoin.Cipher(streamMeta.EncryptionType),
 		}
 		rangers = append(rangers, rr)
 	}
 
-	var contentNonce storj.Nonce
+	var contentNonce czarcoin.Nonce
 	_, err = encryption.Increment(&contentNonce, stream.NumberOfSegments)
 	if err != nil {
 		return nil, Meta{}, err
@@ -352,7 +352,7 @@ func (s *streamStore) Get(ctx context.Context, path storj.Path, pathCipher storj
 		ctx,
 		lastSegmentRanger,
 		stream.LastSegmentSize,
-		storj.Cipher(streamMeta.EncryptionType),
+		czarcoin.Cipher(streamMeta.EncryptionType),
 		derivedKey,
 		encryptedKey,
 		keyNonce,
@@ -376,7 +376,7 @@ func (s *streamStore) Get(ctx context.Context, path storj.Path, pathCipher storj
 }
 
 // Meta implements Store.Meta
-func (s *streamStore) Meta(ctx context.Context, path storj.Path, pathCipher storj.Cipher) (meta Meta, err error) {
+func (s *streamStore) Meta(ctx context.Context, path czarcoin.Path, pathCipher czarcoin.Cipher) (meta Meta, err error) {
 	defer mon.Task()(&ctx)(&err)
 
 	encPath, err := EncryptAfterBucket(path, pathCipher, s.rootKey)
@@ -384,7 +384,7 @@ func (s *streamStore) Meta(ctx context.Context, path storj.Path, pathCipher stor
 		return Meta{}, err
 	}
 
-	lastSegmentMeta, err := s.segments.Meta(ctx, storj.JoinPaths("l", encPath))
+	lastSegmentMeta, err := s.segments.Meta(ctx, czarcoin.JoinPaths("l", encPath))
 	if err != nil {
 		return Meta{}, err
 	}
@@ -404,14 +404,14 @@ func (s *streamStore) Meta(ctx context.Context, path storj.Path, pathCipher stor
 }
 
 // Delete all the segments, with the last one last
-func (s *streamStore) Delete(ctx context.Context, path storj.Path, pathCipher storj.Cipher) (err error) {
+func (s *streamStore) Delete(ctx context.Context, path czarcoin.Path, pathCipher czarcoin.Cipher) (err error) {
 	defer mon.Task()(&ctx)(&err)
 
 	encPath, err := EncryptAfterBucket(path, pathCipher, s.rootKey)
 	if err != nil {
 		return err
 	}
-	lastSegmentMeta, err := s.segments.Meta(ctx, storj.JoinPaths("l", encPath))
+	lastSegmentMeta, err := s.segments.Meta(ctx, czarcoin.JoinPaths("l", encPath))
 	if err != nil {
 		return err
 	}
@@ -439,18 +439,18 @@ func (s *streamStore) Delete(ctx context.Context, path storj.Path, pathCipher st
 		}
 	}
 
-	return s.segments.Delete(ctx, storj.JoinPaths("l", encPath))
+	return s.segments.Delete(ctx, czarcoin.JoinPaths("l", encPath))
 }
 
 // ListItem is a single item in a listing
 type ListItem struct {
-	Path     storj.Path
+	Path     czarcoin.Path
 	Meta     Meta
 	IsPrefix bool
 }
 
 // List all the paths inside l/, stripping off the l/ prefix
-func (s *streamStore) List(ctx context.Context, prefix, startAfter, endBefore storj.Path, pathCipher storj.Cipher, recursive bool, limit int, metaFlags uint32) (items []ListItem, more bool, err error) {
+func (s *streamStore) List(ctx context.Context, prefix, startAfter, endBefore czarcoin.Path, pathCipher czarcoin.Cipher, recursive bool, limit int, metaFlags uint32) (items []ListItem, more bool, err error) {
 	defer mon.Task()(&ctx)(&err)
 
 	if metaFlags&meta.Size != 0 {
@@ -466,7 +466,7 @@ func (s *streamStore) List(ctx context.Context, prefix, startAfter, endBefore st
 		return nil, false, err
 	}
 
-	prefixKey, err := encryption.DerivePathKey(prefix, s.rootKey, len(storj.SplitPath(prefix)))
+	prefixKey, err := encryption.DerivePathKey(prefix, s.rootKey, len(czarcoin.SplitPath(prefix)))
 	if err != nil {
 		return nil, false, err
 	}
@@ -481,7 +481,7 @@ func (s *streamStore) List(ctx context.Context, prefix, startAfter, endBefore st
 		return nil, false, err
 	}
 
-	segments, more, err := s.segments.List(ctx, storj.JoinPaths("l", encPrefix), encStartAfter, encEndBefore, recursive, limit, metaFlags)
+	segments, more, err := s.segments.List(ctx, czarcoin.JoinPaths("l", encPrefix), encStartAfter, encEndBefore, recursive, limit, metaFlags)
 	if err != nil {
 		return nil, false, err
 	}
@@ -493,7 +493,7 @@ func (s *streamStore) List(ctx context.Context, prefix, startAfter, endBefore st
 			return nil, false, err
 		}
 
-		streamInfo, err := DecryptStreamInfo(ctx, item.Meta, storj.JoinPaths(prefix, path), s.rootKey)
+		streamInfo, err := DecryptStreamInfo(ctx, item.Meta, czarcoin.JoinPaths(prefix, path), s.rootKey)
 		if err != nil {
 			return nil, false, err
 		}
@@ -511,7 +511,7 @@ func (s *streamStore) List(ctx context.Context, prefix, startAfter, endBefore st
 }
 
 // encryptMarker is a helper method for encrypting startAfter and endBefore markers
-func (s *streamStore) encryptMarker(marker storj.Path, pathCipher storj.Cipher, prefixKey *storj.Key) (storj.Path, error) {
+func (s *streamStore) encryptMarker(marker czarcoin.Path, pathCipher czarcoin.Cipher, prefixKey *czarcoin.Key) (czarcoin.Path, error) {
 	if bytes.Equal(s.rootKey[:], prefixKey[:]) { // empty prefix
 		return EncryptAfterBucket(marker, pathCipher, s.rootKey)
 	}
@@ -519,7 +519,7 @@ func (s *streamStore) encryptMarker(marker storj.Path, pathCipher storj.Cipher, 
 }
 
 // decryptMarker is a helper method for decrypting listed path markers
-func (s *streamStore) decryptMarker(marker storj.Path, pathCipher storj.Cipher, prefixKey *storj.Key) (storj.Path, error) {
+func (s *streamStore) decryptMarker(marker czarcoin.Path, pathCipher czarcoin.Cipher, prefixKey *czarcoin.Key) (czarcoin.Path, error) {
 	if bytes.Equal(s.rootKey[:], prefixKey[:]) { // empty prefix
 		return DecryptAfterBucket(marker, pathCipher, s.rootKey)
 	}
@@ -529,12 +529,12 @@ func (s *streamStore) decryptMarker(marker storj.Path, pathCipher storj.Cipher, 
 type lazySegmentRanger struct {
 	ranger        ranger.Ranger
 	segments      segments.Store
-	path          storj.Path
+	path          czarcoin.Path
 	size          int64
-	derivedKey    *storj.Key
-	startingNonce *storj.Nonce
+	derivedKey    *czarcoin.Key
+	startingNonce *czarcoin.Nonce
 	encBlockSize  int
-	cipher        storj.Cipher
+	cipher        czarcoin.Cipher
 }
 
 // Size implements Ranger.Size
@@ -564,7 +564,7 @@ func (lr *lazySegmentRanger) Range(ctx context.Context, offset, length int64) (i
 }
 
 // decryptRanger returns a decrypted ranger of the given rr ranger
-func decryptRanger(ctx context.Context, rr ranger.Ranger, decryptedSize int64, cipher storj.Cipher, derivedKey *storj.Key, encryptedKey storj.EncryptedPrivateKey, encryptedKeyNonce, startingNonce *storj.Nonce, encBlockSize int) (ranger.Ranger, error) {
+func decryptRanger(ctx context.Context, rr ranger.Ranger, decryptedSize int64, cipher czarcoin.Cipher, derivedKey *czarcoin.Key, encryptedKey czarcoin.EncryptedPrivateKey, encryptedKeyNonce, startingNonce *czarcoin.Nonce, encBlockSize int) (ranger.Ranger, error) {
 	contentKey, err := encryption.DecryptKey(encryptedKey, cipher, derivedKey, encryptedKeyNonce)
 	if err != nil {
 		return nil, err
@@ -600,8 +600,8 @@ func decryptRanger(ctx context.Context, rr ranger.Ranger, decryptedSize int64, c
 }
 
 // EncryptAfterBucket encrypts a path without encrypting its first element
-func EncryptAfterBucket(path storj.Path, cipher storj.Cipher, key *storj.Key) (encrypted storj.Path, err error) {
-	comps := storj.SplitPath(path)
+func EncryptAfterBucket(path czarcoin.Path, cipher czarcoin.Cipher, key *czarcoin.Key) (encrypted czarcoin.Path, err error) {
+	comps := czarcoin.SplitPath(path)
 	if len(comps) <= 1 {
 		return path, nil
 	}
@@ -612,18 +612,18 @@ func EncryptAfterBucket(path storj.Path, cipher storj.Cipher, key *storj.Key) (e
 	}
 
 	// replace the first path component with the unencrypted bucket name
-	return storj.JoinPaths(comps[0], storj.JoinPaths(storj.SplitPath(encrypted)[1:]...)), nil
+	return czarcoin.JoinPaths(comps[0], czarcoin.JoinPaths(czarcoin.SplitPath(encrypted)[1:]...)), nil
 }
 
 // DecryptAfterBucket decrypts a path without modifying its first element
-func DecryptAfterBucket(path storj.Path, cipher storj.Cipher, key *storj.Key) (decrypted storj.Path, err error) {
-	comps := storj.SplitPath(path)
+func DecryptAfterBucket(path czarcoin.Path, cipher czarcoin.Cipher, key *czarcoin.Key) (decrypted czarcoin.Path, err error) {
+	comps := czarcoin.SplitPath(path)
 	if len(comps) <= 1 {
 		return path, nil
 	}
 
 	bucket := comps[0]
-	toDecrypt := storj.JoinPaths(comps[1:]...)
+	toDecrypt := czarcoin.JoinPaths(comps[1:]...)
 
 	bucketKey, err := encryption.DerivePathKey(path, key, 1)
 	if err != nil {
@@ -635,11 +635,11 @@ func DecryptAfterBucket(path storj.Path, cipher storj.Cipher, key *storj.Key) (d
 		return "", err
 	}
 
-	return storj.JoinPaths(bucket, decPath), nil
+	return czarcoin.JoinPaths(bucket, decPath), nil
 }
 
 // CancelHandler handles clean up of segments on receiving CTRL+C
-func (s *streamStore) cancelHandler(ctx context.Context, totalSegments int64, path storj.Path, pathCipher storj.Cipher) {
+func (s *streamStore) cancelHandler(ctx context.Context, totalSegments int64, path czarcoin.Path, pathCipher czarcoin.Cipher) {
 	for i := int64(0); i < totalSegments; i++ {
 		encPath, err := EncryptAfterBucket(path, pathCipher, s.rootKey)
 		if err != nil {
@@ -654,19 +654,19 @@ func (s *streamStore) cancelHandler(ctx context.Context, totalSegments int64, pa
 	}
 }
 
-func getEncryptedKeyAndNonce(m *pb.SegmentMeta) (storj.EncryptedPrivateKey, *storj.Nonce) {
+func getEncryptedKeyAndNonce(m *pb.SegmentMeta) (czarcoin.EncryptedPrivateKey, *czarcoin.Nonce) {
 	if m == nil {
 		return nil, nil
 	}
 
-	var nonce storj.Nonce
+	var nonce czarcoin.Nonce
 	copy(nonce[:], m.KeyNonce)
 
 	return m.EncryptedKey, &nonce
 }
 
 // DecryptStreamInfo decrypts stream info
-func DecryptStreamInfo(ctx context.Context, item segments.Meta, path storj.Path, rootKey *storj.Key) (streamInfo []byte, err error) {
+func DecryptStreamInfo(ctx context.Context, item segments.Meta, path czarcoin.Path, rootKey *czarcoin.Key) (streamInfo []byte, err error) {
 	streamMeta := pb.StreamMeta{}
 	err = proto.Unmarshal(item.Data, &streamMeta)
 	if err != nil {
@@ -678,7 +678,7 @@ func DecryptStreamInfo(ctx context.Context, item segments.Meta, path storj.Path,
 		return nil, err
 	}
 
-	cipher := storj.Cipher(streamMeta.EncryptionType)
+	cipher := czarcoin.Cipher(streamMeta.EncryptionType)
 	encryptedKey, keyNonce := getEncryptedKeyAndNonce(streamMeta.LastSegmentMeta)
 	contentKey, err := encryption.DecryptKey(encryptedKey, cipher, derivedKey, keyNonce)
 	if err != nil {
@@ -686,5 +686,5 @@ func DecryptStreamInfo(ctx context.Context, item segments.Meta, path storj.Path,
 	}
 
 	// decrypt metadata with the content encryption key and zero nonce
-	return encryption.Decrypt(streamMeta.EncryptedStreamInfo, cipher, contentKey, &storj.Nonce{})
+	return encryption.Decrypt(streamMeta.EncryptedStreamInfo, cipher, contentKey, &czarcoin.Nonce{})
 }

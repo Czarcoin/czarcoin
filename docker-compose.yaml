@@ -12,39 +12,39 @@ services:
   test-postgres:
     image: postgres
     environment:
-    - POSTGRES_USER=storj
-    - POSTGRES_PASSWORD=storj-pass
+    - POSTGRES_USER=czarcoin
+    - POSTGRES_PASSWORD=czarcoin-pass
 
   satellite:
-    image: storjlabs/satellite:${VERSION}
+    image: czarcoin/satellite:${VERSION}
     environment:
     - API_KEY=abc123
     - BOOTSTRAP_ADDR=localhost:8080
     - IDENTITY_ADDR=satellite:7777
-    - STORJ_LOG_LEVEL=debug
-    - STORJ_CHECKER_QUEUE_ADDRESS=redis://redis:6379/?db=1
-    - STORJ_REPAIRER_QUEUE_ADDRESS=redis://redis:6379/?db=1
+    - CZARCOIN_LOG_LEVEL=debug
+    - CZARCOIN_CHECKER_QUEUE_ADDRESS=redis://redis:6379/?db=1
+    - CZARCOIN_REPAIRER_QUEUE_ADDRESS=redis://redis:6379/?db=1
     restart: always
     links:
     - redis
     depends_on:
     - redis
   storagenode:
-    image: storjlabs/storagenode:${VERSION}
+    image: czarcoin/storagenode:${VERSION}
     environment:
     - SATELLITE_ADDR=satellite:7777
-    - STORJ_LOG_LEVEL=debug
-    - STORJ_IDENTITY_ADDRESS=storagenode:7777
+    - CZARCOIN_LOG_LEVEL=debug
+    - CZARCOIN_IDENTITY_ADDRESS=storagenode:7777
     restart: always
     links:
     - satellite
   gateway:
-    image: storjlabs/gateway:${VERSION}
+    image: czarcoin/gateway:${VERSION}
     command: --min-threshold 1 --max-threshold 2 --repair-threshold 1 --success-threshold 1
     environment:
     - API_KEY=abc123
     - SATELLITE_ADDR=satellite:7777
-    - STORJ_LOG_LEVEL=debug
+    - CZARCOIN_LOG_LEVEL=debug
     ports:
     - 7777:7777
     restart: always

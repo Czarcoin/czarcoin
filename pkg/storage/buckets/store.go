@@ -11,13 +11,13 @@ import (
 
 	monkit "gopkg.in/spacemonkeygo/monkit.v2"
 
-	"storj.io/storj/pkg/encryption"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/storage/meta"
-	"storj.io/storj/pkg/storage/objects"
-	"storj.io/storj/pkg/storage/streams"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/storage"
+	"czarcoin.org/czarcoin/pkg/encryption"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/storage/meta"
+	"czarcoin.org/czarcoin/pkg/storage/objects"
+	"czarcoin.org/czarcoin/pkg/storage/streams"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/storage"
 )
 
 var mon = monkit.Package()
@@ -25,7 +25,7 @@ var mon = monkit.Package()
 // Store creates an interface for interacting with buckets
 type Store interface {
 	Get(ctx context.Context, bucket string) (meta Meta, err error)
-	Put(ctx context.Context, bucket string, pathCipher storj.Cipher) (meta Meta, err error)
+	Put(ctx context.Context, bucket string, pathCipher czarcoin.Cipher) (meta Meta, err error)
 	Delete(ctx context.Context, bucket string) (err error)
 	List(ctx context.Context, startAfter, endBefore string, limit int) (items []ListItem, more bool, err error)
 	GetObjectStore(ctx context.Context, bucketName string) (store objects.Store, err error)
@@ -46,26 +46,26 @@ type BucketStore struct {
 // Meta is the bucket metadata struct
 type Meta struct {
 	Created            time.Time
-	PathEncryptionType storj.Cipher
+	PathEncryptionType czarcoin.Cipher
 }
 
 // NewStore instantiates BucketStore
 func NewStore(stream streams.Store) Store {
 	// root object store for storing the buckets with unencrypted names
-	store := objects.NewStore(stream, storj.Unencrypted)
+	store := objects.NewStore(stream, czarcoin.Unencrypted)
 	return &BucketStore{store: store, stream: stream}
 }
 
 // GetObjectStore returns an implementation of objects.Store
 func (b *BucketStore) GetObjectStore(ctx context.Context, bucket string) (objects.Store, error) {
 	if bucket == "" {
-		return nil, storj.ErrNoBucket.New("")
+		return nil, czarcoin.ErrNoBucket.New("")
 	}
 
 	m, err := b.Get(ctx, bucket)
 	if err != nil {
 		if storage.ErrKeyNotFound.Has(err) {
-			err = storj.ErrBucketNotFound.Wrap(err)
+			err = czarcoin.ErrBucketNotFound.Wrap(err)
 		}
 		return nil, err
 	}
@@ -81,13 +81,13 @@ func (b *BucketStore) Get(ctx context.Context, bucket string) (meta Meta, err er
 	defer mon.Task()(&ctx)(&err)
 
 	if bucket == "" {
-		return Meta{}, storj.ErrNoBucket.New("")
+		return Meta{}, czarcoin.ErrNoBucket.New("")
 	}
 
 	objMeta, err := b.store.Meta(ctx, bucket)
 	if err != nil {
 		if storage.ErrKeyNotFound.Has(err) {
-			err = storj.ErrBucketNotFound.Wrap(err)
+			err = czarcoin.ErrBucketNotFound.Wrap(err)
 		}
 		return Meta{}, err
 	}
@@ -96,14 +96,14 @@ func (b *BucketStore) Get(ctx context.Context, bucket string) (meta Meta, err er
 }
 
 // Put calls objects store Put
-func (b *BucketStore) Put(ctx context.Context, bucket string, pathCipher storj.Cipher) (meta Meta, err error) {
+func (b *BucketStore) Put(ctx context.Context, bucket string, pathCipher czarcoin.Cipher) (meta Meta, err error) {
 	defer mon.Task()(&ctx)(&err)
 
 	if bucket == "" {
-		return Meta{}, storj.ErrNoBucket.New("")
+		return Meta{}, czarcoin.ErrNoBucket.New("")
 	}
 
-	if pathCipher < storj.Unencrypted || pathCipher > storj.SecretBox {
+	if pathCipher < czarcoin.Unencrypted || pathCipher > czarcoin.SecretBox {
 		return Meta{}, encryption.ErrInvalidConfig.New("encryption type %d is not supported", pathCipher)
 	}
 
@@ -124,13 +124,13 @@ func (b *BucketStore) Delete(ctx context.Context, bucket string) (err error) {
 	defer mon.Task()(&ctx)(&err)
 
 	if bucket == "" {
-		return storj.ErrNoBucket.New("")
+		return czarcoin.ErrNoBucket.New("")
 	}
 
 	err = b.store.Delete(ctx, bucket)
 
 	if storage.ErrKeyNotFound.Has(err) {
-		err = storj.ErrBucketNotFound.Wrap(err)
+		err = czarcoin.ErrBucketNotFound.Wrap(err)
 	}
 
 	return err
@@ -164,19 +164,19 @@ func (b *BucketStore) List(ctx context.Context, startAfter, endBefore string, li
 
 // convertMeta converts stream metadata to object metadata
 func convertMeta(m objects.Meta) (Meta, error) {
-	var cipher storj.Cipher
+	var cipher czarcoin.Cipher
 
 	pathEncType := m.UserDefined["path-enc-type"]
 
 	if pathEncType == "" {
 		// backward compatibility for old buckets
-		cipher = storj.AESGCM
+		cipher = czarcoin.AESGCM
 	} else {
 		pet, err := strconv.Atoi(pathEncType)
 		if err != nil {
 			return Meta{}, err
 		}
-		cipher = storj.Cipher(pet)
+		cipher = czarcoin.Cipher(pet)
 	}
 
 	return Meta{

@@ -14,8 +14,8 @@ import (
 
 	"go.uber.org/zap"
 
-	"storj.io/storj/pkg/auth"
-	"storj.io/storj/pkg/satellite/satelliteauth"
+	"czarcoin.org/czarcoin/pkg/auth"
+	"czarcoin.org/czarcoin/pkg/satellite/satelliteauth"
 )
 
 // Service is handling accounts related logic

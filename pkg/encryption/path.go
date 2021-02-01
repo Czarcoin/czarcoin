@@ -8,21 +8,21 @@ import (
 	"crypto/sha512"
 	"encoding/base64"
 
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 // EncryptPath encrypts path with the given key
-func EncryptPath(path storj.Path, cipher storj.Cipher, key *storj.Key) (encrypted storj.Path, err error) {
+func EncryptPath(path czarcoin.Path, cipher czarcoin.Cipher, key *czarcoin.Key) (encrypted czarcoin.Path, err error) {
 	// do not encrypt empty paths
 	if len(path) == 0 {
 		return path, nil
 	}
 
-	if cipher == storj.Unencrypted {
+	if cipher == czarcoin.Unencrypted {
 		return path, nil
 	}
 
-	comps := storj.SplitPath(path)
+	comps := czarcoin.SplitPath(path)
 	for i, comp := range comps {
 		comps[i], err = encryptPathComponent(comp, cipher, key)
 		if err != nil {
@@ -33,16 +33,16 @@ func EncryptPath(path storj.Path, cipher storj.Cipher, key *storj.Key) (encrypte
 			return "", err
 		}
 	}
-	return storj.JoinPaths(comps...), nil
+	return czarcoin.JoinPaths(comps...), nil
 }
 
 // DecryptPath decrypts path with the given key
-func DecryptPath(path storj.Path, cipher storj.Cipher, key *storj.Key) (decrypted storj.Path, err error) {
-	if cipher == storj.Unencrypted {
+func DecryptPath(path czarcoin.Path, cipher czarcoin.Cipher, key *czarcoin.Key) (decrypted czarcoin.Path, err error) {
+	if cipher == czarcoin.Unencrypted {
 		return path, nil
 	}
 
-	comps := storj.SplitPath(path)
+	comps := czarcoin.SplitPath(path)
 	for i, comp := range comps {
 		comps[i], err = decryptPathComponent(comp, cipher, key)
 		if err != nil {
@@ -53,12 +53,12 @@ func DecryptPath(path storj.Path, cipher storj.Cipher, key *storj.Key) (decrypte
 			return "", err
 		}
 	}
-	return storj.JoinPaths(comps...), nil
+	return czarcoin.JoinPaths(comps...), nil
 }
 
 // DerivePathKey derives the key for the given depth from the given root key.
 // This method must be called on an unencrypted path.
-func DerivePathKey(path storj.Path, key *storj.Key, depth int) (derivedKey *storj.Key, err error) {
+func DerivePathKey(path czarcoin.Path, key *czarcoin.Key, depth int) (derivedKey *czarcoin.Key, err error) {
 	if depth < 0 {
 		return nil, Error.New("negative depth")
 	}
@@ -68,7 +68,7 @@ func DerivePathKey(path storj.Path, key *storj.Key, depth int) (derivedKey *stor
 		return key, nil
 	}
 
-	comps := storj.SplitPath(path)
+	comps := czarcoin.SplitPath(path)
 	if depth > len(comps) {
 		return nil, Error.New("depth greater than path length")
 	}
@@ -85,8 +85,8 @@ func DerivePathKey(path storj.Path, key *storj.Key, depth int) (derivedKey *stor
 
 // DeriveContentKey derives the key for the encrypted object data using the root key.
 // This method must be called on an unencrypted path.
-func DeriveContentKey(path storj.Path, key *storj.Key) (derivedKey *storj.Key, err error) {
-	comps := storj.SplitPath(path)
+func DeriveContentKey(path czarcoin.Path, key *czarcoin.Key) (derivedKey *czarcoin.Key, err error) {
+	comps := czarcoin.SplitPath(path)
 	if len(comps) == 0 {
 		return nil, Error.New("path is empty")
 	}
@@ -101,7 +101,7 @@ func DeriveContentKey(path storj.Path, key *storj.Key) (derivedKey *storj.Key, e
 	return derivedKey, nil
 }
 
-func encryptPathComponent(comp string, cipher storj.Cipher, key *storj.Key) (string, error) {
+func encryptPathComponent(comp string, cipher czarcoin.Cipher, key *czarcoin.Key) (string, error) {
 	// derive the key for the current path component
 	derivedKey, err := DeriveKey(key, "path:"+comp)
 	if err != nil {
@@ -115,7 +115,7 @@ func encryptPathComponent(comp string, cipher storj.Cipher, key *storj.Key) (str
 		return "", Error.Wrap(err)
 	}
 
-	nonce := new(storj.Nonce)
+	nonce := new(czarcoin.Nonce)
 	copy(nonce[:], mac.Sum(nil))
 
 	// encrypt the path components with the parent's key and the derived nonce
@@ -124,8 +124,8 @@ func encryptPathComponent(comp string, cipher storj.Cipher, key *storj.Key) (str
 		return "", Error.Wrap(err)
 	}
 
-	nonceSize := storj.NonceSize
-	if cipher == storj.AESGCM {
+	nonceSize := czarcoin.NonceSize
+	if cipher == czarcoin.AESGCM {
 		nonceSize = AESGCMNonceSize
 	}
 
@@ -133,7 +133,7 @@ func encryptPathComponent(comp string, cipher storj.Cipher, key *storj.Key) (str
 	return base64.RawURLEncoding.EncodeToString(append(nonce[:nonceSize], cipherText...)), nil
 }
 
-func decryptPathComponent(comp string, cipher storj.Cipher, key *storj.Key) (string, error) {
+func decryptPathComponent(comp string, cipher czarcoin.Cipher, key *czarcoin.Key) (string, error) {
 	if comp == "" {
 		return "", nil
 	}
@@ -143,13 +143,13 @@ func decryptPathComponent(comp string, cipher storj.Cipher, key *storj.Key) (str
 		return "", Error.Wrap(err)
 	}
 
-	nonceSize := storj.NonceSize
-	if cipher == storj.AESGCM {
+	nonceSize := czarcoin.NonceSize
+	if cipher == czarcoin.AESGCM {
 		nonceSize = AESGCMNonceSize
 	}
 
 	// extract the nonce from the cipher text
-	nonce := new(storj.Nonce)
+	nonce := new(czarcoin.Nonce)
 	copy(nonce[:], data[:nonceSize])
 
 	decrypted, err := Decrypt(data[nonceSize:], cipher, key, nonce)

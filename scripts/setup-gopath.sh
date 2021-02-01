@@ -4,11 +4,11 @@ mkdir -p ~/bin ~/cache
 export PATH=~/bin:$PATH
 
 export GOSPACE_ROOT=$GOPATH
-export GOSPACE_PKG=storj.io/storj
-export GOSPACE_REPO=git@github.com:storj/storj/git
+export GOSPACE_PKG=czarcoin.org/czarcoin
+export GOSPACE_REPO=git@github.com:czarcoin/czarcoin/git
 
 # setup gospace
-wget -O ~/bin/gospace https://github.com/storj/gospace/releases/download/v0.0.5/gospace_linux_amd64
+wget -O ~/bin/gospace https://github.com/czarcoin/gospace/releases/download/v0.0.5/gospace_linux_amd64
 chmod +x ~/bin/gospace
 
 # find module dependency hash

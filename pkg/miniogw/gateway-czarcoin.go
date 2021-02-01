@@ -15,21 +15,21 @@ import (
 	"github.com/zeebo/errs"
 	monkit "gopkg.in/spacemonkeygo/monkit.v2"
 
-	"storj.io/storj/pkg/storage/streams"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/pkg/stream"
-	"storj.io/storj/pkg/utils"
+	"czarcoin.org/czarcoin/pkg/storage/streams"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/pkg/stream"
+	"czarcoin.org/czarcoin/pkg/utils"
 )
 
 var (
 	mon = monkit.Package()
 
 	// Error is the errs class of standard End User Client errors
-	Error = errs.Class("Storj Gateway error")
+	Error = errs.Class("Czarcoin Gateway error")
 )
 
-// NewStorjGateway creates a *Storj object from an existing ObjectStore
-func NewStorjGateway(metainfo storj.Metainfo, streams streams.Store, pathCipher storj.Cipher, encryption storj.EncryptionScheme, redundancy storj.RedundancyScheme) *Gateway {
+// NewCzarcoinGateway creates a *Czarcoin object from an existing ObjectStore
+func NewCzarcoinGateway(metainfo czarcoin.Metainfo, streams streams.Store, pathCipher czarcoin.Cipher, encryption czarcoin.EncryptionScheme, redundancy czarcoin.RedundancyScheme) *Gateway {
 	return &Gateway{
 		metainfo:   metainfo,
 		streams:    streams,
@@ -42,17 +42,17 @@ func NewStorjGateway(metainfo storj.Metainfo, streams streams.Store, pathCipher 
 
 // Gateway is the implementation of a minio cmd.Gateway
 type Gateway struct {
-	metainfo   storj.Metainfo
+	metainfo   czarcoin.Metainfo
 	streams    streams.Store
-	pathCipher storj.Cipher
-	encryption storj.EncryptionScheme
-	redundancy storj.RedundancyScheme
+	pathCipher czarcoin.Cipher
+	encryption czarcoin.EncryptionScheme
+	redundancy czarcoin.RedundancyScheme
 	multipart  *MultipartUploads
 }
 
 // Name implements cmd.Gateway
 func (gateway *Gateway) Name() string {
-	return "storj"
+	return "czarcoin"
 }
 
 // NewGatewayLayer implements cmd.Gateway
@@ -73,7 +73,7 @@ type gatewayLayer struct {
 func (layer *gatewayLayer) DeleteBucket(ctx context.Context, bucket string) (err error) {
 	defer mon.Task()(&ctx)(&err)
 
-	list, err := layer.gateway.metainfo.ListObjects(ctx, bucket, storj.ListOptions{Direction: storj.After, Recursive: true, Limit: 1})
+	list, err := layer.gateway.metainfo.ListObjects(ctx, bucket, czarcoin.ListOptions{Direction: czarcoin.After, Recursive: true, Limit: 1})
 	if err != nil {
 		return convertError(err, bucket, "")
 	}
@@ -165,7 +165,7 @@ func (layer *gatewayLayer) ListBuckets(ctx context.Context) (bucketItems []minio
 	startAfter := ""
 
 	for {
-		list, err := layer.gateway.metainfo.ListBuckets(ctx, storj.BucketListOptions{Direction: storj.After, Cursor: startAfter})
+		list, err := layer.gateway.metainfo.ListBuckets(ctx, czarcoin.BucketListOptions{Direction: czarcoin.After, Cursor: startAfter})
 		if err != nil {
 			return nil, err
 		}
@@ -197,8 +197,8 @@ func (layer *gatewayLayer) ListObjects(ctx context.Context, bucket, prefix, mark
 	var objects []minio.ObjectInfo
 	var prefixes []string
 
-	list, err := layer.gateway.metainfo.ListObjects(ctx, bucket, storj.ListOptions{
-		Direction: storj.After,
+	list, err := layer.gateway.metainfo.ListObjects(ctx, bucket, czarcoin.ListOptions{
+		Direction: czarcoin.After,
 		Cursor:    startAfter,
 		Prefix:    prefix,
 		Recursive: recursive,
@@ -212,7 +212,7 @@ func (layer *gatewayLayer) ListObjects(ctx context.Context, bucket, prefix, mark
 		for _, item := range list.Items {
 			path := item.Path
 			if recursive && prefix != "" {
-				path = storj.JoinPaths(strings.TrimSuffix(prefix, "/"), path)
+				path = czarcoin.JoinPaths(strings.TrimSuffix(prefix, "/"), path)
 			}
 			if item.IsPrefix {
 				prefixes = append(prefixes, path)
@@ -255,7 +255,7 @@ func (layer *gatewayLayer) ListObjectsV2(ctx context.Context, bucket, prefix, co
 	recursive := delimiter == ""
 	var nextContinuationToken string
 
-	var startAfterPath storj.Path
+	var startAfterPath czarcoin.Path
 	if continuationToken != "" {
 		startAfterPath = continuationToken
 	}
@@ -266,8 +266,8 @@ func (layer *gatewayLayer) ListObjectsV2(ctx context.Context, bucket, prefix, co
 	var objects []minio.ObjectInfo
 	var prefixes []string
 
-	list, err := layer.gateway.metainfo.ListObjects(ctx, bucket, storj.ListOptions{
-		Direction: storj.After,
+	list, err := layer.gateway.metainfo.ListObjects(ctx, bucket, czarcoin.ListOptions{
+		Direction: czarcoin.After,
 		Cursor:    startAfterPath,
 		Prefix:    prefix,
 		Recursive: recursive,
@@ -281,7 +281,7 @@ func (layer *gatewayLayer) ListObjectsV2(ctx context.Context, bucket, prefix, co
 		for _, item := range list.Items {
 			path := item.Path
 			if recursive && prefix != "" {
-				path = storj.JoinPaths(strings.TrimSuffix(prefix, "/"), path)
+				path = czarcoin.JoinPaths(strings.TrimSuffix(prefix, "/"), path)
 			}
 			if item.IsPrefix {
 				prefixes = append(prefixes, path)
@@ -329,11 +329,11 @@ func (layer *gatewayLayer) MakeBucketWithLocation(ctx context.Context, bucket st
 		return minio.BucketAlreadyExists{Bucket: bucket}
 	}
 
-	if !storj.ErrBucketNotFound.Has(err) {
+	if !czarcoin.ErrBucketNotFound.Has(err) {
 		return convertError(err, bucket, "")
 	}
 
-	_, err = layer.gateway.metainfo.CreateBucket(ctx, bucket, &storj.Bucket{PathCipher: layer.gateway.pathCipher})
+	_, err = layer.gateway.metainfo.CreateBucket(ctx, bucket, &czarcoin.Bucket{PathCipher: layer.gateway.pathCipher})
 
 	return err
 }
@@ -350,7 +350,7 @@ func (layer *gatewayLayer) CopyObject(ctx context.Context, srcBucket, srcObject,
 	defer utils.LogClose(download)
 
 	info := readOnlyStream.Info()
-	createInfo := storj.CreateObject{
+	createInfo := czarcoin.CreateObject{
 		ContentType:      info.ContentType,
 		Expires:          info.Expires,
 		Metadata:         info.Metadata,
@@ -361,7 +361,7 @@ func (layer *gatewayLayer) CopyObject(ctx context.Context, srcBucket, srcObject,
 	return layer.putObject(ctx, destBucket, destObject, download, &createInfo)
 }
 
-func (layer *gatewayLayer) putObject(ctx context.Context, bucket, object string, reader io.Reader, createInfo *storj.CreateObject) (objInfo minio.ObjectInfo, err error) {
+func (layer *gatewayLayer) putObject(ctx context.Context, bucket, object string, reader io.Reader, createInfo *czarcoin.CreateObject) (objInfo minio.ObjectInfo, err error) {
 	defer mon.Task()(&ctx)(&err)
 
 	mutableObject, err := layer.gateway.metainfo.CreateObject(ctx, bucket, object, createInfo)
@@ -392,7 +392,7 @@ func (layer *gatewayLayer) putObject(ctx context.Context, bucket, object string,
 	}, nil
 }
 
-func upload(ctx context.Context, streams streams.Store, mutableObject storj.MutableObject, reader io.Reader) error {
+func upload(ctx context.Context, streams streams.Store, mutableObject czarcoin.MutableObject, reader io.Reader) error {
 	mutableStream, err := mutableObject.CreateStream(ctx)
 	if err != nil {
 		return err
@@ -415,7 +415,7 @@ func (layer *gatewayLayer) PutObject(ctx context.Context, bucket, object string,
 	contentType := metadata["content-type"]
 	delete(metadata, "content-type")
 
-	createInfo := storj.CreateObject{
+	createInfo := czarcoin.CreateObject{
 		ContentType:      contentType,
 		Metadata:         metadata,
 		RedundancyScheme: layer.gateway.redundancy,
@@ -435,19 +435,19 @@ func (layer *gatewayLayer) StorageInfo(context.Context) minio.StorageInfo {
 }
 
 func convertError(err error, bucket, object string) error {
-	if storj.ErrNoBucket.Has(err) {
+	if czarcoin.ErrNoBucket.Has(err) {
 		return minio.BucketNameInvalid{Bucket: bucket}
 	}
 
-	if storj.ErrBucketNotFound.Has(err) {
+	if czarcoin.ErrBucketNotFound.Has(err) {
 		return minio.BucketNotFound{Bucket: bucket}
 	}
 
-	if storj.ErrNoPath.Has(err) {
+	if czarcoin.ErrNoPath.Has(err) {
 		return minio.ObjectNameInvalid{Bucket: bucket, Object: object}
 	}
 
-	if storj.ErrObjectNotFound.Has(err) {
+	if czarcoin.ErrObjectNotFound.Has(err) {
 		return minio.ObjectNotFound{Bucket: bucket, Object: object}
 	}
 

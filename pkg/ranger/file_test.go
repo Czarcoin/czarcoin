@@ -14,7 +14,7 @@ import (
 )
 
 func TestFileRanger(t *testing.T) {
-	tempdir, err := ioutil.TempDir("", "storj-fileranger")
+	tempdir, err := ioutil.TempDir("", "czarcoin-fileranger")
 	if err != nil {
 		t.Fatal(err)
 	}

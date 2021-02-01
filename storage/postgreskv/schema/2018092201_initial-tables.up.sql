@@ -7,7 +7,7 @@ CREATE TABLE buckets (
 );
 
 -- until the KeyValueStore interface supports passing the bucket separately, or
--- until storj actually supports changing the delimiter character per bucket, this
+-- until czarcoin actually supports changing the delimiter character per bucket, this
 -- dummy row should suffice for everything.
 INSERT INTO buckets (bucketname, delim) VALUES (''::BYTEA, ascii('/'));
 

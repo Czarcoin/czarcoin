@@ -8,12 +8,12 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 func TestAesGcm(t *testing.T) {
-	var key storj.Key
-	copy(key[:], randData(storj.KeySize))
+	var key czarcoin.Key
+	copy(key[:], randData(czarcoin.KeySize))
 	var firstNonce AESGCMNonce
 	copy(firstNonce[:], randData(AESGCMNonceSize))
 	encrypter, err := NewAESGCMEncrypter(&key, &firstNonce, 4*1024)

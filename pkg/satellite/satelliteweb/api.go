@@ -13,10 +13,10 @@ import (
 	"github.com/graphql-go/graphql"
 	"github.com/zeebo/errs"
 
-	"storj.io/storj/pkg/auth"
-	"storj.io/storj/pkg/satellite"
-	"storj.io/storj/pkg/satellite/satelliteweb/satelliteql"
-	"storj.io/storj/pkg/utils"
+	"czarcoin.org/czarcoin/pkg/auth"
+	"czarcoin.org/czarcoin/pkg/satellite"
+	"czarcoin.org/czarcoin/pkg/satellite/satelliteweb/satelliteql"
+	"czarcoin.org/czarcoin/pkg/utils"
 )
 
 const (

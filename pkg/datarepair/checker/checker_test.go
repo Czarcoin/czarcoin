@@ -16,20 +16,20 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
 
-	"storj.io/storj/internal/teststorj"
-	"storj.io/storj/pkg/auth"
-	"storj.io/storj/pkg/datarepair/irreparabledb"
-	"storj.io/storj/pkg/datarepair/queue"
-	"storj.io/storj/pkg/overlay"
-	"storj.io/storj/pkg/overlay/mocks"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/pointerdb"
-	"storj.io/storj/pkg/statdb"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/storage/redis"
-	"storj.io/storj/storage/redis/redisserver"
-	"storj.io/storj/storage/testqueue"
-	"storj.io/storj/storage/teststore"
+	"czarcoin.org/czarcoin/internal/testczarcoin"
+	"czarcoin.org/czarcoin/pkg/auth"
+	"czarcoin.org/czarcoin/pkg/datarepair/irreparabledb"
+	"czarcoin.org/czarcoin/pkg/datarepair/queue"
+	"czarcoin.org/czarcoin/pkg/overlay"
+	"czarcoin.org/czarcoin/pkg/overlay/mocks"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/pointerdb"
+	"czarcoin.org/czarcoin/pkg/statdb"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/storage/redis"
+	"czarcoin.org/czarcoin/storage/redis/redisserver"
+	"czarcoin.org/czarcoin/storage/testqueue"
+	"czarcoin.org/czarcoin/storage/teststore"
 )
 
 var ctx = context.Background()
@@ -51,7 +51,7 @@ func TestIdentifyInjuredSegments(t *testing.T) {
 	//fill a pointerdb
 	for i := 0; i < N; i++ {
 		s := strconv.Itoa(i)
-		ids := teststorj.NodeIDsFromStrings([]string{s + "a", s + "b", s + "c", s + "d"}...)
+		ids := testczarcoin.NodeIDsFromStrings([]string{s + "a", s + "b", s + "c", s + "d"}...)
 
 		p := &pb.Pointer{
 			Remote: &pb.RemoteSegment{
@@ -135,14 +135,14 @@ func TestOfflineNodes(t *testing.T) {
 	repairQueue := queue.NewQueue(testqueue.New())
 	const N = 50
 	nodes := []*pb.Node{}
-	nodeIDs := storj.NodeIDList{}
+	nodeIDs := czarcoin.NodeIDList{}
 	expectedOffline := []int32{}
 	for i := 0; i < N; i++ {
-		id := teststorj.NodeIDFromString(strconv.Itoa(i))
+		id := testczarcoin.NodeIDFromString(strconv.Itoa(i))
 		n := &pb.Node{Id: id, Type: pb.NodeType_STORAGE, Address: &pb.NodeAddress{Address: ""}}
 		nodes = append(nodes, n)
 		if i%(rand.Intn(5)+2) == 0 {
-			nodeIDs = append(nodeIDs, teststorj.NodeIDFromString("id"+id.String()))
+			nodeIDs = append(nodeIDs, testczarcoin.NodeIDFromString("id"+id.String()))
 			expectedOffline = append(expectedOffline, int32(i))
 		} else {
 			nodeIDs = append(nodeIDs, id)
@@ -194,7 +194,7 @@ func BenchmarkIdentifyInjuredSegments(b *testing.B) {
 	//fill a pointerdb
 	for i := 0; i < N; i++ {
 		s := strconv.Itoa(i)
-		ids := teststorj.NodeIDsFromStrings([]string{s + "a", s + "b", s + "c", s + "d"}...)
+		ids := testczarcoin.NodeIDsFromStrings([]string{s + "a", s + "b", s + "c", s + "d"}...)
 
 		p := &pb.Pointer{
 			Remote: &pb.RemoteSegment{

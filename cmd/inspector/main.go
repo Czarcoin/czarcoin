@@ -18,11 +18,11 @@ import (
 	"github.com/zeebo/errs"
 	"go.uber.org/zap"
 
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/process"
-	"storj.io/storj/pkg/provider"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/pkg/transport"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/process"
+	"czarcoin.org/czarcoin/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/pkg/transport"
 )
 
 var (
@@ -44,7 +44,7 @@ var (
 	// Commander CLI
 	rootCmd = &cobra.Command{
 		Use:   "inspector",
-		Short: "CLI for interacting with Storj Kademlia network",
+		Short: "CLI for interacting with Czarcoin Kademlia network",
 	}
 	kadCmd = &cobra.Command{
 		Use:   "kad",
@@ -186,7 +186,7 @@ func GetBucket(cmd *cobra.Command, args []string) (err error) {
 	if err != nil {
 		return ErrInspectorDial.Wrap(err)
 	}
-	nodeID, err := storj.NodeIDFromString(args[0])
+	nodeID, err := czarcoin.NodeIDFromString(args[0])
 	if err != nil {
 		return err
 	}
@@ -274,7 +274,7 @@ func prettyPrintBucket(b *pb.GetBucketResponse) string {
 
 // PingNode sends a PING RPC across the Kad network to check node availability
 func PingNode(cmd *cobra.Command, args []string) (err error) {
-	nodeID, err := storj.NodeIDFromString(args[0])
+	nodeID, err := czarcoin.NodeIDFromString(args[0])
 	if err != nil {
 		return err
 	}
@@ -311,7 +311,7 @@ func GetStats(cmd *cobra.Command, args []string) (err error) {
 		return ErrInspectorDial.Wrap(err)
 	}
 
-	nodeID, err := storj.NodeIDFromString(args[0])
+	nodeID, err := czarcoin.NodeIDFromString(args[0])
 	if err != nil {
 		return err
 	}
@@ -348,7 +348,7 @@ func GetCSVStats(cmd *cobra.Command, args []string) (err error) {
 			return ErrArgs.Wrap(err)
 		}
 
-		nodeID, err := storj.NodeIDFromString(line[0])
+		nodeID, err := czarcoin.NodeIDFromString(line[0])
 		if err != nil {
 			return err
 		}
@@ -373,7 +373,7 @@ func CreateStats(cmd *cobra.Command, args []string) (err error) {
 		return ErrInspectorDial.Wrap(err)
 	}
 
-	nodeID, err := storj.NodeIDFromString(args[0])
+	nodeID, err := czarcoin.NodeIDFromString(args[0])
 	if err != nil {
 		return err
 	}
@@ -428,7 +428,7 @@ func CreateCSVStats(cmd *cobra.Command, args []string) (err error) {
 			return ErrArgs.Wrap(err)
 		}
 
-		nodeID, err := storj.NodeIDFromString(line[0])
+		nodeID, err := czarcoin.NodeIDFromString(line[0])
 		if err != nil {
 			return err
 		}

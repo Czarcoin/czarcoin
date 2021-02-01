@@ -10,19 +10,19 @@ import (
 
 	"google.golang.org/grpc"
 
-	"storj.io/storj/pkg/cfgstruct"
-	"storj.io/storj/pkg/provider"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/pkg/cfgstruct"
+	"czarcoin.org/czarcoin/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 var (
-	targetAddr = flag.String("target", "satellite.staging.storj.io:7777", "address of target")
+	targetAddr = flag.String("target", "satellite.staging.czarcoin.org:7777", "address of target")
 
 	identityConfig provider.IdentityConfig
 )
 
 func init() {
-	cfgstruct.Bind(flag.CommandLine, &identityConfig, cfgstruct.ConfDir("$HOME/.storj/gw"))
+	cfgstruct.Bind(flag.CommandLine, &identityConfig, cfgstruct.ConfDir("$HOME/.czarcoin/gw"))
 }
 
 func main() {
@@ -32,7 +32,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	dialOption, err := identity.DialOption(storj.NodeID{})
+	dialOption, err := identity.DialOption(czarcoin.NodeID{})
 	if err != nil {
 		panic(err)
 	}

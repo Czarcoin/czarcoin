@@ -19,9 +19,9 @@ import (
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/peer"
 
-	"storj.io/storj/pkg/peertls"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/pkg/utils"
+	"czarcoin.org/czarcoin/pkg/peertls"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/pkg/utils"
 )
 
 const (
@@ -38,7 +38,7 @@ type PeerIdentity struct {
 	// signed by the CA. The leaf is what is used for communication.
 	Leaf *x509.Certificate
 	// The ID taken from the CA public key
-	ID storj.NodeID
+	ID czarcoin.NodeID
 }
 
 // FullIdentity represents you on the network. In addition to a PeerIdentity,
@@ -51,7 +51,7 @@ type FullIdentity struct {
 	// signed by the CA. The leaf is what is used for communication.
 	Leaf *x509.Certificate
 	// The ID taken from the CA public key
-	ID storj.NodeID
+	ID czarcoin.NodeID
 	// Key is the key this identity uses with the leaf for communication.
 	Key crypto.PrivateKey
 }
@@ -320,7 +320,7 @@ func (fi *FullIdentity) ServerOption(pcvFuncs ...peertls.PeerCertVerificationFun
 // DialOption returns a grpc `DialOption` for making outgoing connections
 // to the node with this peer identity
 // id is an optional id of the node we are dialing
-func (fi *FullIdentity) DialOption(id storj.NodeID) (grpc.DialOption, error) {
+func (fi *FullIdentity) DialOption(id czarcoin.NodeID) (grpc.DialOption, error) {
 	// TODO(coyle): add ID
 	ch := [][]byte{fi.Leaf.Raw, fi.CA.Raw}
 	ch = append(ch, fi.RestChainRaw()...)
@@ -342,14 +342,14 @@ func (fi *FullIdentity) DialOption(id storj.NodeID) (grpc.DialOption, error) {
 }
 
 // NodeIDFromKey hashes a publc key and creates a node ID from it
-func NodeIDFromKey(k crypto.PublicKey) (storj.NodeID, error) {
+func NodeIDFromKey(k crypto.PublicKey) (czarcoin.NodeID, error) {
 	kb, err := x509.MarshalPKIXPublicKey(k)
 	if err != nil {
-		return storj.NodeID{}, storj.ErrNodeID.Wrap(err)
+		return czarcoin.NodeID{}, czarcoin.ErrNodeID.Wrap(err)
 	}
-	hash := make([]byte, len(storj.NodeID{}))
+	hash := make([]byte, len(czarcoin.NodeID{}))
 	sha3.ShakeSum256(hash, kb)
-	return storj.NodeIDFromBytes(hash)
+	return czarcoin.NodeIDFromBytes(hash)
 }
 
 // NewFullIdentity creates a new ID for nodes with difficulty and concurrency params
@@ -389,9 +389,9 @@ func (so *ServerOptions) grpcOpts() (grpc.ServerOption, error) {
 	return so.Ident.ServerOption(so.PCVFuncs...)
 }
 
-func verifyIdentity(id storj.NodeID) peertls.PeerCertVerificationFunc {
+func verifyIdentity(id czarcoin.NodeID) peertls.PeerCertVerificationFunc {
 	return func(_ [][]byte, parsedChains [][]*x509.Certificate) error {
-		if id == (storj.NodeID{}) {
+		if id == (czarcoin.NodeID{}) {
 			return nil
 		}
 

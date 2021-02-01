@@ -12,7 +12,7 @@ import (
 
 	"github.com/zeebo/errs"
 
-	"storj.io/storj/pkg/ranger"
+	"czarcoin.org/czarcoin/pkg/ranger"
 )
 
 // IDLength -- Minimum ID length

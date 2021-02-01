@@ -18,39 +18,39 @@ import (
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 
-	testidentity "storj.io/storj/internal/identity"
-	"storj.io/storj/internal/teststorj"
-	"storj.io/storj/pkg/node"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/provider"
-	"storj.io/storj/pkg/storj"
+	testidentity "czarcoin.org/czarcoin/internal/identity"
+	"czarcoin.org/czarcoin/internal/testczarcoin"
+	"czarcoin.org/czarcoin/pkg/node"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 func TestNewKademlia(t *testing.T) {
 	rootdir, cleanup := mktempdir(t, "kademlia")
 	defer cleanup()
 	cases := []struct {
-		id          storj.NodeID
+		id          czarcoin.NodeID
 		bn          []pb.Node
 		addr        string
 		expectedErr error
 	}{
 		{
-			id: func() storj.NodeID {
+			id: func() czarcoin.NodeID {
 				id, err := testidentity.NewTestIdentity()
 				assert.NoError(t, err)
 				return id.ID
 			}(),
-			bn:   []pb.Node{{Id: teststorj.NodeIDFromString("foo")}},
+			bn:   []pb.Node{{Id: testczarcoin.NodeIDFromString("foo")}},
 			addr: "127.0.0.1:8080",
 		},
 		{
-			id: func() storj.NodeID {
+			id: func() czarcoin.NodeID {
 				id, err := testidentity.NewTestIdentity()
 				assert.NoError(t, err)
 				return id.ID
 			}(),
-			bn:   []pb.Node{{Id: teststorj.NodeIDFromString("foo")}},
+			bn:   []pb.Node{{Id: testczarcoin.NodeIDFromString("foo")}},
 			addr: "127.0.0.1:8080",
 		},
 	}
@@ -102,12 +102,12 @@ func TestPeerDiscovery(t *testing.T) {
 	}()
 
 	cases := []struct {
-		target      storj.NodeID
+		target      czarcoin.NodeID
 		opts        discoveryOptions
 		expected    *pb.Node
 		expectedErr error
 	}{
-		{target: func() storj.NodeID {
+		{target: func() czarcoin.NodeID {
 			// this is what the bootstrap node returns
 			mockBootServer.returnValue = []*pb.Node{{Id: targetID.ID, Address: &pb.NodeAddress{Address: targetAddress}}}
 			return targetID.ID
@@ -185,17 +185,17 @@ func testNode(t *testing.T, bn []pb.Node) (*Kademlia, *grpc.Server, func()) {
 
 func TestGetNodes(t *testing.T) {
 	var (
-		nodeIDA = teststorj.NodeIDFromString("AAAAA")
-		nodeIDB = teststorj.NodeIDFromString("BBBBB")
-		nodeIDC = teststorj.NodeIDFromString("CCCCC")
-		nodeIDD = teststorj.NodeIDFromString("DDDDD")
+		nodeIDA = testczarcoin.NodeIDFromString("AAAAA")
+		nodeIDB = testczarcoin.NodeIDFromString("BBBBB")
+		nodeIDC = testczarcoin.NodeIDFromString("CCCCC")
+		nodeIDD = testczarcoin.NodeIDFromString("DDDDD")
 	)
 
 	lis, err := net.Listen("tcp", "127.0.0.1:0")
 
 	assert.NoError(t, err)
 
-	srv, _ := newTestServer([]*pb.Node{{Id: teststorj.NodeIDFromString("foo")}})
+	srv, _ := newTestServer([]*pb.Node{{Id: testczarcoin.NodeIDFromString("foo")}})
 	go func() { assert.NoError(t, srv.Serve(lis)) }()
 	defer srv.Stop()
 
@@ -217,7 +217,7 @@ func TestGetNodes(t *testing.T) {
 	}()
 
 	// add nodes
-	ids := storj.NodeIDList{nodeIDA, nodeIDB, nodeIDC, nodeIDD}
+	ids := czarcoin.NodeIDList{nodeIDA, nodeIDB, nodeIDC, nodeIDD}
 	bw := []int64{1, 2, 3, 4}
 	disk := []int64{4, 3, 2, 1}
 	nodes := []*pb.Node{}
@@ -236,7 +236,7 @@ func TestGetNodes(t *testing.T) {
 
 	cases := []struct {
 		testID       string
-		start        storj.NodeID
+		start        czarcoin.NodeID
 		limit        int
 		restrictions []pb.Restriction
 		expected     []*pb.Node

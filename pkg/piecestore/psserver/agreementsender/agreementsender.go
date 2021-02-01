@@ -12,12 +12,12 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
-	"storj.io/storj/pkg/overlay"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/piecestore/psserver/psdb"
-	"storj.io/storj/pkg/provider"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/pkg/utils"
+	"czarcoin.org/czarcoin/pkg/overlay"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/piecestore/psserver/psdb"
+	"czarcoin.org/czarcoin/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/pkg/utils"
 )
 
 var (
@@ -51,7 +51,7 @@ func (as *AgreementSender) Run(ctx context.Context) error {
 	zap.S().Info("AgreementSender is starting up")
 
 	type agreementGroup struct {
-		satellite  storj.NodeID
+		satellite  czarcoin.NodeID
 		agreements []*psdb.Agreement
 	}
 
@@ -90,7 +90,7 @@ func (as *AgreementSender) Run(ctx context.Context) error {
 				}
 
 				// Create client from satellite ip
-				identOpt, err := as.identity.DialOption(storj.NodeID{})
+				identOpt, err := as.identity.DialOption(czarcoin.NodeID{})
 				if err != nil {
 					zap.S().Error(err)
 					return

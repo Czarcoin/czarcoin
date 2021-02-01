@@ -8,7 +8,7 @@ import (
 	"math/rand"
 	"testing"
 
-	"storj.io/storj/storage"
+	"czarcoin.org/czarcoin/storage"
 )
 
 func testCRUD(t *testing.T, store storage.KeyValueStore) {

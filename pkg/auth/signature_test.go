@@ -11,7 +11,7 @@ import (
 	"github.com/gtank/cryptopasta"
 	"github.com/stretchr/testify/assert"
 
-	"storj.io/storj/internal/identity"
+	"czarcoin.org/czarcoin/internal/identity"
 )
 
 func TestGenerateSignature(t *testing.T) {

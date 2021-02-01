@@ -8,9 +8,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"storj.io/storj/internal/identity"
-	"storj.io/storj/internal/teststorj"
-	"storj.io/storj/pkg/pb"
+	"czarcoin.org/czarcoin/internal/identity"
+	"czarcoin.org/czarcoin/internal/testczarcoin"
+	"czarcoin.org/czarcoin/pkg/pb"
 )
 
 var ctx = context.Background()
@@ -27,7 +27,7 @@ func TestDialNode(t *testing.T) {
 
 	// node.Address.Address == "" condition test
 	node := pb.Node{
-		Id: teststorj.NodeIDFromString("DUMMYID1"),
+		Id: testczarcoin.NodeIDFromString("DUMMYID1"),
 		Address: &pb.NodeAddress{
 			Transport: pb.NodeTransport_TCP_TLS_GRPC,
 			Address:   "",
@@ -39,7 +39,7 @@ func TestDialNode(t *testing.T) {
 
 	// node.Address == nil condition test
 	node = pb.Node{
-		Id:      teststorj.NodeIDFromString("DUMMYID2"),
+		Id:      testczarcoin.NodeIDFromString("DUMMYID2"),
 		Address: nil,
 	}
 	conn, err = oc.DialNode(ctx, &node)
@@ -48,7 +48,7 @@ func TestDialNode(t *testing.T) {
 
 	// node is valid argument condition test
 	node = pb.Node{
-		Id: teststorj.NodeIDFromString("DUMMYID3"),
+		Id: testczarcoin.NodeIDFromString("DUMMYID3"),
 		Address: &pb.NodeAddress{
 			Transport: pb.NodeTransport_TCP_TLS_GRPC,
 			Address:   "127.0.0.0:9000",

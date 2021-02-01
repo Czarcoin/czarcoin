@@ -1,7 +1,7 @@
 // Copyright (C) 2018 Storj Labs, Inc.
 // See LICENSE for copying information.
 
-package storj
+package czarcoin
 
 import (
 	"math/bits"
@@ -9,7 +9,7 @@ import (
 	"github.com/btcsuite/btcutil/base58"
 	"github.com/zeebo/errs"
 
-	"storj.io/storj/pkg/utils"
+	"czarcoin.org/czarcoin/pkg/utils"
 )
 
 // IDVersion is the default version used in the base58check node ID encoding

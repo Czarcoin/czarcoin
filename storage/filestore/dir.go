@@ -12,8 +12,8 @@ import (
 	"path/filepath"
 	"sync"
 
-	"storj.io/storj/pkg/utils"
-	"storj.io/storj/storage"
+	"czarcoin.org/czarcoin/pkg/utils"
+	"czarcoin.org/czarcoin/storage"
 )
 
 const (

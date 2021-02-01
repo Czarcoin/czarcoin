@@ -6,7 +6,7 @@ package testidentity
 import (
 	"context"
 
-	"storj.io/storj/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/provider"
 )
 
 // NewTestIdentity is a helper function to generate new node identities with

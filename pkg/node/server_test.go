@@ -11,10 +11,10 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 
-	"storj.io/storj/internal/teststorj"
-	"storj.io/storj/pkg/dht"
-	"storj.io/storj/pkg/dht/mocks"
-	"storj.io/storj/pkg/pb"
+	"czarcoin.org/czarcoin/internal/testczarcoin"
+	"czarcoin.org/czarcoin/pkg/dht"
+	"czarcoin.org/czarcoin/pkg/dht/mocks"
+	"czarcoin.org/czarcoin/pkg/pb"
 )
 
 func TestQuery(t *testing.T) {
@@ -23,9 +23,9 @@ func TestQuery(t *testing.T) {
 	mockDHT := mock_dht.NewMockDHT(ctrl)
 	mockRT := mock_dht.NewMockRoutingTable(ctrl)
 	s := &Server{dht: mockDHT}
-	sender := &pb.Node{Id: teststorj.NodeIDFromString("A")}
-	target := &pb.Node{Id: teststorj.NodeIDFromString("B")}
-	node := &pb.Node{Id: teststorj.NodeIDFromString("C")}
+	sender := &pb.Node{Id: testczarcoin.NodeIDFromString("A")}
+	target := &pb.Node{Id: testczarcoin.NodeIDFromString("B")}
+	node := &pb.Node{Id: testczarcoin.NodeIDFromString("C")}
 	cases := []struct {
 		caseName   string
 		rt         dht.RoutingTable
@@ -68,7 +68,7 @@ func TestQuery(t *testing.T) {
 		},
 	}
 	for i, v := range cases {
-		req := pb.QueryRequest{Pingback: true, Sender: sender, Target: &pb.Node{Id: teststorj.NodeIDFromString("B")}, Limit: int64(2)}
+		req := pb.QueryRequest{Pingback: true, Sender: sender, Target: &pb.Node{Id: testczarcoin.NodeIDFromString("B")}, Limit: int64(2)}
 		mockDHT.EXPECT().GetRoutingTable(gomock.Any()).Return(v.rt, v.getRTErr)
 		mockDHT.EXPECT().Ping(gomock.Any(), gomock.Any()).Return(v.pingNode, v.pingErr)
 		if v.pingErr != nil {

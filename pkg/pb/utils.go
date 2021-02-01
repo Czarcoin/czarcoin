@@ -3,10 +3,10 @@
 
 package pb
 
-import "storj.io/storj/pkg/storj"
+import "czarcoin.org/czarcoin/pkg/czarcoin"
 
 // NodeIDsToLookupRequests ...
-func NodeIDsToLookupRequests(nodeIDs storj.NodeIDList) *LookupRequests {
+func NodeIDsToLookupRequests(nodeIDs czarcoin.NodeIDList) *LookupRequests {
 	var rq []*LookupRequest
 	for _, v := range nodeIDs {
 		r := &LookupRequest{NodeId: v}
@@ -30,7 +30,7 @@ func LookupResponsesToNodes(responses *LookupResponses) []*Node {
 // with gogo's customtype extension.
 // (see https://github.com/gogo/protobuf/issues/147)
 func CopyNode(src *Node) (dst *Node) {
-	node := Node{Id: storj.NodeID{}}
+	node := Node{Id: czarcoin.NodeID{}}
 	copy(node.Id[:], src.Id[:])
 	if src.Address != nil {
 		node.Address = &NodeAddress{

@@ -19,7 +19,7 @@ import (
 	"go.uber.org/zap"
 	monkit "gopkg.in/spacemonkeygo/monkit.v2"
 
-	"storj.io/storj/pkg/telemetry"
+	"czarcoin.org/czarcoin/pkg/telemetry"
 )
 
 // ExecuteWithConfig runs a Cobra command with the provided default config
@@ -117,7 +117,7 @@ func cleanup(cmd *cobra.Command) {
 		if err != nil {
 			return err
 		}
-		vip.SetEnvPrefix("storj")
+		vip.SetEnvPrefix("czarcoin")
 		vip.SetEnvKeyReplacer(strings.NewReplacer(".", "_", "-", "_"))
 		vip.AutomaticEnv()
 

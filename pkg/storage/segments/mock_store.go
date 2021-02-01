@@ -12,8 +12,8 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 
-	ranger "storj.io/storj/pkg/ranger"
-	storj "storj.io/storj/pkg/storj"
+	ranger "czarcoin.org/czarcoin/pkg/ranger"
+	czarcoin "czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 // MockStore is a mock of Store interface
@@ -40,7 +40,7 @@ func (m *MockStore) EXPECT() *MockStoreMockRecorder {
 }
 
 // Meta mocks base method
-func (m *MockStore) Meta(ctx context.Context, path storj.Path) (Meta, error) {
+func (m *MockStore) Meta(ctx context.Context, path czarcoin.Path) (Meta, error) {
 	ret := m.ctrl.Call(m, "Meta", ctx, path)
 	ret0, _ := ret[0].(Meta)
 	ret1, _ := ret[1].(error)
@@ -53,7 +53,7 @@ func (mr *MockStoreMockRecorder) Meta(ctx, path interface{}) *gomock.Call {
 }
 
 // Get mocks base method
-func (m *MockStore) Get(ctx context.Context, path storj.Path) (ranger.Ranger, Meta, error) {
+func (m *MockStore) Get(ctx context.Context, path czarcoin.Path) (ranger.Ranger, Meta, error) {
 	ret := m.ctrl.Call(m, "Get", ctx, path)
 	ret0, _ := ret[0].(ranger.Ranger)
 	ret1, _ := ret[1].(Meta)
@@ -67,7 +67,7 @@ func (mr *MockStoreMockRecorder) Get(ctx, path interface{}) *gomock.Call {
 }
 
 // Repair mocks base method
-func (m *MockStore) Repair(ctx context.Context, path storj.Path, lostPieces []int32) error {
+func (m *MockStore) Repair(ctx context.Context, path czarcoin.Path, lostPieces []int32) error {
 	ret := m.ctrl.Call(m, "Repair", ctx, path, lostPieces)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -79,7 +79,7 @@ func (mr *MockStoreMockRecorder) Repair(ctx, path, lostPieces interface{}) *gomo
 }
 
 // Put mocks base method
-func (m *MockStore) Put(ctx context.Context, data io.Reader, expiration time.Time, segmentInfo func() (storj.Path, []byte, error)) (Meta, error) {
+func (m *MockStore) Put(ctx context.Context, data io.Reader, expiration time.Time, segmentInfo func() (czarcoin.Path, []byte, error)) (Meta, error) {
 	ret := m.ctrl.Call(m, "Put", ctx, data, expiration, segmentInfo)
 	ret0, _ := ret[0].(Meta)
 	ret1, _ := ret[1].(error)
@@ -92,7 +92,7 @@ func (mr *MockStoreMockRecorder) Put(ctx, data, expiration, segmentInfo interfac
 }
 
 // Delete mocks base method
-func (m *MockStore) Delete(ctx context.Context, path storj.Path) error {
+func (m *MockStore) Delete(ctx context.Context, path czarcoin.Path) error {
 	ret := m.ctrl.Call(m, "Delete", ctx, path)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -104,7 +104,7 @@ func (mr *MockStoreMockRecorder) Delete(ctx, path interface{}) *gomock.Call {
 }
 
 // List mocks base method
-func (m *MockStore) List(ctx context.Context, prefix, startAfter, endBefore storj.Path, recursive bool, limit int, metaFlags uint32) ([]ListItem, bool, error) {
+func (m *MockStore) List(ctx context.Context, prefix, startAfter, endBefore czarcoin.Path, recursive bool, limit int, metaFlags uint32) ([]ListItem, bool, error) {
 	ret := m.ctrl.Call(m, "List", ctx, prefix, startAfter, endBefore, recursive, limit, metaFlags)
 	ret0, _ := ret[0].([]ListItem)
 	ret1, _ := ret[1].(bool)

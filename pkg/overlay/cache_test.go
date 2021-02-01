@@ -9,35 +9,35 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"storj.io/storj/internal/testcontext"
-	"storj.io/storj/internal/testplanet"
-	"storj.io/storj/internal/teststorj"
-	"storj.io/storj/pkg/overlay"
-	"storj.io/storj/pkg/statdb"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/storage"
-	"storj.io/storj/storage/boltdb"
-	"storj.io/storj/storage/redis"
-	"storj.io/storj/storage/redis/redisserver"
-	"storj.io/storj/storage/teststore"
+	"czarcoin.org/czarcoin/internal/testcontext"
+	"czarcoin.org/czarcoin/internal/testplanet"
+	"czarcoin.org/czarcoin/internal/testczarcoin"
+	"czarcoin.org/czarcoin/pkg/overlay"
+	"czarcoin.org/czarcoin/pkg/statdb"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/storage"
+	"czarcoin.org/czarcoin/storage/boltdb"
+	"czarcoin.org/czarcoin/storage/redis"
+	"czarcoin.org/czarcoin/storage/redis/redisserver"
+	"czarcoin.org/czarcoin/storage/teststore"
 )
 
 var (
-	valid1ID   = teststorj.NodeIDFromString("valid1")
-	valid2ID   = teststorj.NodeIDFromString("valid2")
-	invalid1ID = teststorj.NodeIDFromString("invalid1")
-	invalid2ID = teststorj.NodeIDFromString("invalid2")
+	valid1ID   = testczarcoin.NodeIDFromString("valid1")
+	valid2ID   = testczarcoin.NodeIDFromString("valid2")
+	invalid1ID = testczarcoin.NodeIDFromString("invalid1")
+	invalid2ID = testczarcoin.NodeIDFromString("invalid2")
 )
 
 func testCache(ctx context.Context, t *testing.T, store storage.KeyValueStore, sdb *statdb.StatDB) {
 	cache := overlay.Cache{DB: store, StatDB: sdb}
 
 	{ // Put
-		err := cache.Put(ctx, valid1ID, *teststorj.MockNode("valid1"))
+		err := cache.Put(ctx, valid1ID, *testczarcoin.MockNode("valid1"))
 		if err != nil {
 			t.Fatal(err)
 		}
-		err = cache.Put(ctx, valid2ID, *teststorj.MockNode("valid2"))
+		err = cache.Put(ctx, valid2ID, *testczarcoin.MockNode("valid2"))
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -60,28 +60,28 @@ func testCache(ctx context.Context, t *testing.T, store storage.KeyValueStore, s
 	}
 
 	{ // GetAll
-		nodes, err := cache.GetAll(ctx, storj.NodeIDList{valid2ID, valid1ID, valid2ID})
+		nodes, err := cache.GetAll(ctx, czarcoin.NodeIDList{valid2ID, valid1ID, valid2ID})
 		assert.NoError(t, err)
 		assert.Equal(t, nodes[0].Id, valid2ID)
 		assert.Equal(t, nodes[1].Id, valid1ID)
 		assert.Equal(t, nodes[2].Id, valid2ID)
 
-		nodes, err = cache.GetAll(ctx, storj.NodeIDList{valid1ID, invalid1ID})
+		nodes, err = cache.GetAll(ctx, czarcoin.NodeIDList{valid1ID, invalid1ID})
 		assert.NoError(t, err)
 		assert.Equal(t, nodes[0].Id, valid1ID)
 		assert.Nil(t, nodes[1])
 
-		nodes, err = cache.GetAll(ctx, make(storj.NodeIDList, 2))
+		nodes, err = cache.GetAll(ctx, make(czarcoin.NodeIDList, 2))
 		assert.NoError(t, err)
 		assert.Nil(t, nodes[0])
 		assert.Nil(t, nodes[1])
 
-		_, err = cache.GetAll(ctx, storj.NodeIDList{})
+		_, err = cache.GetAll(ctx, czarcoin.NodeIDList{})
 		assert.True(t, overlay.OverlayError.Has(err))
 
 		if storeClient, ok := store.(*teststore.Client); ok {
 			storeClient.ForceError++
-			_, err := cache.GetAll(ctx, storj.NodeIDList{valid1ID, valid2ID})
+			_, err := cache.GetAll(ctx, czarcoin.NodeIDList{valid1ID, valid2ID})
 			assert.Error(t, err)
 		}
 	}

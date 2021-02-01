@@ -66,7 +66,7 @@ linters-settings:
     #  3. you do repeated runs (false for CI) or cache $GOPATH/pkg or `go env GOCACHE` dir in CI.
     use-installed-packages: false
   goimports:
-    local: "storj.io"
+    local: "czarcoin.org"
   golint:
     min-confidence: 0.8
   gofmt:

@@ -14,9 +14,9 @@ import (
 
 	"github.com/vivint/infectious"
 
-	"storj.io/storj/pkg/eestream"
-	"storj.io/storj/pkg/encryption"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/pkg/eestream"
+	"czarcoin.org/czarcoin/pkg/encryption"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 var (
@@ -54,9 +54,9 @@ func Main() error {
 	if err != nil {
 		return err
 	}
-	encKey := storj.Key(sha256.Sum256([]byte(*key)))
-	var firstNonce storj.Nonce
-	encrypter, err := encryption.NewEncrypter(storj.AESGCM, &encKey, &firstNonce, es.StripeSize())
+	encKey := czarcoin.Key(sha256.Sum256([]byte(*key)))
+	var firstNonce czarcoin.Nonce
+	encrypter, err := encryption.NewEncrypter(czarcoin.AESGCM, &encKey, &firstNonce, es.StripeSize())
 	if err != nil {
 		return err
 	}

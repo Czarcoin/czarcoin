@@ -15,10 +15,10 @@ import (
 	"github.com/zeebo/errs"
 	"go.uber.org/zap"
 
-	"storj.io/storj/internal/sync2"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/piecestore"
-	"storj.io/storj/pkg/utils"
+	"czarcoin.org/czarcoin/internal/sync2"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/piecestore"
+	"czarcoin.org/czarcoin/pkg/utils"
 )
 
 // RetrieveError is a type of error for failures in Server.Retrieve()

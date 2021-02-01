@@ -6,11 +6,11 @@ package node
 import (
 	"context"
 
-	"storj.io/storj/pkg/dht"
-	"storj.io/storj/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/dht"
+	"czarcoin.org/czarcoin/pkg/pb"
 )
 
-// Node is the storj definition for a node in the network
+// Node is the czarcoin definition for a node in the network
 type Node struct {
 	dht  dht.DHT
 	self pb.Node

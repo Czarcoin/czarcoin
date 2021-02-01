@@ -18,10 +18,10 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/vivint/infectious"
 
-	"storj.io/storj/internal/readcloser"
-	"storj.io/storj/pkg/encryption"
-	"storj.io/storj/pkg/ranger"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/internal/readcloser"
+	"czarcoin.org/czarcoin/pkg/encryption"
+	"czarcoin.org/czarcoin/pkg/ranger"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 func randData(amount int) []byte {
@@ -104,9 +104,9 @@ func TestRSRanger(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	encKey := storj.Key(sha256.Sum256([]byte("the secret key")))
-	var firstNonce storj.Nonce
-	encrypter, err := encryption.NewEncrypter(storj.AESGCM, &encKey, &firstNonce, rs.StripeSize())
+	encKey := czarcoin.Key(sha256.Sum256([]byte("the secret key")))
+	var firstNonce czarcoin.Nonce
+	encrypter, err := encryption.NewEncrypter(czarcoin.AESGCM, &encKey, &firstNonce, rs.StripeSize())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -123,7 +123,7 @@ func TestRSRanger(t *testing.T) {
 	for i, piece := range pieces {
 		rrs[i] = ranger.ByteRanger(piece)
 	}
-	decrypter, err := encryption.NewDecrypter(storj.AESGCM, &encKey, &firstNonce, rs.StripeSize())
+	decrypter, err := encryption.NewDecrypter(czarcoin.AESGCM, &encKey, &firstNonce, rs.StripeSize())
 	if err != nil {
 		t.Fatal(err)
 	}

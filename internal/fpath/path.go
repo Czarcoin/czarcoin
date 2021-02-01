@@ -16,7 +16,7 @@ import (
 )
 
 // Create a set
-var storjScheme = map[string]struct{}{
+var czarcoinScheme = map[string]struct{}{
 	"sj": {},
 	"s3": {},
 }
@@ -25,8 +25,8 @@ var storjScheme = map[string]struct{}{
 type FPath struct {
 	original string // the original URL or local path
 	local    bool   // if local path
-	bucket   string // only for Storj URL
-	path     string // only for Storj URL - the path within the bucket, cleaned from duplicated slashes
+	bucket   string // only for Czarcoin URL
+	path     string // only for Czarcoin URL - the path within the bucket, cleaned from duplicated slashes
 }
 
 // New creates new FPath from the given URL
@@ -51,7 +51,7 @@ func New(p string) (FPath, error) {
 			return fp, nil
 		}
 
-		if _, validScheme := storjScheme[u.Scheme]; !validScheme {
+		if _, validScheme := czarcoinScheme[u.Scheme]; !validScheme {
 			return fp, fmt.Errorf("unsupported URL scheme: %s, use format sj://bucket/", u.Scheme)
 		}
 
@@ -67,7 +67,7 @@ func New(p string) (FPath, error) {
 	}
 
 	if u.Port() != "" {
-		return fp, errors.New("port in Storj URL is not supported, use format sj://bucket/")
+		return fp, errors.New("port in Czarcoin URL is not supported, use format sj://bucket/")
 	}
 
 	fp.bucket = u.Host

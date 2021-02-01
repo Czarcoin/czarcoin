@@ -16,12 +16,12 @@ import (
 	"github.com/golang/protobuf/ptypes"
 	"github.com/stretchr/testify/assert"
 
-	"storj.io/storj/internal/teststorj"
+	"czarcoin.org/czarcoin/internal/testczarcoin"
 
-	"storj.io/storj/pkg/auth"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/storage/meta"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/pkg/auth"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/storage/meta"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 const (
@@ -47,13 +47,13 @@ func TestNewPointerDBClient(t *testing.T) {
 	assert.NotNil(t, pdb.client)
 }
 
-func makePointer(path storj.Path) pb.PutRequest {
+func makePointer(path czarcoin.Path) pb.PutRequest {
 	// rps is an example slice of RemotePieces to add to this
 	// REMOTE pointer type.
 	var rps []*pb.RemotePiece
 	rps = append(rps, &pb.RemotePiece{
 		PieceNum: 1,
-		NodeId:   teststorj.NodeIDFromString("testId"),
+		NodeId:   testczarcoin.NodeIDFromString("testId"),
 	})
 	pr := pb.PutRequest{
 		Path: path,
@@ -82,7 +82,7 @@ func TestPut(t *testing.T) {
 
 	for i, tt := range []struct {
 		APIKey    []byte
-		path      storj.Path
+		path      czarcoin.Path
 		err       error
 		errString string
 	}{
@@ -120,7 +120,7 @@ func TestGet(t *testing.T) {
 
 	for i, tt := range []struct {
 		APIKey    []byte
-		path      storj.Path
+		path      czarcoin.Path
 		err       error
 		errString string
 	}{
@@ -264,7 +264,7 @@ func TestDelete(t *testing.T) {
 
 	for i, tt := range []struct {
 		APIKey    []byte
-		path      storj.Path
+		path      czarcoin.Path
 		err       error
 		errString string
 	}{

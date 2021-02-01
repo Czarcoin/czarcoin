@@ -12,17 +12,17 @@ import (
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 
-	"storj.io/storj/internal/teststorj"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/internal/testczarcoin"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
-var fooID = teststorj.NodeIDFromString("foo")
+var fooID = testczarcoin.NodeIDFromString("foo")
 
 func TestGet(t *testing.T) {
 	cases := []struct {
 		pool          *ConnectionPool
-		nodeID        storj.NodeID
+		nodeID        czarcoin.NodeID
 		expected      Conn
 		expectedError error
 	}{
@@ -55,14 +55,14 @@ func TestDisconnect(t *testing.T) {
 	// gc.Close = func() error { return nil }
 	cases := []struct {
 		pool          ConnectionPool
-		nodeID        storj.NodeID
+		nodeID        czarcoin.NodeID
 		expected      interface{}
 		expectedError error
 	}{
 		{
 			pool: ConnectionPool{
 				mu:    sync.RWMutex{},
-				items: map[storj.NodeID]*Conn{fooID: &Conn{grpc: unsafe.Pointer(conn)}},
+				items: map[czarcoin.NodeID]*Conn{fooID: &Conn{grpc: unsafe.Pointer(conn)}},
 			},
 			nodeID:        fooID,
 			expected:      nil,

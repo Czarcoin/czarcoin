@@ -16,9 +16,9 @@ import (
 	"github.com/gogo/protobuf/proto"
 	_ "github.com/mattn/go-sqlite3"
 
-	"storj.io/storj/internal/teststorj"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/internal/testczarcoin"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 var ctx = context.Background()
@@ -26,7 +26,7 @@ var ctx = context.Background()
 const concurrency = 10
 
 func newDB(t testing.TB) (*DB, func()) {
-	tmpdir, err := ioutil.TempDir("", "storj-psdb")
+	tmpdir, err := ioutil.TempDir("", "czarcoin-psdb")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -138,7 +138,7 @@ func TestHappyPath(t *testing.T) {
 		}
 	})
 
-	bandwidthAllocation := func(satelliteID storj.NodeID, total int64) []byte {
+	bandwidthAllocation := func(satelliteID czarcoin.NodeID, total int64) []byte {
 		return serialize(t, &pb.RenterBandwidthAllocation_Data{
 			PayerAllocation: &pb.PayerBandwidthAllocation{
 				Data: serialize(t, &pb.PayerBandwidthAllocation_Data{
@@ -150,7 +150,7 @@ func TestHappyPath(t *testing.T) {
 	}
 
 	//TODO: use better data
-	nodeIDAB := teststorj.NodeIDFromString("AB")
+	nodeIDAB := testczarcoin.NodeIDFromString("AB")
 	allocationTests := []*pb.RenterBandwidthAllocation{
 		{
 			Signature: []byte("signed by test"),

@@ -14,13 +14,13 @@ import (
 	"gopkg.in/spacemonkeygo/monkit.v2"
 	"gopkg.in/spacemonkeygo/monkit.v2/environment"
 
-	"storj.io/storj/pkg/telemetry"
+	"czarcoin.org/czarcoin/pkg/telemetry"
 )
 
 var (
 	metricInterval = flag.Duration("metrics.interval", telemetry.DefaultInterval,
 		"how frequently to send up telemetry")
-	metricCollector = flag.String("metrics.addr", "collectora.storj.io:9000",
+	metricCollector = flag.String("metrics.addr", "collectora.czarcoin.org:9000",
 		"address to send telemetry to")
 	metricApp = flag.String("metrics.app", filepath.Base(os.Args[0]),
 		"application name for telemetry identification")

@@ -8,14 +8,14 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"storj.io/storj/internal/fpath"
-	"storj.io/storj/pkg/process"
+	"czarcoin.org/czarcoin/internal/fpath"
+	"czarcoin.org/czarcoin/pkg/process"
 )
 
 func init() {
 	addCmd(&cobra.Command{
 		Use:   "cat",
-		Short: "Copies a Storj object to standard out",
+		Short: "Copies a Czarcoin object to standard out",
 		RunE:  catMain,
 	}, CLICmd)
 }

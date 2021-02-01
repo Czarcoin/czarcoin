@@ -7,14 +7,14 @@ import (
 	"context"
 	"io"
 
-	"storj.io/storj/pkg/storage/streams"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/pkg/storage/streams"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 // Download implements Reader, Seeker and Closer for reading from stream.
 type Download struct {
 	ctx     context.Context
-	stream  storj.ReadOnlyStream
+	stream  czarcoin.ReadOnlyStream
 	streams streams.Store
 	reader  io.ReadCloser
 	offset  int64
@@ -22,7 +22,7 @@ type Download struct {
 }
 
 // NewDownload creates new stream download.
-func NewDownload(ctx context.Context, stream storj.ReadOnlyStream, streams streams.Store) *Download {
+func NewDownload(ctx context.Context, stream czarcoin.ReadOnlyStream, streams streams.Store) *Download {
 	return &Download{
 		ctx:     ctx,
 		stream:  stream,
@@ -106,7 +106,7 @@ func (download *Download) resetReader(offset int64) error {
 
 	obj := download.stream.Info()
 
-	rr, _, err := download.streams.Get(download.ctx, storj.JoinPaths(obj.Bucket.Name, obj.Path), obj.Bucket.PathCipher)
+	rr, _, err := download.streams.Get(download.ctx, czarcoin.JoinPaths(obj.Bucket.Name, obj.Path), obj.Bucket.PathCipher)
 	if err != nil {
 		return err
 	}

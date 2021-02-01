@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 
-	"storj.io/storj/pkg/auth"
+	"czarcoin.org/czarcoin/pkg/auth"
 )
 
 // NewAPIKeyInterceptor creates instance of apikey interceptor

@@ -12,15 +12,15 @@ import (
 	"go.uber.org/zap"
 
 	monkit "gopkg.in/spacemonkeygo/monkit.v2"
-	"storj.io/storj/pkg/kademlia"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/provider"
-	"storj.io/storj/pkg/statdb"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/pkg/utils"
-	"storj.io/storj/storage"
-	"storj.io/storj/storage/boltdb"
-	"storj.io/storj/storage/redis"
+	"czarcoin.org/czarcoin/pkg/kademlia"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/statdb"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/pkg/utils"
+	"czarcoin.org/czarcoin/storage"
+	"czarcoin.org/czarcoin/storage/boltdb"
+	"czarcoin.org/czarcoin/storage/redis"
 )
 
 var (
@@ -141,11 +141,11 @@ func LoadServerFromContext(ctx context.Context) *Server {
 }
 
 // ParseIDs converts the base58check encoded node ID strings from the config into node IDs
-func (c LookupConfig) ParseIDs() (ids storj.NodeIDList, err error) {
+func (c LookupConfig) ParseIDs() (ids czarcoin.NodeIDList, err error) {
 	var idErrs []error
 	idStrs := strings.Split(c.NodeIDsString, c.Delimiter)
 	for _, s := range idStrs {
-		id, err := storj.NodeIDFromString(s)
+		id, err := czarcoin.NodeIDFromString(s)
 		if err != nil {
 			idErrs = append(idErrs, err)
 			continue

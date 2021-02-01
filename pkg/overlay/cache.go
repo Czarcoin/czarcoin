@@ -9,12 +9,12 @@ import (
 	"github.com/gogo/protobuf/proto"
 	"github.com/zeebo/errs"
 
-	"storj.io/storj/pkg/dht"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/statdb"
-	statproto "storj.io/storj/pkg/statdb/proto"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/storage"
+	"czarcoin.org/czarcoin/pkg/dht"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/statdb"
+	statproto "czarcoin.org/czarcoin/pkg/statdb/proto"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/storage"
 )
 
 const (
@@ -44,7 +44,7 @@ func NewOverlayCache(db storage.KeyValueStore, dht dht.DHT, sdb *statdb.StatDB) 
 }
 
 // Get looks up the provided nodeID from the overlay cache
-func (o *Cache) Get(ctx context.Context, nodeID storj.NodeID) (*pb.Node, error) {
+func (o *Cache) Get(ctx context.Context, nodeID czarcoin.NodeID) (*pb.Node, error) {
 	b, err := o.DB.Get(nodeID.Bytes())
 	if err != nil {
 		return nil, err
@@ -61,7 +61,7 @@ func (o *Cache) Get(ctx context.Context, nodeID storj.NodeID) (*pb.Node, error) 
 }
 
 // GetAll looks up the provided nodeIDs from the overlay cache
-func (o *Cache) GetAll(ctx context.Context, nodeIDs storj.NodeIDList) ([]*pb.Node, error) {
+func (o *Cache) GetAll(ctx context.Context, nodeIDs czarcoin.NodeIDList) ([]*pb.Node, error) {
 	if len(nodeIDs) == 0 {
 		return nil, OverlayError.New("no nodeIDs provided")
 	}
@@ -90,10 +90,10 @@ func (o *Cache) GetAll(ctx context.Context, nodeIDs storj.NodeIDList) ([]*pb.Nod
 }
 
 // Put adds a nodeID to the redis cache with a binary representation of proto defined Node
-func (o *Cache) Put(ctx context.Context, nodeID storj.NodeID, value pb.Node) error {
+func (o *Cache) Put(ctx context.Context, nodeID czarcoin.NodeID, value pb.Node) error {
 	// If we get a Node without an ID (i.e. bootstrap node)
 	// we don't want to add to the routing tbale
-	if nodeID == (storj.NodeID{}) {
+	if nodeID == (czarcoin.NodeID{}) {
 		return nil
 	}
 

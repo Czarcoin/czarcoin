@@ -15,10 +15,10 @@ import (
 	"google.golang.org/grpc/status"
 	"gopkg.in/spacemonkeygo/monkit.v2"
 
-	"storj.io/storj/pkg/dht"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/storage"
+	"czarcoin.org/czarcoin/pkg/dht"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/storage"
 )
 
 // ServerError creates class of errors for stack traces
@@ -77,7 +77,7 @@ func (o *Server) FindStorageNodes(ctx context.Context, req *pb.FindStorageNodesR
 	restrictions := opts.GetRestrictions()
 	reputation := opts.GetMinStats()
 
-	var startID storj.NodeID
+	var startID czarcoin.NodeID
 	result := []*pb.Node{}
 	for {
 		var nodes []*pb.Node
@@ -102,7 +102,7 @@ func (o *Server) FindStorageNodes(ctx context.Context, req *pb.FindStorageNodesR
 
 		result = append(result, resultNodes...)
 
-		if len(result) >= int(maxNodes) || startID == (storj.NodeID{}) {
+		if len(result) >= int(maxNodes) || startID == (czarcoin.NodeID{}) {
 			break
 		}
 
@@ -141,15 +141,15 @@ func (o *Server) getNodes(ctx context.Context, keys storage.Keys) ([]*pb.Node, e
 
 }
 
-func (o *Server) populate(ctx context.Context, startID storj.NodeID, maxNodes int64,
+func (o *Server) populate(ctx context.Context, startID czarcoin.NodeID, maxNodes int64,
 	minRestrictions *pb.NodeRestrictions, minReputation *pb.NodeStats,
-	excluded storj.NodeIDList) ([]*pb.Node, storj.NodeID, error) {
+	excluded czarcoin.NodeIDList) ([]*pb.Node, czarcoin.NodeID, error) {
 
 	limit := int(maxNodes * 2)
 	keys, err := o.cache.DB.List(startID.Bytes(), limit)
 	if err != nil {
 		o.logger.Error("Error listing nodes", zap.Error(err))
-		return nil, storj.NodeID{}, Error.Wrap(err)
+		return nil, czarcoin.NodeID{}, Error.Wrap(err)
 	}
 
 	if len(keys) <= 0 {
@@ -162,7 +162,7 @@ func (o *Server) populate(ctx context.Context, startID storj.NodeID, maxNodes in
 	nodes, err := o.getNodes(ctx, keys)
 	if err != nil {
 		o.logger.Error("Error getting nodes", zap.Error(err))
-		return nil, storj.NodeID{}, Error.Wrap(err)
+		return nil, czarcoin.NodeID{}, Error.Wrap(err)
 	}
 
 	for _, v := range nodes {
@@ -185,21 +185,21 @@ func (o *Server) populate(ctx context.Context, startID storj.NodeID, maxNodes in
 		result = append(result, v)
 	}
 
-	var nextStart storj.NodeID
+	var nextStart czarcoin.NodeID
 	if len(keys) < limit {
-		nextStart = storj.NodeID{}
+		nextStart = czarcoin.NodeID{}
 	} else {
-		nextStart, err = storj.NodeIDFromBytes(keys[len(keys)-1])
+		nextStart, err = czarcoin.NodeIDFromBytes(keys[len(keys)-1])
 	}
 	if err != nil {
-		return nil, storj.NodeID{}, Error.Wrap(err)
+		return nil, czarcoin.NodeID{}, Error.Wrap(err)
 	}
 
 	return result, nextStart, nil
 }
 
 // contains checks if item exists in list
-func contains(nodeIDs storj.NodeIDList, searchID storj.NodeID) bool {
+func contains(nodeIDs czarcoin.NodeIDList, searchID czarcoin.NodeID) bool {
 	for _, id := range nodeIDs {
 		if bytes.Equal(id.Bytes(), searchID.Bytes()) {
 			return true
@@ -209,7 +209,7 @@ func contains(nodeIDs storj.NodeIDList, searchID storj.NodeID) bool {
 }
 
 // lookupRequestsToNodeIDs returns the nodeIDs from the LookupRequests
-func lookupRequestsToNodeIDs(reqs *pb.LookupRequests) (ids storj.NodeIDList) {
+func lookupRequestsToNodeIDs(reqs *pb.LookupRequests) (ids czarcoin.NodeIDList) {
 	for _, v := range reqs.LookupRequest {
 		ids = append(ids, v.NodeId)
 	}

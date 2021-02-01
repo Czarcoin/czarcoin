@@ -6,11 +6,11 @@ Usage:
 
 First make an identity:
 ```
-go install storj.io/storj/cmd/uplink
+go install czarcoin.org/czarcoin/cmd/uplink
 uplink setup
 ```
 
-You can edit `~/.storj/uplink/config.yaml` to your liking. Then run it!
+You can edit `~/.czarcoin/uplink/config.yaml` to your liking. Then run it!
 
 ```
 uplink run

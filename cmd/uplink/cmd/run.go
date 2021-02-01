@@ -9,8 +9,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"storj.io/storj/pkg/process"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/pkg/process"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 var (
@@ -35,7 +35,7 @@ func cmdRun(cmd *cobra.Command, args []string) (err error) {
 		address = net.JoinHostPort("localhost", port)
 	}
 
-	fmt.Printf("Starting Storj S3-compatible gateway!\n\n")
+	fmt.Printf("Starting Czarcoin S3-compatible gateway!\n\n")
 	fmt.Printf("Endpoint: %s\n", address)
 	fmt.Printf("Access key: %s\n", cfg.Minio.AccessKey)
 	fmt.Printf("Secret key: %s\n", cfg.Minio.SecretKey)
@@ -46,7 +46,7 @@ func cmdRun(cmd *cobra.Command, args []string) (err error) {
 		return err
 	}
 
-	_, err = metainfo.ListBuckets(ctx, storj.BucketListOptions{Direction: storj.After})
+	_, err = metainfo.ListBuckets(ctx, czarcoin.BucketListOptions{Direction: czarcoin.After})
 	if err != nil {
 		return fmt.Errorf("Failed to contact Satellite.\n"+
 			"Perhaps your configuration is invalid?\n%s", err)

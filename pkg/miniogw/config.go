@@ -12,17 +12,17 @@ import (
 	"github.com/vivint/infectious"
 	"go.uber.org/zap"
 
-	"storj.io/storj/pkg/eestream"
-	"storj.io/storj/pkg/metainfo/kvmetainfo"
-	"storj.io/storj/pkg/miniogw/logging"
-	"storj.io/storj/pkg/overlay"
-	"storj.io/storj/pkg/pointerdb/pdbclient"
-	"storj.io/storj/pkg/provider"
-	"storj.io/storj/pkg/storage/buckets"
-	ecclient "storj.io/storj/pkg/storage/ec"
-	"storj.io/storj/pkg/storage/segments"
-	"storj.io/storj/pkg/storage/streams"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/pkg/eestream"
+	"czarcoin.org/czarcoin/pkg/metainfo/kvmetainfo"
+	"czarcoin.org/czarcoin/pkg/miniogw/logging"
+	"czarcoin.org/czarcoin/pkg/overlay"
+	"czarcoin.org/czarcoin/pkg/pointerdb/pdbclient"
+	"czarcoin.org/czarcoin/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/storage/buckets"
+	ecclient "czarcoin.org/czarcoin/pkg/storage/ec"
+	"czarcoin.org/czarcoin/pkg/storage/segments"
+	"czarcoin.org/czarcoin/pkg/storage/streams"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 // RSConfig is a configuration struct that keeps details about default
@@ -85,8 +85,8 @@ func (c Config) Run(ctx context.Context) (err error) {
 	}
 
 	err = minio.RegisterGatewayCommand(cli.Command{
-		Name:  "storj",
-		Usage: "Storj",
+		Name:  "czarcoin",
+		Usage: "Czarcoin",
 		Action: func(cliCtx *cli.Context) error {
 			return c.action(ctx, cliCtx, identity)
 		},
@@ -106,7 +106,7 @@ func (c Config) Run(ctx context.Context) (err error) {
 		return err
 	}
 
-	minio.Main([]string{"storj", "gateway", "storj",
+	minio.Main([]string{"czarcoin", "gateway", "czarcoin",
 		"--address", c.Identity.Server.Address, "--config-dir", c.Minio.Dir, "--quiet"})
 	return Error.New("unexpected minio exit")
 }
@@ -123,8 +123,8 @@ func (c Config) action(ctx context.Context, cliCtx *cli.Context, identity *provi
 	return Error.New("unexpected minio exit")
 }
 
-// GetMetainfo returns an implementation of storj.Metainfo
-func (c Config) GetMetainfo(ctx context.Context, identity *provider.FullIdentity) (db storj.Metainfo, ss streams.Store, err error) {
+// GetMetainfo returns an implementation of czarcoin.Metainfo
+func (c Config) GetMetainfo(ctx context.Context, identity *provider.FullIdentity) (db czarcoin.Metainfo, ss streams.Store, err error) {
 	defer mon.Task()(&ctx)(&err)
 
 	oc, err := overlay.NewOverlayClient(identity, c.Client.OverlayAddr)
@@ -154,10 +154,10 @@ func (c Config) GetMetainfo(ctx context.Context, identity *provider.FullIdentity
 		return nil, nil, err
 	}
 
-	key := new(storj.Key)
+	key := new(czarcoin.Key)
 	copy(key[:], c.Enc.Key)
 
-	streams, err := streams.NewStreamStore(segments, c.Client.SegmentSize, key, c.Enc.BlockSize, storj.Cipher(c.Enc.DataType))
+	streams, err := streams.NewStreamStore(segments, c.Client.SegmentSize, key, c.Enc.BlockSize, czarcoin.Cipher(c.Enc.DataType))
 	if err != nil {
 		return nil, nil, err
 	}
@@ -168,9 +168,9 @@ func (c Config) GetMetainfo(ctx context.Context, identity *provider.FullIdentity
 }
 
 // GetRedundancyScheme returns the configured redundancy scheme for new uploads
-func (c Config) GetRedundancyScheme() storj.RedundancyScheme {
-	return storj.RedundancyScheme{
-		Algorithm:      storj.ReedSolomon,
+func (c Config) GetRedundancyScheme() czarcoin.RedundancyScheme {
+	return czarcoin.RedundancyScheme{
+		Algorithm:      czarcoin.ReedSolomon,
 		RequiredShares: int16(c.RS.MinThreshold),
 		RepairShares:   int16(c.RS.RepairThreshold),
 		OptimalShares:  int16(c.RS.SuccessThreshold),
@@ -179,9 +179,9 @@ func (c Config) GetRedundancyScheme() storj.RedundancyScheme {
 }
 
 // GetEncryptionScheme returns the configured encryption scheme for new uploads
-func (c Config) GetEncryptionScheme() storj.EncryptionScheme {
-	return storj.EncryptionScheme{
-		Cipher:    storj.Cipher(c.Enc.DataType),
+func (c Config) GetEncryptionScheme() czarcoin.EncryptionScheme {
+	return czarcoin.EncryptionScheme{
+		Cipher:    czarcoin.Cipher(c.Enc.DataType),
 		BlockSize: int32(c.Enc.BlockSize),
 	}
 }
@@ -195,5 +195,5 @@ func (c Config) NewGateway(ctx context.Context, identity *provider.FullIdentity)
 		return nil, err
 	}
 
-	return NewStorjGateway(metainfo, streams, storj.Cipher(c.Enc.PathType), c.GetEncryptionScheme(), c.GetRedundancyScheme()), nil
+	return NewCzarcoinGateway(metainfo, streams, czarcoin.Cipher(c.Enc.PathType), c.GetEncryptionScheme(), c.GetRedundancyScheme()), nil
 }

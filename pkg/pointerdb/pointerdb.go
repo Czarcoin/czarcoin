@@ -15,13 +15,13 @@ import (
 	"google.golang.org/grpc/status"
 	monkit "gopkg.in/spacemonkeygo/monkit.v2"
 
-	"storj.io/storj/pkg/auth"
-	"storj.io/storj/pkg/overlay"
-	"storj.io/storj/pkg/pb"
-	pointerdbAuth "storj.io/storj/pkg/pointerdb/auth"
-	"storj.io/storj/pkg/provider"
-	"storj.io/storj/pkg/storage/meta"
-	"storj.io/storj/storage"
+	"czarcoin.org/czarcoin/pkg/auth"
+	"czarcoin.org/czarcoin/pkg/overlay"
+	"czarcoin.org/czarcoin/pkg/pb"
+	pointerdbAuth "czarcoin.org/czarcoin/pkg/pointerdb/auth"
+	"czarcoin.org/czarcoin/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/storage/meta"
+	"czarcoin.org/czarcoin/storage"
 )
 
 var (

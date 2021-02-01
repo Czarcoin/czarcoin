@@ -3,7 +3,7 @@
 
 package kademlia
 
-import "storj.io/storj/pkg/pb"
+import "czarcoin.org/czarcoin/pkg/pb"
 
 // KBucket implements the Bucket interface
 type KBucket struct {

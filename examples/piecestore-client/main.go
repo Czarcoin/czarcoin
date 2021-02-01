@@ -16,10 +16,10 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/zeebo/errs"
 
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/piecestore/psclient"
-	"storj.io/storj/pkg/provider"
-	"storj.io/storj/pkg/transport"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/piecestore/psclient"
+	"czarcoin.org/czarcoin/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/transport"
 )
 
 var ctx = context.Background()

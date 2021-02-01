@@ -13,15 +13,15 @@ import (
 	"github.com/golang/protobuf/ptypes/timestamp"
 	"go.uber.org/zap"
 
-	"storj.io/storj/internal/memory"
-	"storj.io/storj/pkg/encryption"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/storage/meta"
-	"storj.io/storj/pkg/storage/objects"
-	"storj.io/storj/pkg/storage/segments"
-	"storj.io/storj/pkg/storage/streams"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/storage"
+	"czarcoin.org/czarcoin/internal/memory"
+	"czarcoin.org/czarcoin/pkg/encryption"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/storage/meta"
+	"czarcoin.org/czarcoin/pkg/storage/objects"
+	"czarcoin.org/czarcoin/pkg/storage/segments"
+	"czarcoin.org/czarcoin/pkg/storage/streams"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/storage"
 )
 
 const (
@@ -29,8 +29,8 @@ const (
 	committedPrefix = "l/"
 )
 
-var defaultRS = storj.RedundancyScheme{
-	Algorithm:      storj.ReedSolomon,
+var defaultRS = czarcoin.RedundancyScheme{
+	Algorithm:      czarcoin.ReedSolomon,
 	RequiredShares: 20,
 	RepairShares:   30,
 	OptimalShares:  40,
@@ -38,13 +38,13 @@ var defaultRS = storj.RedundancyScheme{
 	ShareSize:      1 * memory.KB.Int32(),
 }
 
-var defaultES = storj.EncryptionScheme{
-	Cipher:    storj.AESGCM,
+var defaultES = czarcoin.EncryptionScheme{
+	Cipher:    czarcoin.AESGCM,
 	BlockSize: 1 * memory.KB.Int32(),
 }
 
 // GetObject returns information about an object
-func (db *DB) GetObject(ctx context.Context, bucket string, path storj.Path) (info storj.Object, err error) {
+func (db *DB) GetObject(ctx context.Context, bucket string, path czarcoin.Path) (info czarcoin.Object, err error) {
 	defer mon.Task()(&ctx)(&err)
 
 	_, info, err = db.getInfo(ctx, committedPrefix, bucket, path)
@@ -53,7 +53,7 @@ func (db *DB) GetObject(ctx context.Context, bucket string, path storj.Path) (in
 }
 
 // GetObjectStream returns interface for reading the object stream
-func (db *DB) GetObjectStream(ctx context.Context, bucket string, path storj.Path) (stream storj.ReadOnlyStream, err error) {
+func (db *DB) GetObjectStream(ctx context.Context, bucket string, path czarcoin.Path) (stream czarcoin.ReadOnlyStream, err error) {
 	defer mon.Task()(&ctx)(&err)
 
 	meta, info, err := db.getInfo(ctx, committedPrefix, bucket, path)
@@ -75,7 +75,7 @@ func (db *DB) GetObjectStream(ctx context.Context, bucket string, path storj.Pat
 }
 
 // CreateObject creates an uploading object and returns an interface for uploading Object information
-func (db *DB) CreateObject(ctx context.Context, bucket string, path storj.Path, createInfo *storj.CreateObject) (object storj.MutableObject, err error) {
+func (db *DB) CreateObject(ctx context.Context, bucket string, path czarcoin.Path, createInfo *czarcoin.CreateObject) (object czarcoin.MutableObject, err error) {
 	defer mon.Task()(&ctx)(&err)
 
 	bucketInfo, err := db.GetBucket(ctx, bucket)
@@ -84,10 +84,10 @@ func (db *DB) CreateObject(ctx context.Context, bucket string, path storj.Path, 
 	}
 
 	if path == "" {
-		return nil, storj.ErrNoPath.New("")
+		return nil, czarcoin.ErrNoPath.New("")
 	}
 
-	info := storj.Object{
+	info := czarcoin.Object{
 		Bucket: bucketInfo,
 		Path:   path,
 	}
@@ -108,7 +108,7 @@ func (db *DB) CreateObject(ctx context.Context, bucket string, path storj.Path, 
 	}
 
 	if info.EncryptionScheme.IsZero() {
-		info.EncryptionScheme = storj.EncryptionScheme{
+		info.EncryptionScheme = czarcoin.EncryptionScheme{
 			Cipher:    defaultES.Cipher,
 			BlockSize: info.RedundancyScheme.ShareSize,
 		}
@@ -121,13 +121,13 @@ func (db *DB) CreateObject(ctx context.Context, bucket string, path storj.Path, 
 }
 
 // ModifyObject modifies a committed object
-func (db *DB) ModifyObject(ctx context.Context, bucket string, path storj.Path) (object storj.MutableObject, err error) {
+func (db *DB) ModifyObject(ctx context.Context, bucket string, path czarcoin.Path) (object czarcoin.MutableObject, err error) {
 	defer mon.Task()(&ctx)(&err)
 	return nil, errors.New("not implemented")
 }
 
 // DeleteObject deletes an object from database
-func (db *DB) DeleteObject(ctx context.Context, bucket string, path storj.Path) (err error) {
+func (db *DB) DeleteObject(ctx context.Context, bucket string, path czarcoin.Path) (err error) {
 	defer mon.Task()(&ctx)(&err)
 
 	store, err := db.buckets.GetObjectStore(ctx, bucket)
@@ -139,64 +139,64 @@ func (db *DB) DeleteObject(ctx context.Context, bucket string, path storj.Path) 
 }
 
 // ModifyPendingObject creates an interface for updating a partially uploaded object
-func (db *DB) ModifyPendingObject(ctx context.Context, bucket string, path storj.Path) (object storj.MutableObject, err error) {
+func (db *DB) ModifyPendingObject(ctx context.Context, bucket string, path czarcoin.Path) (object czarcoin.MutableObject, err error) {
 	defer mon.Task()(&ctx)(&err)
 	return nil, errors.New("not implemented")
 }
 
 // ListPendingObjects lists pending objects in bucket based on the ListOptions
-func (db *DB) ListPendingObjects(ctx context.Context, bucket string, options storj.ListOptions) (list storj.ObjectList, err error) {
+func (db *DB) ListPendingObjects(ctx context.Context, bucket string, options czarcoin.ListOptions) (list czarcoin.ObjectList, err error) {
 	defer mon.Task()(&ctx)(&err)
-	return storj.ObjectList{}, errors.New("not implemented")
+	return czarcoin.ObjectList{}, errors.New("not implemented")
 }
 
 // ListObjects lists objects in bucket based on the ListOptions
-func (db *DB) ListObjects(ctx context.Context, bucket string, options storj.ListOptions) (list storj.ObjectList, err error) {
+func (db *DB) ListObjects(ctx context.Context, bucket string, options czarcoin.ListOptions) (list czarcoin.ObjectList, err error) {
 	defer mon.Task()(&ctx)(&err)
 
 	bucketInfo, err := db.GetBucket(ctx, bucket)
 	if err != nil {
-		return storj.ObjectList{}, err
+		return czarcoin.ObjectList{}, err
 	}
 
 	objects, err := db.buckets.GetObjectStore(ctx, bucket)
 	if err != nil {
-		return storj.ObjectList{}, err
+		return czarcoin.ObjectList{}, err
 	}
 
 	var startAfter, endBefore string
 	switch options.Direction {
-	case storj.Before:
+	case czarcoin.Before:
 		// before lists backwards from cursor, without cursor
 		endBefore = options.Cursor
-	case storj.Backward:
+	case czarcoin.Backward:
 		// backward lists backwards from cursor, including cursor
 		endBefore = keyAfter(options.Cursor)
-	case storj.Forward:
+	case czarcoin.Forward:
 		// forward lists forwards from cursor, including cursor
 		startAfter = keyBefore(options.Cursor)
-	case storj.After:
+	case czarcoin.After:
 		// after lists forwards from cursor, without cursor
 		startAfter = options.Cursor
 	default:
-		return storj.ObjectList{}, errClass.New("invalid direction %d", options.Direction)
+		return czarcoin.ObjectList{}, errClass.New("invalid direction %d", options.Direction)
 	}
 
 	// TODO: remove this hack-fix of specifying the last key
-	if options.Cursor == "" && (options.Direction == storj.Before || options.Direction == storj.Backward) {
+	if options.Cursor == "" && (options.Direction == czarcoin.Before || options.Direction == czarcoin.Backward) {
 		endBefore = "\x7f\x7f\x7f\x7f\x7f\x7f\x7f"
 	}
 
 	items, more, err := objects.List(ctx, options.Prefix, startAfter, endBefore, options.Recursive, options.Limit, meta.All)
 	if err != nil {
-		return storj.ObjectList{}, err
+		return czarcoin.ObjectList{}, err
 	}
 
-	list = storj.ObjectList{
+	list = czarcoin.ObjectList{
 		Bucket: bucket,
 		Prefix: options.Prefix,
 		More:   more,
-		Items:  make([]storj.Object, 0, len(items)),
+		Items:  make([]czarcoin.Object, 0, len(items)),
 	}
 
 	for _, item := range items {
@@ -214,31 +214,31 @@ type object struct {
 	streamMeta      pb.StreamMeta
 }
 
-func (db *DB) getInfo(ctx context.Context, prefix string, bucket string, path storj.Path) (obj object, info storj.Object, err error) {
+func (db *DB) getInfo(ctx context.Context, prefix string, bucket string, path czarcoin.Path) (obj object, info czarcoin.Object, err error) {
 	defer mon.Task()(&ctx)(&err)
 
 	bucketInfo, err := db.GetBucket(ctx, bucket)
 	if err != nil {
-		return object{}, storj.Object{}, err
+		return object{}, czarcoin.Object{}, err
 	}
 
 	if path == "" {
-		return object{}, storj.Object{}, storj.ErrNoPath.New("")
+		return object{}, czarcoin.Object{}, czarcoin.ErrNoPath.New("")
 	}
 
 	fullpath := bucket + "/" + path
 
 	encryptedPath, err := streams.EncryptAfterBucket(fullpath, bucketInfo.PathCipher, db.rootKey)
 	if err != nil {
-		return object{}, storj.Object{}, err
+		return object{}, czarcoin.Object{}, err
 	}
 
 	pointer, _, _, err := db.pointers.Get(ctx, prefix+encryptedPath)
 	if err != nil {
 		if storage.ErrKeyNotFound.Has(err) {
-			err = storj.ErrObjectNotFound.Wrap(err)
+			err = czarcoin.ErrObjectNotFound.Wrap(err)
 		}
-		return object{}, storj.Object{}, err
+		return object{}, czarcoin.Object{}, err
 	}
 
 	var redundancyScheme *pb.RedundancyScheme
@@ -265,24 +265,24 @@ func (db *DB) getInfo(ctx context.Context, prefix string, bucket string, path st
 
 	streamInfoData, err := streams.DecryptStreamInfo(ctx, lastSegmentMeta, fullpath, db.rootKey)
 	if err != nil {
-		return object{}, storj.Object{}, err
+		return object{}, czarcoin.Object{}, err
 	}
 
 	streamInfo := pb.StreamInfo{}
 	err = proto.Unmarshal(streamInfoData, &streamInfo)
 	if err != nil {
-		return object{}, storj.Object{}, err
+		return object{}, czarcoin.Object{}, err
 	}
 
 	streamMeta := pb.StreamMeta{}
 	err = proto.Unmarshal(lastSegmentMeta.Data, &streamMeta)
 	if err != nil {
-		return object{}, storj.Object{}, err
+		return object{}, czarcoin.Object{}, err
 	}
 
 	info, err = objectStreamFromMeta(bucketInfo, path, lastSegmentMeta, streamInfo, streamMeta, redundancyScheme)
 	if err != nil {
-		return object{}, storj.Object{}, err
+		return object{}, czarcoin.Object{}, err
 	}
 
 	return object{
@@ -294,8 +294,8 @@ func (db *DB) getInfo(ctx context.Context, prefix string, bucket string, path st
 	}, info, nil
 }
 
-func objectFromMeta(bucket storj.Bucket, path storj.Path, isPrefix bool, meta objects.Meta) storj.Object {
-	return storj.Object{
+func objectFromMeta(bucket czarcoin.Bucket, path czarcoin.Path, isPrefix bool, meta objects.Meta) czarcoin.Object {
+	return czarcoin.Object{
 		Version:  0, // TODO:
 		Bucket:   bucket,
 		Path:     path,
@@ -308,24 +308,24 @@ func objectFromMeta(bucket storj.Bucket, path storj.Path, isPrefix bool, meta ob
 		Modified:    meta.Modified, // TODO: use correct field
 		Expires:     meta.Expiration,
 
-		Stream: storj.Stream{
+		Stream: czarcoin.Stream{
 			Size:     meta.Size,
 			Checksum: []byte(meta.Checksum),
 		},
 	}
 }
 
-func objectStreamFromMeta(bucket storj.Bucket, path storj.Path, lastSegment segments.Meta, stream pb.StreamInfo, streamMeta pb.StreamMeta, redundancyScheme *pb.RedundancyScheme) (storj.Object, error) {
-	var nonce storj.Nonce
+func objectStreamFromMeta(bucket czarcoin.Bucket, path czarcoin.Path, lastSegment segments.Meta, stream pb.StreamInfo, streamMeta pb.StreamMeta, redundancyScheme *pb.RedundancyScheme) (czarcoin.Object, error) {
+	var nonce czarcoin.Nonce
 	copy(nonce[:], streamMeta.LastSegmentMeta.KeyNonce)
 
 	serMetaInfo := pb.SerializableMeta{}
 	err := proto.Unmarshal(stream.Metadata, &serMetaInfo)
 	if err != nil {
-		return storj.Object{}, err
+		return czarcoin.Object{}, err
 	}
 
-	return storj.Object{
+	return czarcoin.Object{
 		Version:  0, // TODO:
 		Bucket:   bucket,
 		Path:     path,
@@ -338,26 +338,26 @@ func objectStreamFromMeta(bucket storj.Bucket, path storj.Path, lastSegment segm
 		Modified:    lastSegment.Modified,   // TODO: use correct field
 		Expires:     lastSegment.Expiration, // TODO: use correct field
 
-		Stream: storj.Stream{
+		Stream: czarcoin.Stream{
 			Size: stream.SegmentsSize*(stream.NumberOfSegments-1) + stream.LastSegmentSize,
 			// Checksum: []byte(object.Checksum),
 
 			SegmentCount:     stream.NumberOfSegments,
 			FixedSegmentSize: stream.SegmentsSize,
 
-			RedundancyScheme: storj.RedundancyScheme{
-				Algorithm:      storj.ReedSolomon,
+			RedundancyScheme: czarcoin.RedundancyScheme{
+				Algorithm:      czarcoin.ReedSolomon,
 				ShareSize:      redundancyScheme.GetErasureShareSize(),
 				RequiredShares: int16(redundancyScheme.GetMinReq()),
 				RepairShares:   int16(redundancyScheme.GetRepairThreshold()),
 				OptimalShares:  int16(redundancyScheme.GetSuccessThreshold()),
 				TotalShares:    int16(redundancyScheme.GetTotal()),
 			},
-			EncryptionScheme: storj.EncryptionScheme{
-				Cipher:    storj.Cipher(streamMeta.EncryptionType),
+			EncryptionScheme: czarcoin.EncryptionScheme{
+				Cipher:    czarcoin.Cipher(streamMeta.EncryptionType),
 				BlockSize: streamMeta.EncryptionBlockSize,
 			},
-			LastSegment: storj.LastSegment{
+			LastSegment: czarcoin.LastSegment{
 				Size:              stream.LastSegmentSize,
 				EncryptedKeyNonce: nonce,
 				EncryptedKey:      streamMeta.LastSegmentMeta.EncryptedKey,
@@ -380,19 +380,19 @@ func convertTime(ts *timestamp.Timestamp) time.Time {
 
 type mutableObject struct {
 	db   *DB
-	info storj.Object
+	info czarcoin.Object
 }
 
-func (object *mutableObject) Info() storj.Object { return object.info }
+func (object *mutableObject) Info() czarcoin.Object { return object.info }
 
-func (object *mutableObject) CreateStream(ctx context.Context) (storj.MutableStream, error) {
+func (object *mutableObject) CreateStream(ctx context.Context) (czarcoin.MutableStream, error) {
 	return &mutableStream{
 		db:   object.db,
 		info: object.info,
 	}, nil
 }
 
-func (object *mutableObject) ContinueStream(ctx context.Context) (storj.MutableStream, error) {
+func (object *mutableObject) ContinueStream(ctx context.Context) (czarcoin.MutableStream, error) {
 	return nil, errors.New("not implemented")
 }
 

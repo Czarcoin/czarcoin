@@ -8,7 +8,7 @@ import (
 	"io"
 	"os"
 
-	"storj.io/storj/pkg/utils"
+	"czarcoin.org/czarcoin/pkg/utils"
 )
 
 type fileRanger struct {

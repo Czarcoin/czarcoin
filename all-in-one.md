@@ -16,9 +16,9 @@ following:
    Export the version of the network you want to run. Latest should be ok, but
    if you're testing something else, set the version here. ex: `c6cd912-all-in-one-go1.10`
    Usable images should be pushed to the Docker Hub:
-   - https://hub.docker.com/r/storjlabs/gateway/tags/
-   - https://hub.docker.com/r/storjlabs/storagenode/tags/
-   - https://hub.docker.com/r/storjlabs/satellite/tags/
+   - https://hub.docker.com/r/czarcoin/gateway/tags/
+   - https://hub.docker.com/r/czarcoin/storagenode/tags/
+   - https://hub.docker.com/r/czarcoin/satellite/tags/
 
 5. `docker-compose up satellite storagenode gateway`
    Bring up the gateway, satellite, and 1 storagenode

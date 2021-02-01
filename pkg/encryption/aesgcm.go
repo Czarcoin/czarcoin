@@ -7,12 +7,12 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
 type aesgcmEncrypter struct {
 	blockSize     int
-	key           *storj.Key
+	key           *czarcoin.Key
 	startingNonce *AESGCMNonce
 	overhead      int
 	aesgcm        cipher.AEAD
@@ -31,7 +31,7 @@ type aesgcmEncrypter struct {
 //
 // When in doubt, generate a new key from crypto/rand and a startingNonce
 // from crypto/rand as often as possible.
-func NewAESGCMEncrypter(key *storj.Key, startingNonce *AESGCMNonce, encryptedBlockSize int) (Transformer, error) {
+func NewAESGCMEncrypter(key *czarcoin.Key, startingNonce *AESGCMNonce, encryptedBlockSize int) (Transformer, error) {
 	block, err := aes.NewCipher(key[:])
 	if err != nil {
 		return nil, Error.Wrap(err)
@@ -80,7 +80,7 @@ func (s *aesgcmEncrypter) Transform(out, in []byte, blockNum int64) ([]byte, err
 
 type aesgcmDecrypter struct {
 	blockSize     int
-	key           *storj.Key
+	key           *czarcoin.Key
 	startingNonce *AESGCMNonce
 	overhead      int
 	aesgcm        cipher.AEAD
@@ -89,7 +89,7 @@ type aesgcmDecrypter struct {
 // NewAESGCMDecrypter returns a Transformer that decrypts the data passing
 // through with key. See the comments for NewAESGCMEncrypter about
 // startingNonce.
-func NewAESGCMDecrypter(key *storj.Key, startingNonce *AESGCMNonce, encryptedBlockSize int) (Transformer, error) {
+func NewAESGCMDecrypter(key *czarcoin.Key, startingNonce *AESGCMNonce, encryptedBlockSize int) (Transformer, error) {
 	block, err := aes.NewCipher(key[:])
 	if err != nil {
 		return nil, Error.Wrap(err)
@@ -131,7 +131,7 @@ func (s *aesgcmDecrypter) Transform(out, in []byte, blockNum int64) ([]byte, err
 }
 
 // EncryptAESGCM encrypts byte data with a key and nonce. The cipher data is returned
-func EncryptAESGCM(data []byte, key *storj.Key, nonce *AESGCMNonce) (cipherData []byte, err error) {
+func EncryptAESGCM(data []byte, key *czarcoin.Key, nonce *AESGCMNonce) (cipherData []byte, err error) {
 	block, err := aes.NewCipher(key[:])
 	if err != nil {
 		return []byte{}, Error.Wrap(err)
@@ -145,7 +145,7 @@ func EncryptAESGCM(data []byte, key *storj.Key, nonce *AESGCMNonce) (cipherData 
 }
 
 // DecryptAESGCM decrypts byte data with a key and nonce. The plain data is returned
-func DecryptAESGCM(cipherData []byte, key *storj.Key, nonce *AESGCMNonce) (data []byte, err error) {
+func DecryptAESGCM(cipherData []byte, key *czarcoin.Key, nonce *AESGCMNonce) (data []byte, err error) {
 	if len(cipherData) == 0 {
 		return []byte{}, Error.New("empty cipher data")
 	}

@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"testing"
 
-	"storj.io/storj/storage"
+	"czarcoin.org/czarcoin/storage"
 )
 
 // RunTests runs common storage.KeyValueStore tests

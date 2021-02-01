@@ -10,16 +10,16 @@ import (
 	"github.com/gogo/protobuf/proto"
 	"golang.org/x/sync/errgroup"
 
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/storage/streams"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/pkg/utils"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/storage/streams"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/pkg/utils"
 )
 
 // Upload implements Writer and Closer for writing to stream.
 type Upload struct {
 	ctx      context.Context
-	stream   storj.MutableStream
+	stream   czarcoin.MutableStream
 	streams  streams.Store
 	writer   io.WriteCloser
 	closed   bool
@@ -27,7 +27,7 @@ type Upload struct {
 }
 
 // NewUpload creates new stream upload.
-func NewUpload(ctx context.Context, stream storj.MutableStream, streams streams.Store) *Upload {
+func NewUpload(ctx context.Context, stream czarcoin.MutableStream, streams streams.Store) *Upload {
 	reader, writer := io.Pipe()
 
 	upload := Upload{
@@ -49,7 +49,7 @@ func NewUpload(ctx context.Context, stream storj.MutableStream, streams streams.
 			return utils.CombineErrors(err, reader.CloseWithError(err))
 		}
 
-		_, err = streams.Put(ctx, storj.JoinPaths(obj.Bucket.Name, obj.Path), obj.Bucket.PathCipher, reader, metadata, obj.Expires)
+		_, err = streams.Put(ctx, czarcoin.JoinPaths(obj.Bucket.Name, obj.Path), obj.Bucket.PathCipher, reader, metadata, obj.Expires)
 		if err != nil {
 			return utils.CombineErrors(err, reader.CloseWithError(err))
 		}

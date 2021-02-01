@@ -13,14 +13,14 @@ import (
 	"go.uber.org/zap"
 	"gopkg.in/spacemonkeygo/monkit.v2"
 
-	"storj.io/storj/pkg/eestream"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/piecestore/psclient"
-	"storj.io/storj/pkg/provider"
-	"storj.io/storj/pkg/ranger"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/pkg/transport"
-	"storj.io/storj/pkg/utils"
+	"czarcoin.org/czarcoin/pkg/eestream"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/piecestore/psclient"
+	"czarcoin.org/czarcoin/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/ranger"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/pkg/transport"
+	"czarcoin.org/czarcoin/pkg/utils"
 )
 
 var mon = monkit.Package()
@@ -269,7 +269,7 @@ func unique(nodes []*pb.Node) bool {
 		return true
 	}
 
-	ids := make(storj.NodeIDList, len(nodes))
+	ids := make(czarcoin.NodeIDList, len(nodes))
 	for i, n := range nodes {
 		if n != nil {
 			ids[i] = n.Id
@@ -280,7 +280,7 @@ func unique(nodes []*pb.Node) bool {
 	sort.Sort(ids)
 	// sort.Slice(ids, func(i, k int) bool { return ids[i].Less(ids[k]) })
 	for i := 1; i < len(ids); i++ {
-		if ids[i] != (storj.NodeID{}) && ids[i] == ids[i-1] {
+		if ids[i] != (czarcoin.NodeID{}) && ids[i] == ids[i-1] {
 			return false
 		}
 	}

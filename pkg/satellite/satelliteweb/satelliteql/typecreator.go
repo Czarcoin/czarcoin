@@ -6,7 +6,7 @@ package satelliteql
 import (
 	"github.com/graphql-go/graphql"
 
-	"storj.io/storj/pkg/satellite"
+	"czarcoin.org/czarcoin/pkg/satellite"
 )
 
 // Types return graphql type objects

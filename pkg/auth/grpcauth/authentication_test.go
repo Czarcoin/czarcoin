@@ -14,7 +14,7 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
-	"storj.io/storj/pkg/auth"
+	"czarcoin.org/czarcoin/pkg/auth"
 )
 
 func TestAPIKeyInterceptor(t *testing.T) {

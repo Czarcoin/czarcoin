@@ -4,18 +4,18 @@
 package statdb
 
 import (
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/storj"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
 )
 
-// NodeID is an alias to storj.NodeID for use in generated protobuf code
-type NodeID = storj.NodeID
+// NodeID is an alias to czarcoin.NodeID for use in generated protobuf code
+type NodeID = czarcoin.NodeID
 
-// NodeIDList is an alias to storj.NodeIDList for use in generated protobuf code
-type NodeIDList = storj.NodeIDList
+// NodeIDList is an alias to czarcoin.NodeIDList for use in generated protobuf code
+type NodeIDList = czarcoin.NodeIDList
 
-// Node is an alias to storj.Node for use in generated protobuf code
+// Node is an alias to czarcoin.Node for use in generated protobuf code
 type Node = pb.Node
 
-// NodeStats is an alias to storj.NodeStats for use in generated protobuf code
+// NodeStats is an alias to czarcoin.NodeStats for use in generated protobuf code
 type NodeStats = pb.NodeStats

@@ -7,8 +7,8 @@ import (
 	"context"
 	"time"
 
-	"storj.io/storj/pkg/bwagreement"
-	dbx "storj.io/storj/satellite/satellitedb/dbx"
+	"czarcoin.org/czarcoin/pkg/bwagreement"
+	dbx "czarcoin.org/czarcoin/satellite/satellitedb/dbx"
 )
 
 type bandwidthagreement struct {

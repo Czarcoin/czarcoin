@@ -1,4 +1,4 @@
-module storj.io/storj
+module czarcoin.org/czarcoin
 
 // force specific versions for minio
 require (

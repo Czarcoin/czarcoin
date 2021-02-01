@@ -8,12 +8,12 @@ New-Item "$xhome/cache" -Force -ItemType "directory"
 $env:PATH=$env:PATH + ";$xhome/bin"
 
 $env:GOSPACE_ROOT="$env:GOPATH"
-$env:GOSPACE_PKG="storj.io/storj"
-$env:GOSPACE_REPO="git@github.com:storj/storj.git"
+$env:GOSPACE_PKG="czarcoin.org/czarcoin"
+$env:GOSPACE_REPO="git@github.com:czarcoin/czarcoin.git"
 
 # setup gospace
 [Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls"
-Invoke-WebRequest -Uri "https://github.com/storj/gospace/releases/download/v0.0.5/gospace_windows_amd64.exe" -OutFile "$xhome/bin/gospace.exe"
+Invoke-WebRequest -Uri "https://github.com/czarcoin/gospace/releases/download/v0.0.5/gospace_windows_amd64.exe" -OutFile "$xhome/bin/gospace.exe"
 
 # find module dependency hash
 $modhash = gospace hash

@@ -8,9 +8,9 @@ import (
 
 	"github.com/gtank/cryptopasta"
 
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/peertls"
-	"storj.io/storj/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/peertls"
+	"czarcoin.org/czarcoin/pkg/provider"
 )
 
 // GenerateSignature creates signature from identity id

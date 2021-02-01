@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestStorjURL(t *testing.T) {
+func TestCzarcoinURL(t *testing.T) {
 	for i, tt := range []struct {
 		url    string
 		bucket string
@@ -92,7 +92,7 @@ func TestStorjURL(t *testing.T) {
 	}
 }
 
-func TestInvalidStorjURL(t *testing.T) {
+func TestInvalidCzarcoinURL(t *testing.T) {
 	for i, tt := range []string{
 		"://",
 		"sj://",

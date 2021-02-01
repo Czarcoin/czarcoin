@@ -41,7 +41,7 @@
                     <Checkbox class="checkbox"
                               @setData="setTermsAccepted"
                               :isCheckboxError="isTermsAcceptedError"/>
-                    <h2>I agree to the Storj Bridge Hosting <a>Terms & Conditions</a></h2>
+                    <h2>I agree to the Czarcoin Bridge Hosting <a>Terms & Conditions</a></h2>
                 </div>
                 <div class="account-area-save-button-area__btn">
                     <Button class="account-area-save-button-area__cancel-button" label="Cancel" width="140px"  height="50px" :onPress="onCancelAccountSettingsButtonClick" isWhite/>

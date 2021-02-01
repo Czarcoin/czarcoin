@@ -6,7 +6,7 @@ package testplanet
 import (
 	"errors"
 
-	"storj.io/storj/pkg/provider"
+	"czarcoin.org/czarcoin/pkg/provider"
 )
 
 //go:generate go run gen_identities.go -count 150 -out identities_table.go

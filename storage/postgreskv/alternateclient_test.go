@@ -9,9 +9,9 @@ import (
 
 	"go.uber.org/zap/zaptest"
 
-	"storj.io/storj/storage"
-	"storj.io/storj/storage/storelogger"
-	"storj.io/storj/storage/testsuite"
+	"czarcoin.org/czarcoin/storage"
+	"czarcoin.org/czarcoin/storage/storelogger"
+	"czarcoin.org/czarcoin/storage/testsuite"
 )
 
 var (

@@ -11,8 +11,8 @@ import (
 
 	"github.com/zeebo/errs"
 
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/ranger"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/ranger"
 )
 
 // Error is the error class for pieceRanger

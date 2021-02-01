@@ -8,9 +8,9 @@ import (
 
 	"github.com/zeebo/errs"
 
-	"storj.io/storj/internal/migrate"
-	dbx "storj.io/storj/pkg/datarepair/irreparabledb/dbx"
-	"storj.io/storj/pkg/utils"
+	"czarcoin.org/czarcoin/internal/migrate"
+	dbx "czarcoin.org/czarcoin/pkg/datarepair/irreparabledb/dbx"
+	"czarcoin.org/czarcoin/pkg/utils"
 )
 
 // Error is the default irreparabledb errs class

@@ -14,8 +14,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"storj.io/storj/storage"
-	"storj.io/storj/storage/filestore"
+	"czarcoin.org/czarcoin/storage"
+	"czarcoin.org/czarcoin/storage/filestore"
 )
 
 func newTestStore(t testing.TB) (dir string, store *filestore.Store, cleanup func()) {

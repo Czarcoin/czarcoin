@@ -10,20 +10,20 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"storj.io/storj/internal/teststorj"
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/storj"
-	"storj.io/storj/storage"
+	"czarcoin.org/czarcoin/internal/testczarcoin"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/czarcoin"
+	"czarcoin.org/czarcoin/storage"
 )
 
 func TestLocal(t *testing.T) {
-	rt, cleanup := createRoutingTable(t, teststorj.NodeIDFromString("AA"))
+	rt, cleanup := createRoutingTable(t, testczarcoin.NodeIDFromString("AA"))
 	defer cleanup()
 	assert.Equal(t, rt.Local().Id.Bytes()[:2], []byte("AA"))
 }
 
 func TestK(t *testing.T) {
-	rt, cleanup := createRoutingTable(t, teststorj.NodeIDFromString("AA"))
+	rt, cleanup := createRoutingTable(t, testczarcoin.NodeIDFromString("AA"))
 	defer cleanup()
 	k := rt.K()
 	assert.Equal(t, rt.bucketSize, k)
@@ -31,7 +31,7 @@ func TestK(t *testing.T) {
 }
 
 func TestCacheSize(t *testing.T) {
-	rt, cleanup := createRoutingTable(t, teststorj.NodeIDFromString("AA"))
+	rt, cleanup := createRoutingTable(t, testczarcoin.NodeIDFromString("AA"))
 	defer cleanup()
 	expected := rt.rcBucketSize
 	result := rt.CacheSize()
@@ -39,16 +39,16 @@ func TestCacheSize(t *testing.T) {
 }
 
 func TestGetBucket(t *testing.T) {
-	rt, cleanup := createRoutingTable(t, teststorj.NodeIDFromString("AA"))
+	rt, cleanup := createRoutingTable(t, testczarcoin.NodeIDFromString("AA"))
 	defer cleanup()
-	node := teststorj.MockNode("AA")
-	node2 := teststorj.MockNode("BB")
+	node := testczarcoin.MockNode("AA")
+	node2 := testczarcoin.MockNode("BB")
 	ok, err := rt.addNode(node2)
 	assert.True(t, ok)
 	assert.NoError(t, err)
 
 	cases := []struct {
-		nodeID   storj.NodeID
+		nodeID   czarcoin.NodeID
 		expected *KBucket
 		ok       bool
 	}{
@@ -75,10 +75,10 @@ func TestGetBucket(t *testing.T) {
 }
 
 func TestGetBuckets(t *testing.T) {
-	rt, cleanup := createRoutingTable(t, teststorj.NodeIDFromString("AA"))
+	rt, cleanup := createRoutingTable(t, testczarcoin.NodeIDFromString("AA"))
 	defer cleanup()
-	node := teststorj.MockNode("AA")
-	node2 := teststorj.MockNode("BB")
+	node := testczarcoin.MockNode("AA")
+	node2 := testczarcoin.MockNode("BB")
 	ok, err := rt.addNode(node2)
 	assert.True(t, ok)
 	assert.NoError(t, err)
@@ -93,11 +93,11 @@ func TestGetBuckets(t *testing.T) {
 }
 
 func TestFindNear(t *testing.T) {
-	rt, cleanup := createRoutingTable(t, teststorj.NodeIDFromString("AA"))
+	rt, cleanup := createRoutingTable(t, testczarcoin.NodeIDFromString("AA"))
 	defer cleanup()
-	node1 := teststorj.MockNode("AA")
-	node2 := teststorj.MockNode("BB")
-	node3 := teststorj.MockNode("CC")
+	node1 := testczarcoin.MockNode("AA")
+	node2 := testczarcoin.MockNode("BB")
+	node3 := testczarcoin.MockNode("CC")
 	ok, err := rt.addNode(node2)
 	assert.True(t, ok)
 	assert.NoError(t, err)
@@ -141,10 +141,10 @@ func TestFindNear(t *testing.T) {
 }
 
 func TestConnectionSuccess(t *testing.T) {
-	id := teststorj.NodeIDFromString("AA")
+	id := testczarcoin.NodeIDFromString("AA")
 	rt, cleanup := createRoutingTable(t, id)
 	defer cleanup()
-	id2 := teststorj.NodeIDFromString("BB")
+	id2 := testczarcoin.NodeIDFromString("BB")
 	address1 := &pb.NodeAddress{Address: "a"}
 	address2 := &pb.NodeAddress{Address: "b"}
 	node1 := &pb.Node{Id: id, Address: address1}
@@ -152,7 +152,7 @@ func TestConnectionSuccess(t *testing.T) {
 	cases := []struct {
 		testID  string
 		node    *pb.Node
-		id      storj.NodeID
+		id      czarcoin.NodeID
 		address *pb.NodeAddress
 	}{
 		{testID: "Update Node",
@@ -180,7 +180,7 @@ func TestConnectionSuccess(t *testing.T) {
 }
 
 func TestConnectionFailed(t *testing.T) {
-	id := teststorj.NodeIDFromString("AA")
+	id := testczarcoin.NodeIDFromString("AA")
 	node := &pb.Node{Id: id}
 	rt, cleanup := createRoutingTable(t, id)
 	defer cleanup()
@@ -192,7 +192,7 @@ func TestConnectionFailed(t *testing.T) {
 }
 
 func TestSetBucketTimestamp(t *testing.T) {
-	id := teststorj.NodeIDFromString("AA")
+	id := testczarcoin.NodeIDFromString("AA")
 	rt, cleanup := createRoutingTable(t, id)
 	defer cleanup()
 	now := time.Now().UTC()
@@ -211,7 +211,7 @@ func TestSetBucketTimestamp(t *testing.T) {
 }
 
 func TestGetBucketTimestamp(t *testing.T) {
-	id := teststorj.NodeIDFromString("AA")
+	id := testczarcoin.NodeIDFromString("AA")
 	rt, cleanup := createRoutingTable(t, id)
 	defer cleanup()
 	now := time.Now().UTC()

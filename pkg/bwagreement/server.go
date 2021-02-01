@@ -14,8 +14,8 @@ import (
 	"github.com/gtank/cryptopasta"
 	"go.uber.org/zap"
 
-	"storj.io/storj/pkg/pb"
-	"storj.io/storj/pkg/peertls"
+	"czarcoin.org/czarcoin/pkg/pb"
+	"czarcoin.org/czarcoin/pkg/peertls"
 )
 
 // DB interface for database operations
